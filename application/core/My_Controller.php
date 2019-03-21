@@ -1,0 +1,56 @@
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+class DefaultApi extends CI_Controller {
+	
+	protected $Path = './json/';//api總路徑
+	public $Expired = 600;//超時時間，默認十分鐘
+	
+	public function __construct()
+	{
+		parent::__construct();
+		$this->Makedir($this->Path);
+	}
+	
+	/**
+	*	檢查文件是否過期或是否存在
+	*/
+	protected function Checkfile($filepath)
+	{
+		if(is_file($filepath))
+		{
+			$time = filectime($filepath);
+			return ((time()-$time)<$this->Expired);
+		}
+		return false;
+	}
+	
+	/**
+	*	文件夾檢查並創建
+	*/
+	protected function Makedir($Path)
+	{
+		if(!is_dir($Path))
+		{
+			return mkdir($Path,0775);
+		}
+		return true;
+	}
+	
+	/**
+	*	讀取文件內容
+	*/
+	protected function Getfile($filepath)
+	{
+		return (($this->Checkfile($filepath))?file_get_contents($filepath):false);
+	}
+	
+	/**
+	*	保存文件內容
+	*/
+	protected function Savefile($filepath,$data)
+	{
+		$this->Makedir(dirname($filepath));
+		file_put_contents($filepath,$data);
+		chmod($filepath,0775);
+	}
+}
