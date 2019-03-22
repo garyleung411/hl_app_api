@@ -15,7 +15,7 @@ class Api extends CI_Controller{
 		if(isset($_GET['gen'])){
 			
 			$app_config = $this->config->item("app_config");
-			$app_config = json_encode($app_config,JSON_UNESCAPED_SLASHES);
+			$app_config = json_encode($app_config);
 			file_put_contents($this->config->item('app_config_path'),$app_config);
 			//echo '<pre>';
 			//var_dump($app_config);
@@ -30,10 +30,35 @@ class Api extends CI_Controller{
 		$json = json_decode( file_get_contents($this->config->item('hot_search_path')),true);
 		foreach($json as $k => $v){
 			$json[$k] = ncr2str($v);
+		}
+		header("Content-type:application/json");
+		echo json_encode($json);
+	}
+	
+	//For daily & instant only
+	public function hit_list($section){
+		
+		if($section == 1){
+			$file = $this->config->item('instant_top_list_path');
+		}
+		else if($section == 2){
+			$file = $this->config->item('daily_top_list_path');
+		}
+		$json = array();
+		$tmp = json_decode(file_get_contents($file),true);
+		foreach($tmp as $k => $v){
+			$
 			
 		}
-		echo json_encode($json,JSON_UNESCAPED_SLASHES);
+		
+		
+		
+		
+		header("Content-type:application/json");
+		echo json_encode($json);
 	}
+	
+	
 	
 	public function detail($section, $id){
 		
@@ -54,9 +79,5 @@ class Api extends CI_Controller{
 		
 	}
 	
-	
-	
 
-	
-	
 }
