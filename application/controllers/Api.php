@@ -37,7 +37,6 @@ class Api extends CI_Controller{
 	
 	//For daily & instant only
 	public function hit_list($section){
-		
 		if($section == 1){
 			$file = $this->config->item('instant_top_list_path');
 		}
@@ -46,8 +45,11 @@ class Api extends CI_Controller{
 		}
 		$json = array();
 		$tmp = json_decode(file_get_contents($file),true);
-		foreach($tmp as $k => $v){
-			$
+		foreach($tmp as $name => $list){
+			$json[$name] = array();
+			foreach($list as $v){
+				
+			}
 			
 		}
 		
@@ -55,7 +57,7 @@ class Api extends CI_Controller{
 		
 		
 		header("Content-type:application/json");
-		echo json_encode($json);
+		echo json_encode($tmp);
 	}
 	
 	
