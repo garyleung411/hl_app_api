@@ -72,6 +72,13 @@ $config['allow_ads_title_type'] = array(3,4,5);
 $config['allow_ads_content_type'] = array(4);	
 
 
+$config['app_config_path'] = 'json/app_config.json';
+$config['hot_search_path'] = 'json/hotSearch.json';
+
+
+
+
+
 //app_config
 $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
 $app_config['img']['instant_img_url'] =		$config['instant_img_url'];
@@ -92,10 +99,14 @@ $app_config['api']['api_column_list'] =		"column/[columnid]";
 $app_config['api']['api_list'] =			"list/[section]/[cat]";
 $app_config['api']['api_section_cat'] =		"section/[section]";
 
-$app_config['api']['api_id_search'] =		"id_search/[section]/[id]";
+$app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
 $app_config['api']['api_search'] =			"search/[keyword]";
+$app_config['api']['api_hot_search'] =		"hot_search/";
 $app_config['api']['api_interest'] =		"interest/";
+
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";
 $app_config['api']['api_columns_ads'] = 	"ads/columns/";
+
+$config['app_config'] = $app_config;

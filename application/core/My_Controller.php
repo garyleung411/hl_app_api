@@ -53,4 +53,23 @@ class DefaultApi extends CI_Controller {
 		file_put_contents($filepath,$data);
 		chmod($filepath,0775);
 	}
+	
+	/**
+	*	設置header並輸出數據
+	*/
+	protected function PushData($data)
+	{
+		header("Content-type:application/json");
+		echo $data;
+	}
+	
+	/**
+	*	設置超時時間
+	*/
+	protected function SetExpired($time)
+	{
+		$this->Expired = $time;
+		return $this;
+	}
+	
 }
