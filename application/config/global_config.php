@@ -75,7 +75,8 @@ $config['allow_ads_content_type'] = array(4);
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
 $config['section_list_path'] = 'json/section_list.json';
-$config['daily_list_path']	= 'json/daily_list_{cat}.json';
+$config['daily_list_path']	= 'json/daily/list/daily_list_{cat}.json';
+
 
 
 
@@ -97,8 +98,8 @@ $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_detail'] =			"detail/[section]/[id]";
 $app_config['api']['api_column_list'] =		"column/[columnid]";
-$app_config['api']['api_list'] =			"list/[section]/[cat]";
-$app_config['api']['api_section_cat'] =		"section";
+$app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
+$app_config['api']['api_section_cat'] =		"section";//栏目分类列表
 
 $app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
 $app_config['api']['api_search'] =			"search/[keyword]";

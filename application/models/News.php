@@ -15,18 +15,19 @@ class News extends CI_Model
 	/**
 	*	獲取類別下文章列表
 	*/
-    public function Get_All_New_list($cat=-1,$count=FALSE)
+    public function Get_All_New_list($cat=-1,$PageSize=10,$Page=0,$count=FALSE)
     {
+    	$this->db = $this->load->database('daily',TRUE);
 		if($cat){
 			if(!$date = $this->Get_Max_Date($cat,$this->year))
 			{
 				$date = $this->Get_Max_Date($cat,($this->year-1));
 			}
 			
-			$this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy');
+			// $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
 			
 			$this->db->from('daily_hl_news as dhn');
-			$this->db->join('news_main_2019 as nm','dhn.newsID = nm.newsID', 'right');
+			$this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID', 'right');
 			
 			if(is_array($cat)&&count($cat)>0)
 			{
@@ -42,10 +43,13 @@ class News extends CI_Model
 			$this->db->where('publishDatetime >=',$date);
 	
 			if(!$count){
+				$this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
+				$this->db->limit($PageSize,$Page*$PageSize);
+				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				return $res->result();
 			}else{
-				return $res->count_all();
+				return $this->db->count_all_results();
 			}
 		}
     }

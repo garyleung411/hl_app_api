@@ -19,7 +19,7 @@ class Api extends DefaultApi{
 			$app_config = $this->config->item("app_config");
 			$app_config = json_encode(array(
 				'data'=>$app_config,
-				'result' => 0
+				'result' => 1
 			),JSON_UNESCAPED_SLASHES);
 
 			$this->Savefile($this->config->item('app_config_path'),$app_config);
@@ -40,30 +40,47 @@ class Api extends DefaultApi{
 	
 	public function detail($section, $id){
 		
-		
-		
-		
 	}
 	
-	public function list($section, $cat){
-		$this->Expired = 1;
+	public function list($section=2, $cat=1,$page=1){
 
-		$path = str_replace('{cat}',$cat,$this->config->item('daily_list_path'));
+		$error = true;
 
-		if(!($daily_list=$this->Getfile($path))||isset($_GET['gen'])){
-
-			// $this->load->model('Section');
-			// $section_list = $this->Section->Get_Section_list();
-			//根据section确定返回数据
-			$daily_list = json_encode(array(
-				'data'=>$daily_list,
-				'result' => 0
-			),JSON_UNESCAPED_SLASHES);
-
-			// $this->Savefile($this->config->item('section_list_path'),$section_list);
+		if($section!=2||$cat==''){
+			$error = false;
+		}else{
+			$this->load->model('Section');
+			$num = $this->Section->Check_cat_list(2,$cat);
+			$error = ($num!=0);
 		}
 
-		$this->PushData($section_list);
+		if($error){
+			$this->Expired = 1;
+
+			$path = str_replace('{cat}',$cat,$this->config->item('daily_list_path'));
+
+			if((int)$page>1){
+				$path = str_replace('.json','_'.(int)$page.'json',$path);
+			}else{
+				$page = 1;
+			}
+			if(!($daily_list=$this->Getfile($path))||isset($_GET['gen'])){
+				
+				$this->load->model('Cat');
+				$data = $this->Cat->Get_cat_list($section,$cat,(int)$page);
+				if($data){
+					$data['result'] = 1;
+					$daily_list = json_encode($data,JSON_UNESCAPED_SLASHES);
+				}
+				$this->Savefile($path,$daily_list);
+			}
+		}else{
+			$daily_list = json_encode(array(
+				'result' =>0
+			),JSON_UNESCAPED_SLASHES);
+		}
+
+		$this->PushData($daily_list);
 	}
 	
 	public function column_list($columnid){
@@ -79,7 +96,7 @@ class Api extends DefaultApi{
 			$section_list = $this->Section->Get_Section_list();
 			$section_list = json_encode(array(
 				'data'=>$section_list,
-				'result' => 0
+				'result' => 1
 			),JSON_UNESCAPED_SLASHES);
 
 			$this->Savefile($this->config->item('section_list_path'),$section_list);

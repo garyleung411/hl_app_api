@@ -13,7 +13,7 @@ class Img extends CI_Model
     }
 	public function GetImg($newID)
 	{
-		$this->db->select('img.path,info.isCover');
+		$this->db->select('img.path,info.isCover,img.newsID');
 		$this->db->from($this->tablename.' as img');
 		$this->db->join('news_img_info_2019 as info','info.imgID = img.imgID', 'left');
 		if(is_array($newID)&&count($newID)>0)
