@@ -5,7 +5,7 @@ class dev extends CI_Controller {
 
 	public function index()
 	{
-		
+		echo 123;
 		
 	}
 	public function daily()

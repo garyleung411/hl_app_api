@@ -74,9 +74,8 @@ $config['allow_ads_content_type'] = array(4);
 
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
-$config['app_config_path'] = 'json/app_config.json';
-$config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
-$config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
+$config['section_list_path'] = 'json/section_list.json';
+$config['daily_list_path']	= 'json/daily_list_{cat}.json';
 
 
 
@@ -99,13 +98,13 @@ $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 $app_config['api']['api_detail'] =			"detail/[section]/[id]";
 $app_config['api']['api_column_list'] =		"column/[columnid]";
 $app_config['api']['api_list'] =			"list/[section]/[cat]";
-$app_config['api']['api_section_cat'] =		"section/[section]";
+$app_config['api']['api_section_cat'] =		"section";
 
 $app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
 $app_config['api']['api_search'] =			"search/[keyword]";
-$app_config['api']['api_hot_search'] =		"hot_search/";
+$app_config['api']['api_hot_search'] =		"hot_search/";//daily or instant only
 $app_config['api']['api_interest'] =		"interest/";
-$app_config['api']['api_hit_list'] =		"hit_list/[section]";//daily or instant only
+
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";

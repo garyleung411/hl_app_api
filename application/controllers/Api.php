@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Api extends CI_Controller{
+class Api extends DefaultApi{
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
@@ -12,17 +12,20 @@ class Api extends CI_Controller{
 		/**
 		 *	Code for update app_config
 		 */
-		if(isset($_GET['gen'])){
-			
+		$this->Expired = 1;
+
+		if(!($app_config=$this->Getfile($this->config->item('app_config_path')))||isset($_GET['gen'])){
+
 			$app_config = $this->config->item("app_config");
-			$app_config = json_encode($app_config);
-			file_put_contents($this->config->item('app_config_path'),$app_config);
-			//echo '<pre>';
-			//var_dump($app_config);
+			$app_config = json_encode(array(
+				'data'=>$app_config,
+				'result' => 0
+			),JSON_UNESCAPED_SLASHES);
+
+			$this->Savefile($this->config->item('app_config_path'),$app_config);
 		}
-		header("Content-type:application/json");
-		echo file_get_contents($this->config->item('app_config_path'));
-		
+
+		$this->PushData($app_config);
 	}
 	
 	public function hot_search(){
@@ -30,35 +33,10 @@ class Api extends CI_Controller{
 		$json = json_decode( file_get_contents($this->config->item('hot_search_path')),true);
 		foreach($json as $k => $v){
 			$json[$k] = ncr2str($v);
-		}
-		header("Content-type:application/json");
-		echo json_encode($json);
-	}
-	
-	//For daily & instant only
-	public function hit_list($section){
-		
-		if($section == 1){
-			$file = $this->config->item('instant_top_list_path');
-		}
-		else if($section == 2){
-			$file = $this->config->item('daily_top_list_path');
-		}
-		$json = array();
-		$tmp = json_decode(file_get_contents($file),true);
-		foreach($tmp as $k => $v){
-			$
 			
 		}
-		
-		
-		
-		
-		header("Content-type:application/json");
-		echo json_encode($json);
+		echo json_encode($json,JSON_UNESCAPED_SLASHES);
 	}
-	
-	
 	
 	public function detail($section, $id){
 		
@@ -68,16 +46,51 @@ class Api extends CI_Controller{
 	}
 	
 	public function list($section, $cat){
-		
+		$this->Expired = 1;
+
+		$path = str_replace('{cat}',$cat,$this->config->item('daily_list_path'));
+
+		if(!($daily_list=$this->Getfile($path))||isset($_GET['gen'])){
+
+			// $this->load->model('Section');
+			// $section_list = $this->Section->Get_Section_list();
+			//根据section确定返回数据
+			$daily_list = json_encode(array(
+				'data'=>$daily_list,
+				'result' => 0
+			),JSON_UNESCAPED_SLASHES);
+
+			// $this->Savefile($this->config->item('section_list_path'),$section_list);
+		}
+
+		$this->PushData($section_list);
 	}
 	
 	public function column_list($columnid){
 		
 	}
-	
-	public function section($section){
-		
+	public function section(){
+
+		$this->Expired = 1;
+
+		if(!($section_list=$this->Getfile($this->config->item('section_list_path')))||isset($_GET['gen'])){
+
+			$this->load->model('Section');
+			$section_list = $this->Section->Get_Section_list();
+			$section_list = json_encode(array(
+				'data'=>$section_list,
+				'result' => 0
+			),JSON_UNESCAPED_SLASHES);
+
+			$this->Savefile($this->config->item('section_list_path'),$section_list);
+		}
+
+		$this->PushData($section_list);
 	}
 	
+	
+	
 
+	
+	
 }
