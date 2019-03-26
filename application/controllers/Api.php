@@ -40,7 +40,7 @@ class Api extends DefaultApi{
 		echo json_encode($json,JSON_UNESCAPED_SLASHES);
 	}
 	
-		//For daily & instant only
+	//For daily & instant only
 	public function hit_list($section){
 		if($section == 1){
 			$file = $this->config->item('instant_top_list_path');
@@ -67,8 +67,8 @@ class Api extends DefaultApi{
 				if($k>9){
 					break;
 				}
-				$img = ;
-				$video =;
+				// $img = ;
+				// $video =;
 				// var_dump( $v);
 				$json[$name][$k][] = array(
 					'id' => $v['newsId'],
@@ -93,7 +93,7 @@ class Api extends DefaultApi{
 		header("Content-type:application/json");
 		echo json_encode($json);
 			
-		}
+	}
 	
 	public function detail($section, $id){
 		
@@ -127,8 +127,12 @@ class Api extends DefaultApi{
 				$data = $this->Cat->Get_cat_list($section,$cat,(int)$page);
 				if($data){
 					$data['result'] = 1;
+					$data['data'] = $this->list_cast($data['data']);
 					$daily_list = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
+				
+				
+				
 				$this->Savefile($path,$daily_list);
 			}
 		}else{
@@ -136,7 +140,8 @@ class Api extends DefaultApi{
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
-
+		
+		
 		$this->PushData($daily_list);
 	}
 	
@@ -162,6 +167,55 @@ class Api extends DefaultApi{
 		$this->PushData($section_list);
 	}
 	
-
+	private function list_cast($data){
+		$return_data = array();
+		$list = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> "",
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $list;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[$i] = $tmp;
+		}
+		return $return_data;
+	}
 	
+	private function detail_cast($data){
+		$return_data = array();
+		$detail = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> array(),
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+			"keyword"				=> array(),
+			"topic"					=> array(),
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $detail;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[$i] = $tmp;
+		}
+		return $return_data;
+	}
 }

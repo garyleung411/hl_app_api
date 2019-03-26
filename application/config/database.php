@@ -76,9 +76,9 @@ $query_builder = TRUE;
 if(ENV === 'PROD' ){//|| ($_SERVER['SERVER_NAME'] == 'dev.pop.stheadline.com' && isset($_GET['real'])) 
 	$db['popnews'] = array(
 		'dsn'	=> '',
-		'hostname' => 'localhost',
-		'username' => 'root',
-		'password' => '',
+		'hostname' => '192.168.148.98',
+		'username' => 'video_ro',
+		'password' => 'D8ePM7YYR2Wq59tX',
 		'database' => 'video',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
@@ -99,9 +99,9 @@ if(ENV === 'PROD' ){//|| ($_SERVER['SERVER_NAME'] == 'dev.pop.stheadline.com' &&
 else {
 	$db['hl_app'] = array(
 		'dsn'	=> '',
-		'hostname' => 'localhost',
+		'hostname' => '192.168.148.103',
 		'username' => 'root',
-		'password' => '',
+		'password' => 'jzwCvH7b2TWTsdxz',
 		'database' => 'hl_app',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
@@ -120,9 +120,9 @@ else {
 	);
 	$db['daily'] = array(
 		'dsn'	=> '',
-		'hostname' => 'localhost',
+		'hostname' => '192.168.148.103',
 		'username' => 'root',
-		'password' => '',
+		'password' => 'jzwCvH7b2TWTsdxz',
 		'database' => 'hl_content_store',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
@@ -141,9 +141,9 @@ else {
 	);
 	$db['instant'] = array(
 		'dsn'	=> '',
-		'hostname' => 'localhost',
+		'hostname' => '192.168.148.103',
 		'username' => 'root',
-		'password' => '',
+		'password' => 'jzwCvH7b2TWTsdxz',
 		'database' => 'hl_st_breaking',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
@@ -165,9 +165,9 @@ else {
 		// 'hostname' => '192.168.149.98',
 		// 'username' => 'video_rw',
 		// 'password' => 'fFxFpKSMNJb6yR5C',
-		'hostname' => 'localhost',
-		'username' => 'root',
-		'password' => '',
+		'hostname' => '192.168.148.98',
+		'username' => 'video_ro',
+		'password' => 'D8ePM7YYR2Wq59tX',
 		'database' => 'video',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
