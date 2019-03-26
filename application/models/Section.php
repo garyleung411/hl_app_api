@@ -31,12 +31,53 @@ class Section extends CI_Model
 	/**
 	*	獲取欄目下分類信息
 	*/
-	public function Get_cat_list($sectionID)
+	public function Get_cat_list($sectionID='all')
 	{
 		$this->load->model('News_category_list');
 		return $this->News_category_list->Get_Cat($sectionID);
 		
 	}
+
+    /**
+    *   获取所有Section以及cat并关联
+    */
+    public function Get_Section_list()
+    {
+        $Section = $this->Get_Section();
+        $Cat = $this->Get_cat_list();
+        $data = array();
+        foreach ($Section as $value) {
+            $Catlist = array();
+            foreach ($Cat as $key => $v) {
+                if($v->section_id==$value->section_id)
+                {
+                    $Catlist[] = array(
+                        'CatID' => $v->cat_id,
+                        'CatName'=>$v->cat_cname,
+                        'MappingCatID'=>$v->mapping_catid
+                    );
+                    unset($Cat[$key]);
+                }
+            }
+            $data[] = array(
+                'SectionID' =>  $value->section_id,
+                'Name'  => $value->section_cname,
+                'SectionName'=>$value->section_name,
+                'CatList'=>$Catlist
+            );
+        }
+        return $data;
+    }
+
+    /**
+    *   检查欄目下分類信息
+    */
+    public function Check_cat_list($sectionID,$CatID)
+    {
+        $this->load->model('News_category_list');
+        return $this->News_category_list->Check_Cat($sectionID,$CatID);
+        
+    }
 	
 }
 ?>
