@@ -20,9 +20,11 @@ class Api extends CI_Controller{
 			//echo '<pre>';
 			//var_dump($app_config);
 		}
-		header("Content-type:application/json");
-		echo file_get_contents($this->config->item('app_config_path'));
 		
+		$json = json_decode( file_get_contents($this->config->item('app_config_path')),true);
+		$json['result'] = 1;
+		header("Content-type:application/json");
+		echo json_encode($json);
 	}
 	
 	public function hot_search(){
@@ -31,6 +33,7 @@ class Api extends CI_Controller{
 		foreach($json as $k => $v){
 			$json[$k] = ncr2str($v);
 		}
+		$json['result'] = 1;
 		header("Content-type:application/json");
 		echo json_encode($json);
 	}
@@ -43,21 +46,56 @@ class Api extends CI_Controller{
 		else if($section == 2){
 			$file = $this->config->item('daily_top_list_path');
 		}
+		else{
+			$this->show_json(array('result'=>0));
+		}
+		$this->load->model('Section');
+		
+		$cat_list = $this->Section->Get_cat_list($section);
+		$map = array_column($cat_list,'mapping_catid');
+		
 		$json = array();
 		$tmp = json_decode(file_get_contents($file),true);
+		$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
 		foreach($tmp as $name => $list){
 			$json[$name] = array();
-			foreach($list as $v){
-				
+			
+			foreach($list as $k=>$v){
+				$json[$name][] = array();
+				if($k>9){
+					break;
+				}
+				$img = ;
+				$video =;
+				// var_dump( $v);
+				$json[$name][$k][] = array(
+					'id' => $v['newsId'],
+					'title' => $v['title'],
+					'content' => array(
+					),
+					'section' => $section,
+					'cat'	=> $map_cat[$v['catID']],
+					'publish_datetime'=>$v['publishDatetime'],
+					'imgs'=>$imgs,
+					
+					'vdo'=>$video,
+					
+					'layout'=>'',//日報為空
+					'writer'=>array(),//專欄顯示
+				);
 			}
+			
+			
+			
 			
 		}
 		
 		
 		
 		
+		$tmp['result'] = 1;
 		header("Content-type:application/json");
-		echo json_encode($tmp);
+		echo json_encode($json);
 	}
 	
 	
@@ -80,6 +118,7 @@ class Api extends CI_Controller{
 	public function section($section){
 		
 	}
+	
 	
 
 }
