@@ -66,13 +66,14 @@ class Api extends DefaultApi{
 				}
 				foreach($list as $k=>$v){
 					//top 10 only
+					$is_column = $v['catID']==9 && $section == 2;
 					if($k>9){
 						break;
 					}
 					$imgs = array();
 					$video = "";
 					$writer = array();	
-					if(isset($v['columnistID'])&&$v['catID']==9){
+					if(isset($v['columnistID'])&&$is_column){
 						// $writer = array('name'=>'test');
 					}
 					
@@ -80,8 +81,8 @@ class Api extends DefaultApi{
 						'id' => $v['newsId'],
 						'title' => $v['title'],
 						'content' => "",
-						'section' => $v['catID']==9?'5':$section,
-						'cat'	=> $v['catID']==9?'1':$map_cat[$v['catID']],
+						'section' => $is_column?'5':$section,
+						'cat'	=> $is_column?'1':$map_cat[$v['catID']],
 						'publish_datetime'=>$v['publishDatetime'],
 						'imgs'=>$imgs,
 						'vdo'=>$video,
@@ -92,7 +93,8 @@ class Api extends DefaultApi{
 				}
 			}
 			$json['data'] = $this->list_cast($json['data']);
-		}else{
+		}
+		else{
 			$json['result'] = 0;
 		}
 		
