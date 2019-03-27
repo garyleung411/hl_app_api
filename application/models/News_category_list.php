@@ -46,7 +46,7 @@ class News_category_list extends CI_Model
         $this->db->select('mapping_catid as CatID');
         $this->db->from($this->tablename);
         $this->db->where('section_id',$Section);
-        if(is_array($CatID)&&count($CatID)>1){
+        if(is_array($CatID)&&count($CatID)>0){
             $this->db->where_in('cat_id',$CatID);
         }else{
             $this->db->where('cat_id',$CatID);

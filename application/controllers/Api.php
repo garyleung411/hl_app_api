@@ -40,40 +40,73 @@ class Api extends DefaultApi{
 	
 	public function detail($section, $id){
 		
+		$this->load->model('Section');
+		$res = $this->Section->Get_Section($section);
+		$error = true;
+		$error = (count($res)>0);
+
+		if($error){
+
+			$this->load->model('Detail');
+			$this->Detail->SetSection($section)->SetId($id);
+
+			$this->Expired = $this->Detail->Expired;
+			
+			$path = $this->Detail->GetPath($res[0]->section_name);
+			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+				$data = $this->Detail->GetData();
+				if($data){
+					$data['result'] = 1;
+					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$this->Savefile($path,$detail);
+				}else{
+					$detail = json_encode(array(
+						'result' =>0
+					),JSON_UNESCAPED_SLASHES);
+				}
+
+			}
+		}else{
+			$detail = json_encode(array(
+				'result' =>0
+			),JSON_UNESCAPED_SLASHES);
+		}
+
+		$this->PushData($detail);
 	}
 	
 	public function list($section=2, $cat=1,$page=1){
 
 		$error = true;
+		$this->load->model('Section');
 
 		if($section!=2||$cat==''){
 			$error = false;
 		}else{
-			$this->load->model('Section');
+			
 			$num = $this->Section->Check_cat_list(2,$cat);
 			$error = ($num!=0);
 		}
 
 		if($error){
-			$this->Expired = 1;
 
-			$path = str_replace('{cat}',$cat,$this->config->item('daily_list_path'));
+			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
 
-			if((int)$page>1){
-				$path = str_replace('.json','_'.(int)$page.'json',$path);
-			}else{
-				$page = 1;
-			}
-			if(!($daily_list=$this->Getfile($path))||isset($_GET['gen'])){
+			$this->load->model($SectionName);
+			// var_dump($section);
+			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
+			$this->Expired = $this->$SectionName->Expired;
+
+			if(!($daily_list=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
 				
-				$this->load->model('Cat');
-				$data = $this->Cat->Get_cat_list($section,$cat,(int)$page);
+				$data = $this->$SectionName->GetListData();
 				if($data){
 					$data['result'] = 1;
 					$daily_list = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
-				$this->Savefile($path,$daily_list);
+				$this->Savefile($this->$SectionName->path,$daily_list);
 			}
+
 		}else{
 			$daily_list = json_encode(array(
 				'result' =>0
@@ -104,7 +137,42 @@ class Api extends DefaultApi{
 
 		$this->PushData($section_list);
 	}
-	
+
+
+	public function demo($section=2,$id){
+
+		$this->load->model('Section');
+		$res = $this->Section->Get_Section($section);
+		$error = true;
+		$error = (count($res)>0);
+
+		if($error){
+
+			$this->load->model('Detail');
+			$this->Detail->SetSection($section)->SetId($id);
+			$path = $this->Detail->GetPath($res[0]->section_name);
+			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+				$data = $this->Detail->GetData();
+				if($data){
+					$data['result'] = 1;
+					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$this->Savefile($path,$detail);
+				}else{
+					$detail = json_encode(array(
+						'result' =>0
+					),JSON_UNESCAPED_SLASHES);
+				}
+
+			}
+		}else{
+			$detail = json_encode(array(
+				'result' =>0
+			),JSON_UNESCAPED_SLASHES);
+		}
+
+		$this->PushData($detail);
+
+	}
 	
 	
 

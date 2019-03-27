@@ -8,6 +8,7 @@ class DefaultApi extends CI_Controller {
 	public function __construct()
 	{
 		parent::__construct();
+		$this->Path = $_SERVER['DOCUMENT_ROOT'].'/json/';
 		$this->Makedir($this->Path);
 	}
 	
@@ -31,7 +32,7 @@ class DefaultApi extends CI_Controller {
 	{
 		if(!is_dir($Path))
 		{
-			return mkdir($Path,0775);
+			return mkdir($Path,0775,true);
 		}
 		return true;
 	}
