@@ -42,6 +42,9 @@ class Api extends DefaultApi{
 	
 	//For daily & instant only
 	public function hit_list($section){
+		$json = array('data'=>array());
+		$json['result'] = 1;
+		$error = false;
 		if($section == 1){
 			$file = $this->config->item('instant_top_list_path');
 		}
@@ -49,50 +52,57 @@ class Api extends DefaultApi{
 			$file = $this->config->item('daily_top_list_path');
 		}
 		else{
-			$this->show_json(array('result'=>0));
+			$error = true;
 		}
-		$this->load->model('Section');
-		
-		$cat_list = $this->Section->Get_cat_list($section);
-		$map = array_column($cat_list,'mapping_catid');
-		
-		$json = array();
-		$tmp = json_decode(file_get_contents($file),true);
-		$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
-		foreach($tmp as $name => $list){
-			$json[$name] = array();
+		if(!$error){
+			$this->load->model('Section');
+			$cat_list = $this->Section->Get_cat_list($section);
+			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
 			
-			foreach($list as $k=>$v){
-				$json[$name][] = array();
-				if($k>9){
-					break;
+			$tmp = json_decode(file_get_contents($file),true);
+			foreach($tmp as $name => $list){
+				if($name != 'day'){
+					continue;
 				}
-				// $img = ;
-				// $video =;
-				// var_dump( $v);
-				$json[$name][$k][] = array(
-					'id' => $v['newsId'],
-					'title' => $v['title'],
-					'content' => array(
-					),
-					'section' => $section,
-					'cat'	=> $map_cat[$v['catID']],
-					'publish_datetime'=>$v['publishDatetime'],
-					'imgs'=>$imgs,
+				foreach($list as $k=>$v){
+					//top 10 only
+					if($k>9){
+						break;
+					}
+					$imgs = array();
+					$video = "";
+					$writer = array();	
+					if(isset($v['columnistID'])&&$v['catID']==9){
+						// $writer = array('name'=>'test');
+					}
 					
-					'vdo'=>$video,
+					$json['data'][$k] = array(
+						'id' => $v['newsId'],
+						'title' => $v['title'],
+						'content' => "",
+						'section' => $v['catID']==9?'5':$section,
+						'cat'	=> $v['catID']==9?'1':$map_cat[$v['catID']],
+						'publish_datetime'=>$v['publishDatetime'],
+						'imgs'=>$imgs,
+						'vdo'=>$video,
+						'writer'=>$writer,//專欄顯示
+						'layout'=>"",//日報為空
+					);
 					
-					'layout'=>'',//日報為空
-					'writer'=>array(),//專欄顯示
-				);
+				}
 			}
-				
+			$json['data'] = $this->list_cast($json['data']);
+		}else{
+			$json['result'] = 0;
 		}
 		
-		$tmp['result'] = 1;
 		header("Content-type:application/json");
 		echo json_encode($json);
 			
+	}
+	
+	public function interest(){
+		
 	}
 	
 	public function detail($section, $id){
@@ -148,6 +158,7 @@ class Api extends DefaultApi{
 	public function column_list($columnid){
 		
 	}
+	
 	public function section(){
 
 		$this->Expired = 1;
