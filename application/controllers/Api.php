@@ -97,28 +97,30 @@ class Api extends DefaultApi{
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
 			$this->Expired = $this->$SectionName->Expired;
 
-			if(!($daily_list=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
+			if(!($list=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
 				
 				$data = $this->$SectionName->GetListData();
 				if($data){
 					$data['result'] = 1;
-					$daily_list = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$data['data'] = $this->list_cast($data['data']);
+					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
-				$this->Savefile($this->$SectionName->path,$daily_list);
+				$this->Savefile($this->$SectionName->path,$output);
 			}
 
 		}else{
-			$daily_list = json_encode(array(
+			$output = json_encode(array(
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
 
-		$this->PushData($daily_list);
+		$this->PushData($output);
 	}
 	
 	public function column_list($columnid){
 		
 	}
+	
 	public function section(){
 
 		$this->Expired = 1;
@@ -174,7 +176,58 @@ class Api extends DefaultApi{
 
 	}
 	
+	private function list_cast($data){
+		$return_data = array();
+		$list = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> "",
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $list;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[$i] = $tmp;
+		}
+		return $return_data;
+	}
 	
+	private function detail_cast($data){
+		$return_data = array();
+		$detail = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> array(),
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+			"keyword"				=> array(),
+			"topic"					=> array(),
+			"related_news"			=> array(),
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $detail;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[$i] = $tmp;
+		}
+		return $return_data;
+	}
 
 	
 	
