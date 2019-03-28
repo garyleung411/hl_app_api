@@ -220,6 +220,7 @@ class Api extends DefaultApi{
 			"layout"				=> "",
 			"keyword"				=> array(),
 			"topic"					=> array(),
+			"related_news"			=> array(),
 		);
 		
 		foreach($data as $i => $d){
