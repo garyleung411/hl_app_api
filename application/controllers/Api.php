@@ -97,7 +97,7 @@ class Api extends DefaultApi{
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
 			$this->Expired = $this->$SectionName->Expired;
 
-			if(!($list=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
+			if(!($output=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
 				
 				$data = $this->$SectionName->GetListData();
 				if($data){
