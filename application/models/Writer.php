@@ -13,7 +13,7 @@
 		public function GetWriter($creatId)
 		{
 			$this->db->select('columnistID,writer,trait');
-			$this->db->form('news_writer_list');
+			$this->db->from('news_writer_list');
 			$this->db->where('status',1);
             if(is_array($creatId)&&count($creatId)>1){
                 $this->db->where_in('columnistID',$creatId);

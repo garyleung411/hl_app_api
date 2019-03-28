@@ -30,12 +30,12 @@ class Cat extends CI_Model
 				'content'=> mb_substr($value->content,0,50,'utf-8'),	
 				'section'=> $section,
 				'cat'	=> $cat_id,
-				'publish_datetime'	=>$value->publishDatetime,
-				'vdo'	=> (($value->videoID==null||$value->videoID==0||$value->videoID=='')?'':$value->videoID)
+				'publish_datetime'	=>$value->publish_datetime,
+				'vdo'	=> (($value->vdo==null||$value->vdo==0||$value->vdo=='')?'':$value->vdo)
 			);
 			$img_id_list[] = $value->id;
-			if($value->videoID!=''&&$value->videoID!=0){
-				$video_id_list[] = $value->videoID;
+			if($value->vdo!=''&&$value->vdo!=0){
+				$video_id_list[] = $value->vdo;
 			}
 		}
 
@@ -46,66 +46,5 @@ class Cat extends CI_Model
 			);
 		}
 		return false;
-    }
-    public function SetImg($data,$Imgs)
-    {
-    	// var_dump($data);
-    	if(count($Imgs)>0){
-	    	$this->load->model('Img');
-	    	$img = $this->Img->GetImg($Imgs);
-	    	if(count($img)>0){
-	    		foreach ($data as $key => $value) {
-	    			$data[$key]['imgs'] = array();
-	    			if(count($img)>0){
-	    				foreach ($img as $k => $v) {
-	    					if($value['id']==$v->newsID&&count($data[$key]['imgs'])<3){
-	    						unset($v->newsID);
-	    						$data[$key]['imgs'][] = $v;
-	    						unset($img[$k]);
-	    					}
-	    				}
-	    			}
-	    			if(count($data[$key]['imgs'])==2){
-	    				$cover = true;
-	    				foreach ($data[$key]['imgs'] as $i => $d) {
-	    					if($d->isCover==1&&$cover){
-	    						$data[$key]['imgs'] = array();
-	    						$data[$key]['imgs'][] = $d;
-	    						$cover = false;
-	    					}
-	    				}
-	    				if($cover){
-	    					unset($data[$key]['imgs'][1]);
-	    				}
-	    			}
-	    			if(count($img)==0){
-	    				return $data;
-	    			}
-	    		}
-	    	}
-	    }
-    	return $data;
-    }
-    public function SetVideo($data,$video)
-    {
-    	if(count($video)>0){
-	    	$this->load->model('video');
-	    	$videos = $this->video->GetNewVideo($video);
-	    	if(count($videos)>0){
-	    		foreach ($data as $key => $value) {
-	    			if(count($videos)>0){
-	    				foreach ($videos as $k => $v) {
-	    					if($value['vdo']==$v->id){
-	    						$data[$key]['vdo'] = $v->video_path.'.mp4';
-	    						unset($videos[$k]);
-	    					}
-	    				}
-	    			}else{
-	    				return $data;
-	    			}
-	    		}
-	    	}
-	    }
-    	return $data;
     }
 }
