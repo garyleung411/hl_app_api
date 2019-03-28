@@ -47,14 +47,15 @@ class Api extends DefaultApi{
 
 		if($error){
 
-			$this->load->model('Detail');
-			$this->Detail->SetSection($section)->SetId($id);
+			$section_name = $res[0]->section_name;
+			$this->load->model($section_name);
+			$this->$section_name->SetSectionId($section)->SetId($id);
 
-			$this->Expired = $this->Detail->Expired;
+			$this->Expired = $this->$section_name->Expired;
 			
-			$path = $this->Detail->GetPath($res[0]->section_name);
-			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
-				$data = $this->Detail->GetData();
+			$path = $this->$section_name->GetPath($section_name);
+			// if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+				$data = $this->$section_name->GetData();
 				if($data){
 					$data['result'] = 1;
 					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
@@ -65,7 +66,7 @@ class Api extends DefaultApi{
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			}
+			// }
 		}else{
 			$detail = json_encode(array(
 				'result' =>0
@@ -97,23 +98,24 @@ class Api extends DefaultApi{
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
 			$this->Expired = $this->$SectionName->Expired;
 
-			if(!($daily_list=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
+			if(!($output=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
 				
 				$data = $this->$SectionName->GetListData();
 				if($data){
 					$data['result'] = 1;
-					$daily_list = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$data['data'] = $this->list_cast($data['data']);
+					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
-				$this->Savefile($this->$SectionName->path,$daily_list);
+				$this->Savefile($this->$SectionName->path,$output);
 			}
 
 		}else{
-			$daily_list = json_encode(array(
+			$output = json_encode(array(
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
 
-		$this->PushData($daily_list);
+		$this->PushData($output);
 	}
 	
 	public function column_list($columnid){
@@ -151,19 +153,19 @@ class Api extends DefaultApi{
 			$this->load->model('Detail');
 			$this->Detail->SetSection($section)->SetId($id);
 			$path = $this->Detail->GetPath($res[0]->section_name);
-			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+			//if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
 				$data = $this->Detail->GetData();
 				if($data){
 					$data['result'] = 1;
 					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
-					$this->Savefile($path,$detail);
+					// $this->Savefile($path,$detail);
 				}else{
 					$detail = json_encode(array(
 						'result' =>0
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			}
+			//}
 		}else{
 			$detail = json_encode(array(
 				'result' =>0
@@ -172,6 +174,58 @@ class Api extends DefaultApi{
 
 		$this->PushData($detail);
 
+	}
+	private function list_cast($data){
+		$return_data = array();
+		$list = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> "",
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $list;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[] = $tmp;
+		}
+		return $return_data;
+	}
+	
+	private function detail_cast($data){
+		$return_data = array();
+		$detail = array(
+			"id"					=> "",
+			"title"					=> "",
+			"content"				=> array(),
+			"section"				=> "",
+			"cat"					=> "",
+			"publish_datetime"		=> "",
+			"vdo"					=> "",
+			"imgs"					=> array(),
+			"writer"				=> array(),
+			"layout"				=> "",
+			"keyword"				=> array(),
+			"topic"					=> array(),
+			"related_news"			=> array(),
+		);
+		
+		foreach($data as $i => $d){
+			$tmp = $detail;
+			foreach($tmp as $k => $v){
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+			}
+			$return_data[$i] = $tmp;
+		}
+		return $return_data;
 	}
 	
 	
