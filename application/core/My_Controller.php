@@ -2,12 +2,13 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class DefaultApi extends CI_Controller {
 	
-	protected $Path = './json/';//api總路徑
+	protected $Path = 'json/';//api總路徑
 	public $Expired = 600;//超時時間，默認十分鐘
 	
 	public function __construct()
 	{
 		parent::__construct();
+		$this->Path = $_SERVER['DOCUMENT_ROOT'].'/json/';
 		$this->Makedir($this->Path);
 	}
 	
@@ -18,7 +19,7 @@ class DefaultApi extends CI_Controller {
 	{
 		if(is_file($filepath))
 		{
-			$time = filectime($filepath);
+			$time = filemtime($filepath);
 			return ((time()-$time)<$this->Expired);
 		}
 		return false;
@@ -31,7 +32,7 @@ class DefaultApi extends CI_Controller {
 	{
 		if(!is_dir($Path))
 		{
-			return mkdir($Path,0775);
+			return mkdir($Path,0775,true);
 		}
 		return true;
 	}
