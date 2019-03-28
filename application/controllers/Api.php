@@ -38,6 +38,77 @@ class Api extends DefaultApi{
 		echo json_encode($json,JSON_UNESCAPED_SLASHES);
 	}
 	
+	//For daily & instant only
+	public function hit_list($section){
+		$output = array('data'=>array());
+		$output['result'] = 1;
+		$error = false;
+		if($section == 1){
+			$file = $this->config->item('instant_top_list_path');
+		}
+		else if($section == 2){
+			$file = $this->config->item('daily_top_list_path');
+		}
+		else{
+			$error = true;
+		}
+		if(!$error){
+			$this->load->model('Section');
+			
+			$cat_list = $this->Section->Get_cat_list($section);
+			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
+			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
+			
+			$tmp = json_decode(file_get_contents($file),true);
+			foreach($tmp as $name => $list){
+				if($name != 'day'){
+					continue;
+				}
+				foreach($list as $k=>$v){
+					//top 10 only
+					$is_column = $v['catID']==9 && $section == 2;
+					if($k>9){
+						break;
+					}
+					
+					$video = isset($v['video_path_1'])&&!empty($v['video_path_1'])?$v['video_path_1']:"";
+					$writer = array();	
+					if(isset($v['columnistID'])&&$is_column){
+						// $writer = array('name'=>'test');
+					}
+					
+					$output['data'][]= array(
+						'id' => $v['newsId'],
+						'title' => $v['title'],
+						'section' => $is_column?'5':$section,
+						'cat'	=> $is_column?'1':$map_cat[$v['catID']],
+						'publish_datetime'=>$v['publishDatetime'],
+						'vdo'=>$video,
+						'writer'=>$writer,//專欄顯示
+						'layout'=>"",//日報為空
+					);
+					$this->load->model($SectionName);
+					// var_dump($section);
+					$this->$SectionName->SetImg($output['data'],array());
+					
+					
+				}
+			}
+			$output['data'] = $this->list_cast($output['data']);
+		}
+		else{
+			$output['result'] = 0;
+		}
+		
+		header("Content-type:application/json");
+		echo json_encode($output);
+			
+	}
+
+	public function interest($id = -1){
+		
+	}
+
 	public function detail($section, $id){
 		
 		$this->load->model('Section');
@@ -196,7 +267,7 @@ class Api extends DefaultApi{
 			foreach($tmp as $k => $v){
 				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
 			}
-			$return_data[$i] = $tmp;
+			$return_data[] = $tmp;
 		}
 		return $return_data;
 	}
@@ -224,7 +295,7 @@ class Api extends DefaultApi{
 			foreach($tmp as $k => $v){
 				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
 			}
-			$return_data[$i] = $tmp;
+			$return_data[] = $tmp;
 		}
 		return $return_data;
 	}
