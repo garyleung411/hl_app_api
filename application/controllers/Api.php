@@ -118,14 +118,15 @@ class Api extends DefaultApi{
 
 		if($error){
 
-			$this->load->model('Detail');
-			$this->Detail->SetSection($section)->SetId($id);
+			$section_name = $res[0]->section_name;
+			$this->load->model($section_name);
+			$this->$section_name->SetSectionId($section)->SetId($id);
 
-			$this->Expired = $this->Detail->Expired;
+			$this->Expired = $this->$section_name->Expired;
 			
-			$path = $this->Detail->GetPath($res[0]->section_name);
-			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
-				$data = $this->Detail->GetData();
+			$path = $this->$section_name->GetPath($section_name);
+			// if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+				$data = $this->$section_name->GetData();
 				if($data){
 					$data['result'] = 1;
 					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
@@ -136,7 +137,7 @@ class Api extends DefaultApi{
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			}
+			// }
 		}else{
 			$detail = json_encode(array(
 				'result' =>0
@@ -191,7 +192,6 @@ class Api extends DefaultApi{
 	public function column_list($columnid){
 		
 	}
-	
 	public function section(){
 
 		$this->Expired = 1;
@@ -224,19 +224,19 @@ class Api extends DefaultApi{
 			$this->load->model('Detail');
 			$this->Detail->SetSection($section)->SetId($id);
 			$path = $this->Detail->GetPath($res[0]->section_name);
-			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+			//if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
 				$data = $this->Detail->GetData();
 				if($data){
 					$data['result'] = 1;
 					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
-					$this->Savefile($path,$detail);
+					// $this->Savefile($path,$detail);
 				}else{
 					$detail = json_encode(array(
 						'result' =>0
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			}
+			//}
 		}else{
 			$detail = json_encode(array(
 				'result' =>0
@@ -246,7 +246,6 @@ class Api extends DefaultApi{
 		$this->PushData($detail);
 
 	}
-	
 	private function list_cast($data){
 		$return_data = array();
 		$list = array(
@@ -299,6 +298,8 @@ class Api extends DefaultApi{
 		}
 		return $return_data;
 	}
+	
+	
 
 	
 	

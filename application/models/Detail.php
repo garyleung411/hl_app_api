@@ -78,7 +78,30 @@ class Detail extends CI_Model
     }
     private function SetAbout(&$data)
     {
-
+    	$this->load->model('News');
+    	// $this->load->model('Cat');
+    	$res = $this->News->Get_All_New_list($data['cat'],5,1,false);
+    	// echo '<pre>';
+    	$imglist = array();
+    	$return_data = array();
+    	foreach ($res as $key => $value) {
+    		if($value->id==$this->Id){
+    			unset($res[$key]);
+    			break;
+    		}
+    		$return_data[] = array(
+    			'id'=>$value->id,
+    			'title'=>$value->title,
+    			'section'=>$this->SectionID,
+    			'cat'=>$data['cat']
+    		);
+    		$imglist[] = $value->id;
+    	}
+    	if(count($return_data)==5){
+    		unset($return_data[4]);
+    	}
+    	$this->SetImgs($return_data,$imglist);
+    	$data['About'] = $return_data;
     }
     private function detail_cast($data){
 		$return_data = array();
@@ -86,7 +109,7 @@ class Detail extends CI_Model
 			"id"					=> "",
 			"title"					=> "",
 			"content"				=> array(),
-			"section"				=> "",
+			"section"				=> $this->SectionID,
 			"cat"					=> "",
 			"publish_datetime"		=> "",
 			"vdo"					=> "",
@@ -124,6 +147,7 @@ class Detail extends CI_Model
 		}
 		$this->SetVideo($return_data[0]);
 		$this->SetImg($return_data[0]);
+		$this->SetAbout($return_data[0]);
 		if($return_data[0]['writer']!=0&&$return_data[0]['writer']!=''){
 			$this->SetWriter($return_data[0]);
 		}else{
@@ -131,5 +155,42 @@ class Detail extends CI_Model
 		}
 		return $return_data[0];
 	}
-
+	private function SetImgs(&$data,$Imgs)
+    {
+    	// var_dump($data);
+    	if(count($Imgs)>0){
+	    	$this->load->model('Img');
+	    	$img = $this->Img->GetImg($Imgs);
+	    	if(count($img)>0){
+	    		foreach ($data as $key => $value) {
+	    			$data[$key]['imgs'] = array();
+	    			if(count($img)>0){
+	    				foreach ($img as $k => $v) {
+	    					if($value['id']==$v->newsID&&count($data[$key]['imgs'])<3){
+	    						unset($v->newsID);
+	    						$data[$key]['imgs'][] = $v;
+	    						unset($img[$k]);
+	    					}
+	    				}
+	    			}
+	    			if(count($data[$key]['imgs'])==2){
+	    				$cover = true;
+	    				foreach ($data[$key]['imgs'] as $i => $d) {
+	    					if($d->isCover==1&&$cover){
+	    						$data[$key]['imgs'] = array();
+	    						$data[$key]['imgs'][] = $d;
+	    						$cover = false;
+	    					}
+	    				}
+	    				if($cover){
+	    					unset($data[$key]['imgs'][1]);
+	    				}
+	    			}
+	    			if(count($img)==0){
+	    				return;
+	    			}
+	    		}
+	    	}
+	    }
+    }
 }
