@@ -30,6 +30,7 @@ class DefaultApi extends CI_Controller {
 	*/
 	protected function Makedir($Path)
 	{
+		
 		if(!is_dir($Path))
 		{
 			return mkdir($Path,0775,true);
@@ -52,7 +53,7 @@ class DefaultApi extends CI_Controller {
 	{
 		$this->Makedir(dirname($filepath));
 		file_put_contents($filepath,$data);
-		chmod($filepath,0775);
+		chmod($filepath,0664);
 	}
 	
 	/**

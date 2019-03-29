@@ -3,20 +3,19 @@
 class Daily extends CI_Model
 {
 
-	public $Expired = 30;
+
+	public $Expired = 1;
 	public $Page = 1;
-	public $path = '';
+	// public $path = '';
 	public $year;
 	public $maxdate;
 	
     public function __construct()
     {
-		
+
 		$this->year = date('Y');
     	$this->load->model('Section');
-    	$this->path = str_replace('{section}',__CLASS__,$this->config->item('daily_list_path'));
-    	$this->DetailPath = $this->config->item('detail_path');
-    	// $path = str_replace('{cat}',$cat,$this->config->item('daily_list_path'));
+    	// $this->DetailPath = $this->config->item('detail_path');
     }
 
     /**
@@ -34,54 +33,46 @@ class Daily extends CI_Model
     {
     	if($this->CheckCat($CatId)){
 			$this->CatId = $CatId;
-			$this->path = str_replace('{cat}',$CatId,$this->path);
 		}
 		// var_dump(123);
 		return $this;
     }
-    /**
-    *	设置文章Id
-    */
-    public function SetId($id)
-    {
-    	$this->Id = $id;
-    	return $this;
-    }
 
+   
     public function Page($page){
     	$this->Page = $page;
-    	if((int)$page>1){
-	    	$this->path = str_replace('.json','_'.(int)$page.'json',$this->path);
-	    }
     	return $this;
     }
 
     /**
     *	获取列表
     */
-    public function GetListData($page=0)
+    public function GetList($page=0)
     {
-    	$this->load->model('News');
     	$CatID = $this->GetCatID();
     	$Page = ($this->Page>0)?$this->Page-1:0;
 		$PageSize	= 100;
-		$count = $this->Get_All_New_list($CatID,$PageSize,$Page,true);
-		$list = $this->Get_All_New_list($CatID,$PageSize,$Page,false);
+		$count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
+		$list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
 		
 		
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
-			$img_id_list[] = $v->newsID;
-			$v->content = mb_substr($v->content,0,50,'utf-8');
-			
-			$list[$k] = json_decode(json_encode($v), True);
-			if($v->vdo!=''&&$v->vdo!=0){
-				$video_id_list[] = $v->vdo;
+			$img_id_list[] = $v['newsID'];
+			if($v['vdo']!=''&&$v['vdo']!=0){
+				$video_id_list[] = $v['vdo'];
 			}
+			$v['section'] = $this->SectionID;
+			$v['cat'] = $CatID;
+			$v['content'] = mb_substr($v['content'],0,50,'utf-8');
+			$list[$k] = $v;
+
 		}
 		$this->SetImg($list,$img_id_list);
-		$this->SetVideo($list,$video_id_list);
+		if(count($video_id_list)>0){
+			$this->SetVideo($list,$video_id_list);
+		}
 		return array(
 			'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
 			'data'	=>$list//this->list_cast($list)
@@ -91,11 +82,20 @@ class Daily extends CI_Model
 	/**
 	*	设置图片
 	*/
-    public function SetImg(&$data,$Imgs=false)
+    public function SetImg(&$data,$Imgs,$is_list = true)
     {
-
-    	$this->load->model('Img');
-    	if($Imgs&&count($Imgs)>0){
+		if(count($Imgs)==0&&count($data)>0){
+			$Imgs =array();
+			foreach ($data as $value) {
+				if(!isset($value['newsID'])){
+					$value['newsID'] = $this->Get_newsID_by_ID($value['id']);
+				}
+				$Imgs[] = $value['newsID'];
+			}
+		}
+		
+    	if(count($Imgs)>0){
+	    	$this->load->model('Img');
 	    	$img = $this->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {
@@ -107,17 +107,23 @@ class Daily extends CI_Model
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
-	    					if($value['newsID']==$v->newsID&&count($data[$key]['imgs'])<3){
-	    						unset($v->newsID);
+
+	    					if($value['newsID']==$v['newsID']){
+								//
+	    						unset($v['newsID']);
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
 	    					}
+							if($is_list && count($data[$key]['imgs'])==3){
+								break;
+							}
 	    				}
 	    			}
-	    			if(count($data[$key]['imgs'])==2){
+					
+	    			if($is_list&&count($data[$key]['imgs'])==2){
 	    				$cover = true;
 	    				foreach ($data[$key]['imgs'] as $i => $d) {
-	    					if($d->isCover==1&&$cover){
+	    					if($d['isCover']==1&&$cover){
 	    						$data[$key]['imgs'] = array();
 	    						$data[$key]['imgs'][] = $d;
 	    						$cover = false;
@@ -127,15 +133,12 @@ class Daily extends CI_Model
 	    					unset($data[$key]['imgs'][1]);
 	    				}
 	    			}
+					
 	    			if(count($img)==0){
 	    				return;
 	    			}
+					
 	    		}
-	    	}
-	    }else if($Imgs){
-	    	$img = $this->Img->GetImg($data['id']);
-	    	if(count($img)>0){
-	    		$data['imgs'] = $img;
 	    	}
 	    }
     }
@@ -145,18 +148,18 @@ class Daily extends CI_Model
     /**
 	*	设置视频
 	*/
-    public function SetVideo(&$data,$video=false)
-    {
+    public function SetVideo(&$data,$video=false){
     	if($video&&count($video)>0){
-	    	$videos = $this->GetNewVideo($video);
+	    	$videos = $this->GetNewsVideo($video);
 	    	if(count($videos)>0){
 	    		foreach ($data as $key => $value) {
 	    			if(count($videos)>0){
 	    				foreach ($videos as $k => $v) {
-	    					if($value['vdo']==$v->id){
-	    						$data[$key]['vdo'] = $v->video_path.'.mp4';
+	    					if($value['vdo']==$v['id']){
+	    						$data[$key]['vdo'] = $v['video_path'].'.mp4';
 	    						unset($videos[$k]);
 	    					}
+							
 	    				}
 	    			}else{
 	    				return;
@@ -164,7 +167,7 @@ class Daily extends CI_Model
 	    		}
 	    	}
 	    }else if($video){
-	    	$videos = $this->video->GetNewVideo($data['vdo']);
+	    	$videos = $this->GetNewsVideo($data['vdo']);
 		    if(count($videos)>0){
 		    	$videos[0]->video_path = $videos[0]->video_path.'.mp4';
 		    	$data['vdo'] = $videos[0];
@@ -179,10 +182,10 @@ class Daily extends CI_Model
 		$this->db->where('dailyID',$id);
 		$this->db->select('newsID');
 		$res = $this->db->get();
-		return $res->result_array()[0]['newsID'];
+		return isset($res->result_array()[0]['newsID'])?$res->result_array()[0]['newsID']:-1;
 	}
 	
-	private function Get_All_New_list($cat=-1,$PageSize=10,$Page=0,$count=FALSE)
+	private function Get_All_News_list($cat=-1,$PageSize=10,$Page=0,$count=FALSE)
     {
 		
     	$this->db = $this->load->database('daily',TRUE);
@@ -211,12 +214,12 @@ class Daily extends CI_Model
 			$this->db->where('publishDatetime >=',$this->maxdate );
 	
 			if(!$count){
-				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
 				$this->db->limit($PageSize,$Page*$PageSize);
 				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				// var_dump($this->db->last_query());
-				return $res->result();
+				return $res->result_array();
 			}else{
 				return $this->db->count_all_results();
 			}
@@ -243,7 +246,7 @@ class Daily extends CI_Model
 		$this->db->where('dhn.status',1);
 			
 		$res = $this->db->get();
-		return ($res->result()[0]->publishDatetime)?date('Y-m-d',strtotime($res->result()[0]->publishDatetime)):false;
+		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
 	}
 	
 	private function GetImg($newID)
@@ -265,10 +268,10 @@ class Daily extends CI_Model
 		$this->db->where('img.status',1);
 		
 		$res = $this->db->get();
-		return $res->result();
+		return $res->result_array();
 	}
 	
-	private function GetNewVideo($id)
+	private function GetNewsVideo($id)
 	{
 		$this->db = $this->load->database('popnews',TRUE);
 		$this->db->select('id,headline,video_path,cover_path');
@@ -282,7 +285,7 @@ class Daily extends CI_Model
         }
 		$this->db->where('deleted',0);
 		$res = $this->db->get();
-		return $res->result();
+		return $res->result_array();
 	}
 	
 	 /**
@@ -321,37 +324,46 @@ class Daily extends CI_Model
     /**
     *	获取相关新闻
     */
-	private function SetAbout(&$data)
+	private function Set_related_news(&$data, $id)
     {
     	// $this->load->model('Cat');
     	// var_dump($data);
-    	$res = $this->Get_All_New_list($data['cat'],5,0,false);
+    	$res = $this->Get_All_News_list($data['mapcat'],5,0,false);
     	// var_dump($res);
     	$imglist = array();
+		$video_id_list = array();
     	$return_data = array();
+		
     	foreach ($res as $key => $value) {
-    		if($value->id==$this->Id){
+    		if($value['id']==$id){
     			unset($res[$key]);
     			continue;
     		}
+			if($value['vdo']!=''&&$value['vdo']!=0){
+				$video_id_list[] = $value['vdo'];
+			}
     		$return_data[] = array(
-    			'id'=>$value->id,
-    			'title'=>$value->title,
+    			'id'=>$value['id'],
+    			'title'=>$value['title'],
     			'section'=>$this->SectionID,
-    			'cat'=>$data['cat']
+    			'cat'=>$data['cat'],
+				'publish_datetime'=>$data['publish_datetime'],
     		);
-    		$imglist[] = $value->id;
+    		$imglist[] = $value['newsID'];
     	}
     	if(count($return_data)==5){
     		unset($return_data[4]);
     	}
     	$this->SetImg($return_data,$imglist);
-    	$data['About'] = $return_data;
+		if(count($video_id_list)>0){
+			$this->SetVideo($return_data,$video_id_list);
+		}
+    	$data['related_news'] = $return_data;
     }
 
-    public function GetData()
+    public function GetDetail($id)
     {
-  //   	$this->load->model('Section');
+    	// $this->load->model('Section');
     	$this->load->model('News');
 
     	$s = $this->Section->Get_cat_list($this->SectionID);
@@ -359,15 +371,20 @@ class Daily extends CI_Model
 		foreach ($s as $v) {
 			$cat[]=$v->mapping_catid;
 		}
-		$res = $this->Get_New($cat,$this->Id);
+		$res = $this->Get_News($cat,$id);
+		
 		if(count($res)>0){
-		// 	$data = $this->detail_cast($res);
-			$this->SetImg($res[0]);
+			$map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
+			$res[0]['section'] = $this->SectionID;
+			$res[0]['cat'] = $map_cat[$res[0]['mapcat']];
+			
+			$this->SetImg($res,array(),false);
+			
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
 				$this->SetVideo($res[0]);
 			}
-			$this->SetAbout($res[0]);
-
+			$this->Set_related_news($res[0],$id);
+			
 			return array(
 				'data'	=>$res[0]
 			);
@@ -376,23 +393,15 @@ class Daily extends CI_Model
     	
     }
 
-    public function GetPath($section_name)
-    {
-    	$path = str_replace('{section}',$section_name,$this->DetailPath);
-		$page = ((int)($this->Id/1000)+1)*1000;
-		$path = str_replace('{page}',$page,$path);
-		$path = str_replace('{id}',$this->Id,$path);
-		return $path;
-    }
 
     /**
 	*	獲取文章
 	*/
-    public function Get_New($cat=-1,$id=-1)
+    public function Get_News($cat=-1,$id=-1)
     {
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat&&$id){
-			$this->db->select('nm.title,dhn.dailyID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,nm.createdBy as writer,dhn.newsCat as cat');
+			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat');
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID', 'right');

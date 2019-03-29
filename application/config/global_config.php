@@ -8,7 +8,7 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
   $_SERVER['HTTPS'] = 'on';
 }
 $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) ? 'https' : 'http';
-$config['base_suffix']    = 'hl_app_api/';
+$config['base_suffix']    = '';
 $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
 
 
@@ -72,10 +72,19 @@ $config['allow_ads_title_type'] = array(3,4,5);
 $config['allow_ads_content_type'] = array(4);	
 
 
+
+  
+$config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
 $config['section_list_path'] = 'json/section_list.json';
-$config['daily_list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
+$config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
+
+$config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
+$config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
+
+
+
 
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
 
@@ -100,8 +109,10 @@ $app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
 $app_config['api']['api_section_cat'] =		"section";//栏目分类列表
 
 $app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
-$app_config['api']['api_search'] =			"search/[keyword]";
-$app_config['api']['api_hot_search'] =		"hot_search/";//daily or instant only
+$app_config['api']['api_search'] =			"search/[keyword]/[page]";
+$app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
+
+$app_config['api']['api_hit_list'] =		"hit_list/[section]";//十大熱門daily or instant only
 $app_config['api']['api_interest'] =		"interest/";
 
 

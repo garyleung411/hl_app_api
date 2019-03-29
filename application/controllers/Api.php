@@ -38,6 +38,79 @@ class Api extends DefaultApi{
 		echo json_encode($json,JSON_UNESCAPED_SLASHES);
 	}
 	
+	//For daily & instant only
+	//十大
+	public function hit_list($section){
+		$output = array('data'=>array());
+		$output['result'] = 1;
+		$error = false;
+		if($section == 1){
+			$file = $this->config->item('instant_top_list_path');
+		}
+		else if($section == 2){
+			$file = $this->config->item('daily_top_list_path');
+		}
+		else{
+			$error = true;
+		}
+		if(!$error){
+			$this->load->model('Section');
+			
+			$cat_list = $this->Section->Get_cat_list($section);
+			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
+			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
+			
+			$tmp = json_decode(file_get_contents($file),true);
+			foreach($tmp as $name => $list){
+				if($name != 'day'){
+					continue;
+				}
+				foreach($list as $k=>$v){
+					//top 10 only
+					$is_column = $v['catID']==9 && $section == 2;
+					if($k>9){
+						break;
+					}
+					
+					$video = isset($v['video_path_1'])&&!empty($v['video_path_1'])?$v['video_path_1']:"";
+					$writer = array();	
+					if(isset($v['columnistID'])&&$is_column){
+						// $writer = array('name'=>'test');
+					}
+					
+					$output['data'][]= array(
+						'id' => $v['newsId'],
+						'title' => $v['title'],
+						'section' => $is_column?'5':$section,
+						'cat'	=> $is_column?'1':$map_cat[$v['catID']],
+						'publish_datetime'=>$v['publishDatetime'],
+						'vdo'=>$video,
+						'writer'=>$writer,//專欄顯示
+						'layout'=>"",//日報為空
+					);
+					$this->load->model($SectionName);
+					// var_dump($section);
+					$this->$SectionName->SetImg($output['data'],array());
+					
+					
+				}
+			}
+			$output['data'] = $this->list_cast($output['data']);
+		}
+		else{
+			$output['result'] = 0;
+		}
+		
+		header("Content-type:application/json");
+		echo json_encode($output);
+			
+	}
+
+	//感興趣
+	public function interest($id = -1){
+		
+	}
+
 	public function detail($section, $id){
 		
 		$this->load->model('Section');
@@ -49,31 +122,41 @@ class Api extends DefaultApi{
 
 			$section_name = $res[0]->section_name;
 			$this->load->model($section_name);
-			$this->$section_name->SetSectionId($section)->SetId($id);
-
+			$this->$section_name->SetSectionId($section);
 			$this->Expired = $this->$section_name->Expired;
 			
-			$path = $this->$section_name->GetPath($section_name);
-			// if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
-				$data = $this->$section_name->GetData();
+			
+			$path= $this->config->item('detail_path');
+			$path = str_replace('{section}',$section_name,$path);
+			$page = ((int)($id/1000)+1)*1000;
+			$path = str_replace('{page}',$page,$path);
+			$path = str_replace('{id}',$id,$path);
+			
+			
+			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
+
+				$data = $this->$section_name->GetDetail($id);
 				if($data){
 					$data['result'] = 1;
-					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
-					$this->Savefile($path,$detail);
+					$data['data'] = $this->detail_cast($data['data']);
+					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$this->Savefile($path,$output);
+					
 				}else{
-					$detail = json_encode(array(
+					$output = json_encode(array(
 						'result' =>0
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			// }
-		}else{
-			$detail = json_encode(array(
+			}
+		}
+		else{
+			$output = json_encode(array(
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
 
-		$this->PushData($detail);
+		$this->PushData($output);
 	}
 	
 	public function list($section=2, $cat=1,$page=1){
@@ -97,16 +180,21 @@ class Api extends DefaultApi{
 			// var_dump($section);
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
 			$this->Expired = $this->$SectionName->Expired;
-
-			if(!($output=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
+			$path = str_replace('{section}',$SectionName,$this->config->item('list_path'));
+			$path = str_replace('{cat}',$cat,$path);
+			$path = str_replace('.json','_'.(int)$page.'json',$path);
+			
+			
+			
+			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
 				
-				$data = $this->$SectionName->GetListData();
+				$data = $this->$SectionName->GetList();
 				if($data){
 					$data['result'] = 1;
 					$data['data'] = $this->list_cast($data['data']);
 					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
-				$this->Savefile($this->$SectionName->path,$output);
+				$this->Savefile($path,$output);
 			}
 
 		}else{
@@ -121,6 +209,7 @@ class Api extends DefaultApi{
 	public function column_list($columnid){
 		
 	}
+	
 	public function section(){
 
 		$this->Expired = 1;
@@ -139,7 +228,6 @@ class Api extends DefaultApi{
 
 		$this->PushData($section_list);
 	}
-
 
 	public function demo($section=2,$id){
 
@@ -175,6 +263,7 @@ class Api extends DefaultApi{
 		$this->PushData($detail);
 
 	}
+	
 	private function list_cast($data){
 		$return_data = array();
 		$list = array(
@@ -217,13 +306,12 @@ class Api extends DefaultApi{
 			"topic"					=> array(),
 			"related_news"			=> array(),
 		);
-		
-		foreach($data as $i => $d){
-			$tmp = $detail;
-			foreach($tmp as $k => $v){
-				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
-			}
-			$return_data[$i] = $tmp;
+
+		foreach ($detail as $i => $d) {
+			$return_data[$i] = isset($data[$i])?$data[$i]:$d;
+ 		}
+		if(count($return_data["related_news"])>0){
+			$return_data["related_news"] = $this->list_cast($return_data["related_news"]);
 		}
 		return $return_data;
 	}
