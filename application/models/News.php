@@ -82,7 +82,7 @@ class News extends CI_Model
     {
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat&&$id){
-			$this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,nm.createdBy as writer,dhn.newsCat');
+			$this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,nm.createdBy as writer,dhn.newsCat as cat');
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID', 'right');
