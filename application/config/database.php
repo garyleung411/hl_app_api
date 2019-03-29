@@ -73,7 +73,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $active_group = '';
 $query_builder = TRUE;
 
-if(ENV === 'PROD' || isset($_GET['real'])){//|| ($_SERVER['SERVER_NAME'] == 'dev.pop.stheadline.com' && isset($_GET['real'])) 
+if(ENV === 'PROD' ){//|| ($_SERVER['SERVER_NAME'] == 'dev.pop.stheadline.com' && isset($_GET['real'])) 
 	$db['hl_app'] = array(
 		'dsn'	=> '',
 		'hostname' => '192.168.148.103',
@@ -250,6 +250,92 @@ else {
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
+	if( isset($_GET['real'])){
+		$db['hl_app'] = array(
+			'dsn'	=> '',
+			'hostname' => '192.168.148.103',
+			'username' => 'root',
+			'password' => 'jzwCvH7b2TWTsdxz',
+			'database' => 'hl_app',
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => (ENVIRONMENT !== 'production'),
+			'cache_on' => FALSE,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => FALSE,
+			'stricton' => FALSE,
+			'failover' => array(),
+			'save_queries' => TRUE
+		);
+		$db['daily'] = array(
+			'dsn'	=> '',
+			'hostname' => '192.168.1.31',
+			'username' => 'hlapp_ro',
+			'password' => 'BBhTbKtR2ykP',
+			'database' => 'content_store',
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => (ENVIRONMENT !== 'production'),
+			'cache_on' => FALSE,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => FALSE,
+			'stricton' => FALSE,
+			'failover' => array(),
+			'save_queries' => TRUE
+		);
+		$db['instant'] = array(
+			'dsn'	=> '',
+			'hostname' => '192.168.1.33',
+			'username' => 'hlapp_ro',
+			'password' => 'BBhTbKtR2ykP',
+			'database' => 'st_breaking',
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => (ENVIRONMENT !== 'production'),
+			'cache_on' => FALSE,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => FALSE,
+			'stricton' => FALSE,
+			'failover' => array(),
+			'save_queries' => TRUE
+		);
+		$db['popnews'] = array(
+			'dsn'	=> '',
+			'hostname' => '192.168.148.98',
+			'username' => 'video_ro',
+			'password' => 'D8ePM7YYR2Wq59tX',
+			'database' => 'video',
+			'dbdriver' => 'mysqli',
+			'dbprefix' => '',
+			'pconnect' => FALSE,
+			'db_debug' => (ENVIRONMENT !== 'production'),
+			'cache_on' => FALSE,
+			'cachedir' => '',
+			'char_set' => 'utf8',
+			'dbcollat' => 'utf8_general_ci',
+			'swap_pre' => '',
+			'encrypt' => FALSE,
+			'compress' => FALSE,
+			'stricton' => FALSE,
+			'failover' => array(),
+			'save_queries' => TRUE
+		);
+	}
 }
 
 /*
