@@ -120,13 +120,19 @@ class Api extends DefaultApi{
 
 			$section_name = $res[0]->section_name;
 			$this->load->model($section_name);
-			$this->$section_name->SetSectionId($section)->SetId($id);
-
+			$this->$section_name->SetSectionId($section);
 			$this->Expired = $this->$section_name->Expired;
 			
-			$path = $this->$section_name->GetPath($section_name);
-			// if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
-				$data = $this->$section_name->GetData();
+			
+			$path= $this->config->item('detail_path');
+			$path = str_replace('{section}',$section_name,$path);
+			$page = ((int)($id/1000)+1)*1000;
+			$path = str_replace('{page}',$page,$path);
+			$path = str_replace('{id}',$id,$path);
+			
+			
+			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+				$data = $this->$section_name->GetDetail($id);
 				if($data){
 					$data['result'] = 1;
 					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
@@ -137,8 +143,9 @@ class Api extends DefaultApi{
 					),JSON_UNESCAPED_SLASHES);
 				}
 
-			// }
-		}else{
+			}
+		}
+		else{
 			$detail = json_encode(array(
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
@@ -168,16 +175,21 @@ class Api extends DefaultApi{
 			// var_dump($section);
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
 			$this->Expired = $this->$SectionName->Expired;
-
-			if(!($output=$this->Getfile($this->$SectionName->path))||isset($_GET['gen'])){
+			$path = str_replace('{section}',$SectionName,$this->config->item('list_path'));
+			$path = str_replace('{cat}',$cat,$path);
+			$path = str_replace('.json','_'.(int)$page.'json',$path);
+			
+			
+			
+			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
 				
-				$data = $this->$SectionName->GetListData();
+				$data = $this->$SectionName->GetList();
 				if($data){
 					$data['result'] = 1;
 					$data['data'] = $this->list_cast($data['data']);
 					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
-				$this->Savefile($this->$SectionName->path,$output);
+				$this->Savefile($path,$output);
 			}
 
 		}else{
@@ -192,6 +204,7 @@ class Api extends DefaultApi{
 	public function column_list($columnid){
 		
 	}
+	
 	public function section(){
 
 		$this->Expired = 1;
@@ -210,7 +223,6 @@ class Api extends DefaultApi{
 
 		$this->PushData($section_list);
 	}
-
 
 	public function demo($section=2,$id){
 
@@ -246,6 +258,7 @@ class Api extends DefaultApi{
 		$this->PushData($detail);
 
 	}
+	
 	private function list_cast($data){
 		$return_data = array();
 		$list = array(

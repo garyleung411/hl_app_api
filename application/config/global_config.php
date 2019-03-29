@@ -78,8 +78,7 @@ $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
 $config['section_list_path'] = 'json/section_list.json';
-$config['daily_list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
-$config['list_path']	= 'json/{section_name}/list/{section_name}_list_{cat}.json';
+$config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
