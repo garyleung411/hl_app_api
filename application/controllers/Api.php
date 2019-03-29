@@ -39,6 +39,7 @@ class Api extends DefaultApi{
 	}
 	
 	//For daily & instant only
+	//十大
 	public function hit_list($section){
 		$output = array('data'=>array());
 		$output['result'] = 1;
@@ -105,6 +106,7 @@ class Api extends DefaultApi{
 			
 	}
 
+	//感興趣
 	public function interest($id = -1){
 		
 	}
@@ -131,14 +133,17 @@ class Api extends DefaultApi{
 			$path = str_replace('{id}',$id,$path);
 			
 			
-			if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
+			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
+
 				$data = $this->$section_name->GetDetail($id);
 				if($data){
 					$data['result'] = 1;
-					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
-					$this->Savefile($path,$detail);
+					$data['data'] = $this->detail_cast($data['data']);
+					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
+					$this->Savefile($path,$output);
+					
 				}else{
-					$detail = json_encode(array(
+					$output = json_encode(array(
 						'result' =>0
 					),JSON_UNESCAPED_SLASHES);
 				}
@@ -146,12 +151,12 @@ class Api extends DefaultApi{
 			}
 		}
 		else{
-			$detail = json_encode(array(
+			$output = json_encode(array(
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
 
-		$this->PushData($detail);
+		$this->PushData($output);
 	}
 	
 	public function list($section=2, $cat=1,$page=1){
@@ -302,12 +307,11 @@ class Api extends DefaultApi{
 			"related_news"			=> array(),
 		);
 		
-		foreach($data as $i => $d){
-			$tmp = $detail;
-			foreach($tmp as $k => $v){
-				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
-			}
-			$return_data[] = $tmp;
+		foreach ($detail as $i => $d) {
+			$return_data[$i] = isset($data[$i])?$data[$i]:$d;
+ 		}
+		if(count($return_data["related_news"])>0){
+			$return_data["related_news"] = $this->list_cast($return_data["related_news"]);
 		}
 		return $return_data;
 	}
