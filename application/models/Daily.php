@@ -3,7 +3,6 @@
 class Daily extends CI_Model
 {
 
-
 	public $Expired = 1;
 	public $Page = 1;
 	// public $path = '';
@@ -12,7 +11,6 @@ class Daily extends CI_Model
 	
     public function __construct()
     {
-
 		$this->year = date('Y');
     	$this->load->model('Section');
     	// $this->DetailPath = $this->config->item('detail_path');
@@ -37,7 +35,6 @@ class Daily extends CI_Model
 		// var_dump(123);
 		return $this;
     }
-
    
     public function Page($page){
     	$this->Page = $page;
@@ -107,7 +104,6 @@ class Daily extends CI_Model
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
-
 	    					if($value['newsID']==$v['newsID']){
 								//
 	    						unset($v['newsID']);
@@ -144,6 +140,7 @@ class Daily extends CI_Model
     }
 
 
+
 	
     /**
 	*	设置视频
@@ -166,10 +163,10 @@ class Daily extends CI_Model
 	    			}
 	    		}
 	    	}
-	    }else if($video){
+	    }else if(!$video){
 	    	$videos = $this->GetNewsVideo($data['vdo']);
 		    if(count($videos)>0){
-		    	$videos[0]->video_path = $videos[0]->video_path.'.mp4';
+		    	$videos[0]['video_path'] = $videos[0]['video_path'].'.mp4';
 		    	$data['vdo'] = $videos[0];
 		    }
 		    unset($data->videoID);
@@ -225,6 +222,8 @@ class Daily extends CI_Model
 			}
 		}
     }
+	
+	
 	
 	private function Get_Max_Date($cat,$year)
 	{
@@ -348,6 +347,8 @@ class Daily extends CI_Model
     			'section'=>$this->SectionID,
     			'cat'=>$data['cat'],
 				'publish_datetime'=>$data['publish_datetime'],
+				'vdo'=>$data['vdo'],
+
     		);
     		$imglist[] = $value['newsID'];
     	}
@@ -355,6 +356,7 @@ class Daily extends CI_Model
     		unset($return_data[4]);
     	}
     	$this->SetImg($return_data,$imglist);
+
 		if(count($video_id_list)>0){
 			$this->SetVideo($return_data,$video_id_list);
 		}
@@ -383,6 +385,7 @@ class Daily extends CI_Model
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
 				$this->SetVideo($res[0]);
 			}
+			$this->SetWriter($res[0]);
 			$this->Set_related_news($res[0],$id);
 			
 			return array(
@@ -393,6 +396,7 @@ class Daily extends CI_Model
     	
     }
 
+    
 
     /**
 	*	獲取文章
@@ -401,7 +405,7 @@ class Daily extends CI_Model
     {
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat&&$id){
-			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat');
+			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat,nm.createdBy as writer');
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID', 'right');

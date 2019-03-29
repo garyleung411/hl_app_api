@@ -59,7 +59,7 @@ class Api extends DefaultApi{
 			$cat_list = $this->Section->Get_cat_list($section);
 			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
 			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
-			
+			// var_dump($file);
 			$tmp = json_decode(file_get_contents($file),true);
 			foreach($tmp as $name => $list){
 				if($name != 'day'){
@@ -107,8 +107,41 @@ class Api extends DefaultApi{
 	}
 
 	//感興趣
-	public function interest($id = -1){
-		
+	public function interest(){
+
+		$this->Expired = 150;
+		$path = $this->config->item('interest_list_path');
+		$fileid = rand(0,9);
+		$outputpath = str_replace('{page}',$fileid,$path);
+
+		if(!($output=$this->Getfile($outputpath))||isset($_GET['gen'])){
+
+			$this->load->model('Inews');
+			$data = $this->Inews->GetList();
+			$file = array();
+			$fileidlist = array();
+			foreach ($data as $key => $value) {
+				$file[(($key+1)/10)][] = $value;
+				$fileidlist[] = (($key+1)/10);
+			}
+			foreach ($file as $k => $v) {
+				$filepath = str_replace('{page}',$k,$path);
+				$filedata['result'] = 1;
+				$filedata['data'] = $this->list_cast($file[$k]);
+				$data = json_encode($filedata,true);
+				$this->Savefile($filepath,$data);
+
+				if(in_array($k,$fileidlist)&&$k==$fileid){
+					$output = $data;
+				}
+			}
+			if(!$output){
+				$output = json_encode(array(
+						'result' =>0
+					),JSON_UNESCAPED_SLASHES);
+			}
+		}
+		$this->PushData($output);
 	}
 
 	public function detail($section, $id){
@@ -185,7 +218,6 @@ class Api extends DefaultApi{
 			$path = str_replace('.json','_'.(int)$page.'json',$path);
 			
 			
-			
 			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
 				
 				$data = $this->$SectionName->GetList();
@@ -194,6 +226,7 @@ class Api extends DefaultApi{
 					$data['data'] = $this->list_cast($data['data']);
 					$output = json_encode($data,JSON_UNESCAPED_SLASHES);
 				}
+				// var_dump($path);
 				$this->Savefile($path,$output);
 			}
 
@@ -306,8 +339,24 @@ class Api extends DefaultApi{
 			"topic"					=> array(),
 			"related_news"			=> array(),
 		);
-
+		
 		foreach ($detail as $i => $d) {
+			if($i=='content'){
+				$return_data[$i] = array(
+					$data['content'],
+					$data['content2'],
+					$data['content3'],
+
+				);
+				continue;
+			}
+			if($i=='keyword'){
+				$keyword = explode(';',$data['keyword']);
+				if($keyword[0]==''){
+					unset($keyword[0]);
+				}
+				$data['keyword'] = $keyword;
+			}
 			$return_data[$i] = isset($data[$i])?$data[$i]:$d;
  		}
 		if(count($return_data["related_news"])>0){
@@ -316,7 +365,30 @@ class Api extends DefaultApi{
 		return $return_data;
 	}
 	
-	
+	// private function interest_cast($data){
+	// 	$return_data = array();
+	// 	$list = array(
+	// 		"id"					=> "",
+	// 		"title"					=> "",
+	// 		"content"				=> "",
+	// 		"section"				=> "",
+	// 		"cat"					=> "",
+	// 		"publish_datetime"		=> "",
+	// 		"vdo"					=> "",
+	// 		"imgs"					=> array(),
+	// 		"writer"				=> array(),
+	// 		"layout"				=> "",
+	// 	);
+		
+	// 	foreach($data as $i => $d){
+	// 		$tmp = $list;
+	// 		foreach($tmp as $k => $v){
+	// 			$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+	// 		}
+	// 		$return_data[] = $tmp;
+	// 	}
+	// 	return $return_data;
+	// }
 
 	
 	

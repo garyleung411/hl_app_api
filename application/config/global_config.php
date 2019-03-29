@@ -82,11 +82,10 @@ $config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
+$config['interest_list_path'] = 'json/inrerest/list_{page}.json';
 
 
 
-
-$config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
 
 //app_config
 $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
@@ -119,5 +118,6 @@ $app_config['api']['api_interest'] =		"interest/";
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";
 $app_config['api']['api_columns_ads'] = 	"ads/columns/";
+
 
 $config['app_config'] = $app_config;
