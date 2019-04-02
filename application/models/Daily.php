@@ -5,7 +5,6 @@ class Daily extends CI_Model
 
 	public $Expired = 1;
 	public $Page = 1;
-	// public $path = '';
 	public $year;
 	public $maxdate;
 	
@@ -24,6 +23,7 @@ class Daily extends CI_Model
 		$this->SectionID = $SectionId;
 		return $this;
     }
+    
     /**
     *	设置CatID
     */
@@ -195,8 +195,8 @@ class Daily extends CI_Model
 			// $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
 			
 			$this->db->from('daily_hl_news as dhn');
-			$this->db->join('news_main_'.date('Y',strtotime($this->maxdate )).' as nm','dhn.newsID = nm.newsID', 'right');
-			
+			$this->db->join('news_main_'.date('Y',strtotime($this->maxdate )).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year, 'inner');
+			// $this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year.', \'inner\'', 'right');
 			if(is_array($cat)&&count($cat)>0)
 			{
 				$this->db->where_in('dhn.newsCat',$cat);
@@ -231,7 +231,7 @@ class Daily extends CI_Model
 		$this->db->select_max('nm.publishDatetime');
 			
 		$this->db->from('daily_hl_news as dhn');
-		$this->db->join("news_main_$year as nm",'dhn.newsID = nm.newsID', 'right');
+		$this->db->join("news_main_$year as nm",'dhn.newsID = nm.newsID and dhn.year = '.$year, 'inner');
 			
 		if(is_array($cat)&&count($cat)>0)
 		{
@@ -252,7 +252,7 @@ class Daily extends CI_Model
 	{
 		
 		$this->db = $this->load->database('daily',TRUE);
-		$this->db->select('img.path,info.isCover,img.newsID');
+		$this->db->select('img.path,info.isCover,img.newsID,info.caption');
 		$this->db->from('news_img_src_'.$this->year.' as img');
 		$this->db->join('news_img_info_'.$this->year.' as info','info.imgID = img.imgID', 'left');
 		if(is_array($newID)&&count($newID)>0)
@@ -338,16 +338,16 @@ class Daily extends CI_Model
     			unset($res[$key]);
     			continue;
     		}
-			if($value['vdo']!=''&&$value['vdo']!=0){
-				$video_id_list[] = $value['vdo'];
-			}
+			// if($value['vdo']!=''&&$value['vdo']!=0){
+			// 	$video_id_list[] = $value['vdo'];
+			// }
     		$return_data[] = array(
     			'id'=>$value['id'],
     			'title'=>$value['title'],
     			'section'=>$this->SectionID,
     			'cat'=>$data['cat'],
 				'publish_datetime'=>$data['publish_datetime'],
-				'vdo'=>$data['vdo'],
+				// 'vdo'=>$data['vdo'],
 
     		);
     		$imglist[] = $value['newsID'];
@@ -357,9 +357,9 @@ class Daily extends CI_Model
     	}
     	$this->SetImg($return_data,$imglist);
 
-		if(count($video_id_list)>0){
-			$this->SetVideo($return_data,$video_id_list);
-		}
+		// if(count($video_id_list)>0){
+		// 	$this->SetVideo($return_data,$video_id_list);
+		// }
     	$data['related_news'] = $return_data;
     }
 

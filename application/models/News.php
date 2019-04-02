@@ -27,7 +27,7 @@ class News extends CI_Model
 			// $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
 			
 			$this->db->from('daily_hl_news as dhn');
-			$this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID', 'right');
+			$this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year.', \'inner\'', 'right');
 			
 			if(is_array($cat)&&count($cat)>0)
 			{
@@ -58,7 +58,7 @@ class News extends CI_Model
 		$this->db->select_max('nm.publishDatetime');
 			
 		$this->db->from('daily_hl_news as dhn');
-		$this->db->join("news_main_$year as nm",'dhn.newsID = nm.newsID', 'right');
+		$this->db->join("news_main_$year as nm","dhn.newsID = nm.newsID and dhn.year = $year, \'inner\'", 'right');
 			
 		if(is_array($cat)&&count($cat)>0)
 		{

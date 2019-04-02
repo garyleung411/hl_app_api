@@ -109,20 +109,24 @@ class Api extends DefaultApi{
 	//感興趣
 	public function interest(){
 
-		$this->Expired = 150;
+		$this->Expired = 1;
 		$path = $this->config->item('interest_list_path');
 		$fileid = rand(0,9);
 		$outputpath = str_replace('{page}',$fileid,$path);
 
 		if(!($output=$this->Getfile($outputpath))||isset($_GET['gen'])){
 
-			$this->load->model('Inews');
-			$data = $this->Inews->GetList();
+			$this->load->model('Instant');
+
+			$this->Instant->SetSectionId(1);
+			
+			$data = $this->Instant->GetInterestList();
 			$file = array();
 			$fileidlist = array();
+
 			foreach ($data as $key => $value) {
-				$file[(($key+1)/10)][] = $value;
-				$fileidlist[] = (($key+1)/10);
+				$file[(($key+1)%10)][] = $value;
+				$fileidlist[] = (($key+1)%10);
 			}
 			foreach ($file as $k => $v) {
 				$filepath = str_replace('{page}',$k,$path);
@@ -135,7 +139,7 @@ class Api extends DefaultApi{
 					$output = $data;
 				}
 			}
-			if(!$output){
+			if($output==false||$output==''){
 				$output = json_encode(array(
 						'result' =>0
 					),JSON_UNESCAPED_SLASHES);
@@ -193,6 +197,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function list($section=2, $cat=1,$page=1){
+
 
 		$error = true;
 		$this->load->model('Section');
@@ -261,41 +266,6 @@ class Api extends DefaultApi{
 
 		$this->PushData($section_list);
 	}
-
-	public function demo($section=2,$id){
-
-		$this->load->model('Section');
-		$res = $this->Section->Get_Section($section);
-		$error = true;
-		$error = (count($res)>0);
-
-		if($error){
-
-			$this->load->model('Detail');
-			$this->Detail->SetSection($section)->SetId($id);
-			$path = $this->Detail->GetPath($res[0]->section_name);
-			//if(!($detail=$this->Getfile($path))||isset($_GET['gen'])){
-				$data = $this->Detail->GetData();
-				if($data){
-					$data['result'] = 1;
-					$detail = json_encode($data,JSON_UNESCAPED_SLASHES);
-					// $this->Savefile($path,$detail);
-				}else{
-					$detail = json_encode(array(
-						'result' =>0
-					),JSON_UNESCAPED_SLASHES);
-				}
-
-			//}
-		}else{
-			$detail = json_encode(array(
-				'result' =>0
-			),JSON_UNESCAPED_SLASHES);
-		}
-
-		$this->PushData($detail);
-
-	}
 	
 	private function list_cast($data){
 		$return_data = array();
@@ -363,6 +333,11 @@ class Api extends DefaultApi{
 			$return_data["related_news"] = $this->list_cast($return_data["related_news"]);
 		}
 		return $return_data;
+	}
+	public function demo()
+	{
+		$this->load->model('Instant');
+		$this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
 	}
 	
 	// private function interest_cast($data){

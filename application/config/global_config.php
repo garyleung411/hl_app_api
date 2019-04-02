@@ -64,6 +64,21 @@ else{
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
+	if(isset($_GET['real'])){
+		//img_path
+		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
+		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
+		$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
+		$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
+		$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
+		$config['ads_img_url'] = "http://static.stheadline.com/stheadline/";
+		
+		//vdo
+		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
+		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
+		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
+		
+	}
 }
 
 //ads type check
@@ -82,7 +97,7 @@ $config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
-$config['interest_list_path'] = 'json/inrerest/list_{page}.json';
+$config['interest_list_path'] = 'json/interest/list_{page}.json';
 
 
 
@@ -118,6 +133,5 @@ $app_config['api']['api_interest'] =		"interest/";
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";
 $app_config['api']['api_columns_ads'] = 	"ads/columns/";
-
 
 $config['app_config'] = $app_config;
