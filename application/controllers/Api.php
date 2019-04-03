@@ -216,7 +216,9 @@ class Api extends DefaultApi{
 
 			$this->load->model($SectionName);
 			// var_dump($section);
+			// var_dump($cat);
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
+			
 			$this->Expired = $this->$SectionName->Expired;
 			$path = str_replace('{section}',$SectionName,$this->config->item('list_path'));
 			$path = str_replace('{cat}',$cat,$path);
