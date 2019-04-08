@@ -111,6 +111,7 @@ class Instant extends CI_Model
         $this->db->where_in('i.deleted',array(0,null));
 
         
+        $this->db->order_by('type','desc');
         $res = $this->db->get();
         // var_dump($this->db->last_query());
         $data = array();
@@ -131,6 +132,16 @@ class Instant extends CI_Model
                 $imglist = $this->GetImg($Imgs);
                 foreach ($data as $key => $value) {
                     if(isset($imglist[$value['id']])){
+                        if(count($imglist[$value['id']])>3){
+                            foreach ($imglist[$value['id']] as $k => $v) {
+                               if($k>=3){
+                                unset($imglist[$value['id']][$k]);
+                               }
+                            }
+                        }else if(count($imglist[$value['id']])==2)
+                        {
+                            unset($imglist[$value['id']][1]);
+                        }
                         $data[$key]['imgs'] = $imglist[$value['id']];
                     }
                 }
