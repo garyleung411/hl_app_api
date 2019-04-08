@@ -52,6 +52,9 @@ class Daily extends CI_Model
 		$count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
 		$list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
 		
+		$s = $this->Section->Get_cat_list($this->SectionID);
+		$map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
+		$CatID = $map_cat[$CatID];
 		
 		$img_id_list = array();
 		$video_id_list = array();
@@ -106,6 +109,9 @@ class Daily extends CI_Model
 	    				foreach ($img as $k => $v) {
 	    					if($value['newsID']==$v['newsID']){
 								//
+								if($is_list){
+									unset($v['caption']);
+								}
 	    						unset($v['newsID']);
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
@@ -341,6 +347,7 @@ class Daily extends CI_Model
 			// if($value['vdo']!=''&&$value['vdo']!=0){
 			// 	$video_id_list[] = $value['vdo'];
 			// }
+			
     		$return_data[] = array(
     			'id'=>$value['id'],
     			'title'=>$value['title'],
@@ -384,8 +391,10 @@ class Daily extends CI_Model
 			
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
 				$this->SetVideo($res[0]);
+			}else{
+				$res[0]['vdo'] = new StdClass();
 			}
-			$this->SetWriter($res[0]);
+			// $this->SetWriter($res[0]);
 			$this->Set_related_news($res[0],$id);
 			
 			return array(
@@ -405,7 +414,7 @@ class Daily extends CI_Model
     {
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat&&$id){
-			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat,nm.createdBy as writer');
+			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat');
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID', 'right');

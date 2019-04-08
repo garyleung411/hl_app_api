@@ -35,9 +35,34 @@ class Instant extends CI_Model
     	return $data;
     }
 
-    public function GetDetail()
+    public function GetDetail($id)
     {
-        return array('data'=>array('demo'=>0));
+        $this->load->model('News');
+
+        $s = $this->Section->Get_cat_list($this->SectionID);
+        $cat = array();
+        foreach ($s as $v) {
+            $cat[]=$v->mapping_catid;
+        }
+        $res = $this->Get_News($cat,$id);
+        // var_dump($res);
+        if(count($res)>0){
+            $map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
+            $res[0]['section'] = $this->SectionID;
+            $res[0]['cat'] = $map_cat[$res[0]['cat']];
+            
+            $this->SetImg($res[0],array(),false);
+            
+            if($res[0]['vdo']){
+                $res[0]['vdo'] = date('Ymd',strtotime($res[0]['datetime'])).'/'.$res[0]['vdo'];
+            }
+            // $this->SetWriter($res[0]);
+            $this->Set_related_news($res[0],$id);
+            
+            return array(
+                'data'  =>$res[0]
+            );
+        }
     }
 
     /**
@@ -59,7 +84,7 @@ class Instant extends CI_Model
         }
         return $this;
     }
-   
+
     public function Page($page){
         $this->Page = $page;
         return $this;
@@ -93,9 +118,7 @@ class Instant extends CI_Model
             $time = strtotime($value['datetime']);
             $data[$value['rec_id']][] = array(
                 'path' => date('Ymd',$time).'/'.$value['path'],
-                'isCover' => (($value['type'])?1:0),
-                'caption' => $value['caption'],
-                'news_main_id'=>$value['news_main_id']
+                'isCover' => (($value['type'])?1:0)
             );
         }
         return $data;
@@ -114,7 +137,7 @@ class Instant extends CI_Model
             }
         }else{
             $img = $this->GetImg($data['id']);
-            $data['imgs'] = $img;
+            $data['imgs'] = $img[$data['id']];
         }
     }
 
@@ -124,34 +147,48 @@ class Instant extends CI_Model
     */
     public function GetList($page=0)
     {
-        // $CatID = $this->GetCatID();
-        // $Page = ($this->Page>0)?$this->Page-1:0;
-        // $PageSize   = 100;
-        // $count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
-        // $list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
-        
-        
-        // $img_id_list = array();
-        // $video_id_list = array();
-        // foreach($list as $k => $v){
-        //     $img_id_list[] = $v['newsID'];
-        //     if($v['vdo']!=''&&$v['vdo']!=0){
-        //         $video_id_list[] = $v['vdo'];
-        //     }
-        //     $v['section'] = $this->SectionID;
-        //     $v['cat'] = $CatID;
-        //     $v['content'] = mb_substr($v['content'],0,50,'utf-8');
-        //     $list[$k] = $v;
+        $MaxPage = 100;
+        $CatID = $this->GetCatID();
+        $Page = ($this->Page>0)?$this->Page-1:0;
+        $PageSize   = 100;
 
-        // }
-        // $this->SetImg($list,$img_id_list);
-        // if(count($video_id_list)>0){
-        //     $this->SetVideo($list,$video_id_list);
-        // }
-        // return array(
-        //     'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
-        //     'data'  =>$list
-        // );
+        $count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
+
+        if($count>$MaxPage){
+            $count = $MaxPage;
+        }
+
+        if(($Page+1)>((int)($count/$PageSize)+((($count%$PageSize)>0)?1:0)))
+        {
+            $Page = 0;
+        }
+
+        $list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
+        $img_id_list = array();
+
+        
+        foreach($list as $k => $v){
+            if($v['vdo']){
+                $v['vdo'] = date('Ymd',strtotime($v['datetime'])).'/'.$v['vdo'];
+            }
+            $img_id_list[] = $v['id'];
+            $v['section'] = $this->SectionID;
+            $v['cat'] = $this->CatId;
+            $v['content'] = mb_substr($v['content'],0,50,'utf-8');
+            $list[$k] = $v;
+
+            $keyword = explode(';',$v['keyword']);
+            if($keyword[0]==''){
+                unset($keyword[0]);
+            }
+            $v['keyword'] = $keyword;
+
+        }
+        $this->SetImg($list,$img_id_list);
+        return array(
+            'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
+            'data'  =>$list//this->list_cast($list)
+        );
     }
 
     public function Get_All_News_list($cat=-1,$PageSize=100,$Page=0,$count=FALSE)
@@ -166,7 +203,7 @@ class Instant extends CI_Model
             // $this->year = date('Y',strtotime($this->maxdate ));
             // $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
             
-            $this->db->select($this->SectionID.' As section , tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as cat');
+            $this->db->select($this->SectionID.' As section , datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as cat');
             $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
 
 
@@ -191,14 +228,117 @@ class Instant extends CI_Model
             //     $this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
                 $this->db->limit($PageSize,$Page*$PageSize);
                 $res = $this->db->get();
+                return $res->result_array();
                 // var_dump($this->db->last_query());
-                echo json_encode($res->result_array());
+                // echo json_encode($res->result_array());
             }else{
-                $this->db->limit($PageSize,$Page*$PageSize);
+                // $this->db->limit($PageSize,$Page*$PageSize);
+                return $this->db->count_all_results();
 
-                echo $this->db->count_all_results();
+                // echo $this->db->count_all_results();
             }
         }
+    }
+
+    /**
+    *   检查cat是否属于当前栏目
+    */
+    private function CheckCat($cat){
+
+        $num = $this->Section->Check_cat_list($this->SectionID,$cat);
+
+        return ($num!=0);
+
+    }
+
+    /**
+    *   获取Catid
+    */
+    private function GetCatID()
+    {
+        $this->load->model('News_category_list');
+        return $this->News_category_list->Mapping($this->SectionID,$this->CatId)[0]->CatID;
+    }
+
+    /**
+    *   獲取文章
+    */
+    public function Get_News($cat=-1,$id=-1)
+    {
+        $this->db = $this->load->database('instant',TRUE);
+        if($cat&&$id){
+
+            $this->db->select($this->SectionID.' As section , datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as cat');
+            $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
+
+
+
+            $this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'left');
+
+            
+            if(is_array($cat)&&count($cat)>0)
+            {
+                $this->db->where_in('st.newstype',$cat);
+                
+            }else if($cat!=null&&$cat!='')
+            {
+                $this->db->where('st.newstypet',$cat);
+            }
+            
+            // $this->db->where('dhn.status',1);
+            $this->db->where('tmp.rec_id',(int)$id);
+        
+            $res = $this->db->get();
+            return $res->result_array();
+        }else{
+            return false;
+        }
+    }
+
+    /**
+    *   获取相关新闻
+    */
+    private function Set_related_news(&$data, $id)
+    {
+        // $this->load->model('Cat');
+        // var_dump($data);
+        $this->CatId = $data['cat'];
+        $catid = $this->GetCatID();
+        $res = $this->Get_All_News_list($catid,5,0,false);
+        // var_dump($res);
+        $imglist = array();
+        $video_id_list = array();
+        $return_data = array();
+        
+        foreach ($res as $key => $value) {
+            if($value['id']==$id){
+                unset($res[$key]);
+                continue;
+            }
+            // if($value['vdo']!=''&&$value['vdo']!=0){
+            //  $video_id_list[] = $value['vdo'];
+            // }
+            
+            $return_data[] = array(
+                'id'=>$value['id'],
+                'title'=>$value['title'],
+                'section'=>$this->SectionID,
+                'cat'=>$data['cat'],
+                'publish_datetime'=>$data['publish_datetime'],
+                // 'vdo'=>$data['vdo'],
+
+            );
+            $imglist[] = $value['id'];
+        }
+        if(count($return_data)==5){
+            unset($return_data[4]);
+        }
+        $this->SetImg($return_data,$imglist);
+
+        // if(count($video_id_list)>0){
+        //  $this->SetVideo($return_data,$video_id_list);
+        // }
+        $data['related_news'] = $return_data;
     }
 
 }

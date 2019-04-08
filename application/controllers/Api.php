@@ -173,6 +173,7 @@ class Api extends DefaultApi{
 			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
 
 				$data = $this->$section_name->GetDetail($id);
+				// var_dump($data);
 				if($data){
 					$data['result'] = 1;
 					$data['data'] = $this->detail_cast($data['data']);
@@ -202,11 +203,11 @@ class Api extends DefaultApi{
 		$error = true;
 		$this->load->model('Section');
 
-		if($section!=2||$cat==''){
+		if($cat==''){
 			$error = false;
 		}else{
 			
-			$num = $this->Section->Check_cat_list(2,$cat);
+			$num = $this->Section->Check_cat_list($section,$cat);
 			$error = ($num!=0);
 		}
 
@@ -216,7 +217,9 @@ class Api extends DefaultApi{
 
 			$this->load->model($SectionName);
 			// var_dump($section);
+			// var_dump($cat);
 			$this->$SectionName->SetSectionId($section)->SetCatId($cat)->page($page);
+			
 			$this->Expired = $this->$SectionName->Expired;
 			$path = str_replace('{section}',$SectionName,$this->config->item('list_path'));
 			$path = str_replace('{cat}',$cat,$path);
@@ -336,8 +339,9 @@ class Api extends DefaultApi{
 	}
 	public function demo()
 	{
-		$this->load->model('Instant');
-		$this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
+		// var_dump($cat
+		// $this->load->model('Instant');
+		// $this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
 	}
 	
 	// private function interest_cast($data){
