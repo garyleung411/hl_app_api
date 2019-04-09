@@ -30,7 +30,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 	$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
 	$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
-	$config['ads_img_url'] = "http://static.stheadline.com/stheadline/";
+	$config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
 	
 	//vdo
 	$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
@@ -58,7 +58,7 @@ else{
 	$config['life_img_url'] = "http://192.168.148.107/stheadline/";
 	$config['column_img_url'] = "http://192.168.148.107/stheadline/";
 	
-	$config['ads_img_url'] = "http://192.168.149.49/stheadline/";
+	$config['hl_app_img_url'] = "http://192.168.149.49/stheadline/";
 	
 	//vdo
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
@@ -71,7 +71,7 @@ else{
 		$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 		$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
-		$config['ads_img_url'] = "http://static.stheadline.com/stheadline/";
+		$config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
 		
 		//vdo
 		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
@@ -81,14 +81,10 @@ else{
 	}
 }
 
-//ads type check
-$config['allow_ads_image_type'] = array(1,2,5,-1);	//-1 mean landing photo
-$config['allow_ads_title_type'] = array(3,4,5);	
-$config['allow_ads_content_type'] = array(4);	
+$config['total_topic'] = 20;
 
 
 
-  
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
@@ -108,7 +104,7 @@ $app_config['img']['instant_img_url'] =		$config['instant_img_url'];
 $app_config['img']['popnews_img_url'] =		$config['popnews_img_url'];
 $app_config['img']['life_img_url'] =		$config['life_img_url'];
 $app_config['img']['column_img_url'] =		$config['column_img_url'];
-$app_config['img']['ads_img_url'] =			$config['ads_img_url'];
+$app_config['img']['hl_app_img_url'] =			$config['hl_app_img_url'];
 
 
 
@@ -129,6 +125,8 @@ $app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
 $app_config['api']['api_hit_list'] =		"hit_list/[section]";//十大熱門daily or instant only
 $app_config['api']['api_interest'] =		"interest/";
 
+$app_config['api']['api_special'] =			"special/";
+$app_config['api']['api_topic'] =			"topic/";
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";

@@ -126,7 +126,14 @@ class Instant extends CI_Model
     }
     public function SetImg(&$data,$Imgs,$is_list = true)
     {
-
+		if(count($Imgs)==0&&count($data)>0){
+			$Imgs =array();
+			foreach ($data as $value) {
+				if(isset($value['id'])){
+					$Imgs[] = $value['id'];
+				}
+			}
+		}
         if($is_list){
             if(count($Imgs)>0){
                 $imglist = $this->GetImg($Imgs);
@@ -148,7 +155,10 @@ class Instant extends CI_Model
             }
         }else{
             $img = $this->GetImg($data['id']);
-            $data['imgs'] = $img[$data['id']];
+			// var_dump($data['id']);exit;
+			if(count($img)>0){
+				$data['imgs'] = $img[$data['id']];
+			}
         }
     }
 
