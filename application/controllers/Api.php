@@ -99,7 +99,10 @@ class Api extends DefaultApi{
 			$json[$k] = ncr2str($v);
 			
 		}
-		echo json_encode($json,JSON_UNESCAPED_SLASHES);
+		$output = array('data'=>$json);
+		$output['result'] = 1;
+		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
 	}
 	
 	//For daily & instant only
@@ -166,9 +169,8 @@ class Api extends DefaultApi{
 		else{
 			$output['result'] = 0;
 		}
-		
-		header("Content-type:application/json");
-		echo json_encode($output);
+		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
 			
 	}
 
@@ -281,7 +283,7 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function list($section=2, $cat=1,$page=1){
+	public function list($section, $cat,$page){
 
 
 		$error = true;
