@@ -188,7 +188,7 @@ class Daily extends CI_Model
 		return isset($res->result_array()[0]['newsID'])?$res->result_array()[0]['newsID']:-1;
 	}
 	
-	private function Get_All_News_list($cat=-1,$PageSize=10,$Page=0,$count=FALSE)
+	private function Get_All_News_list($cat=-1,$PageSize=10,$Page=0,$count=FALSE,$rand=false)
     {
 		
     	$this->db = $this->load->database('daily',TRUE);
@@ -215,6 +215,9 @@ class Daily extends CI_Model
 			$this->db->where('dhn.status',1);
 		
 			$this->db->where('publishDatetime >=',$this->maxdate );
+			if($rand){
+                $this->db->order_by(rand(0,1), 'RANDOM');
+            }
 	
 			if(!$count){
 				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
@@ -333,7 +336,7 @@ class Daily extends CI_Model
     {
     	// $this->load->model('Cat');
     	// var_dump($data);
-    	$res = $this->Get_All_News_list($data['mapcat'],5,0,false);
+    	$res = $this->Get_All_News_list($data['mapcat'],5,0,false,true);
     	// var_dump($res);
     	$imglist = array();
 		$video_id_list = array();
@@ -436,6 +439,39 @@ class Daily extends CI_Model
 		}else{
 			return false;
 		}
+    }
+
+    /**
+    *	推荐文章获取
+    */
+    public function Get_Ads_News_list($id)
+    {
+		
+    	$this->db = $this->load->database('daily',TRUE);
+		
+			
+		$this->db->from('daily_hl_news as dhn');
+		$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year, 'inner');
+		// $this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year.', \'inner\'', 'right');
+		if(is_array($id)&&count($id)>0)
+		{
+			$this->db->where_in('dhn.dailyID',$id);
+			
+		}else if($id!=null&&$id!='')
+		{
+			$this->db->where('dhn.dailyID',$id);
+		}
+		
+		// $this->db->where('dhn.status',1);
+	
+		// $this->db->where('publishDatetime >=',$this->maxdate );
+
+
+		
+		$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+		$res = $this->db->get();
+		return $res->result_array();
+		
     }
 
 }
