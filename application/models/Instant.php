@@ -90,8 +90,7 @@ class Instant extends CI_Model
         return $this;
     }
 
-    private function GetImg($newID)
-    {
+    private function GetImg($newID){
         
         $this->db = $this->load->database('instant',TRUE);
         $this->db->select('i.photo_content_for_headline as path,i.type,i.news_main_id,i.caption_content_for_headline as caption,m.rec_id,m.datetime');

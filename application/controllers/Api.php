@@ -8,6 +8,38 @@ class Api extends DefaultApi{
 		// $this->load->library('session');
 	}
 	
+	private function index_section(){
+		$other = array(
+			"SectionID" => "other",
+			"name" => "期它類別",
+			"SectionName" => "other",
+			"CatList"	=> array(),
+		);
+		$topic =array();
+		$tmp = json_decode($this->topic(true),true);
+		
+		if($tmp['result'] == 1){
+			$catlist = array();
+			foreach($tmp['data'] as $v){
+				$cat = array(
+					"CatID" => $v['id'],
+					"CatName" => $v['title'],
+					"MappingCatID" => "",
+				);
+				$catlist[] = $cat;
+			}
+			$topic = array(
+				"SectionID" => "topic",
+				"name" => "話題新聞",
+				"SectionName" => "topic",
+				"CatList"	=> $catlist,
+			);
+			
+		}
+		return array($other, $topic);
+		
+	}
+	
 	public function app_config(){
 		/**
 		 *	Code for update app_config
@@ -26,7 +58,8 @@ class Api extends DefaultApi{
 		$tmp = json_decode($this->special(true), true);
 		if($tmp['result']==1){
 			$data['special'] = $tmp['data'];
-		}	
+		}
+		
 		$app_config = json_encode(array(
 			'data'=>$data,
 			'result' => 1
@@ -270,7 +303,7 @@ class Api extends DefaultApi{
 			$data = $data['data'];
 			if($data["section"]==1){
 				$this->load->model("Topic");
-				$data["topic"] = $this->Topic->is_topic($data["keyword"]);
+				$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
 			}
 			
 			$output = json_encode(array(
@@ -283,12 +316,16 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function list($section, $cat,$page){
-
-
+	public function list($section, $cat, $page =1){
+		if($section == "topic"){
+			$this->topic_list($cat);
+			return;
+		}
+		
+		
 		$error = true;
 		$this->load->model('Section');
-
+		
 		if($cat==''){
 			$error = false;
 		}else{
@@ -337,26 +374,76 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
+	private function topic_list($cat){
+		$empty = false;
+		$this->load->model('Topic');
+		$list = array();
+		if($cat > $this->config->item('total_topic')){
+			$empty = true;
+		}
+		else{
+			$topic = $this->Topic->get_all_topic();
+			
+			if(in_array($cat,array_column($topic,'id'))){
+				$i = array_search($cat,array_column($topic,'id'));
+				$keyword = array_column($topic,'keyword')[$i];
+				$list = $this->Topic->get_topic_list_by_keyword($keyword);
+				if(count($list)<1){
+					$empty = true;
+				}
+			}
+			else{
+				$empty = true;
+			}
+		}
+		$list = $this->list_cast($list);
+		if($empty){
+			$output = json_encode(array(
+				'result' =>0
+			),JSON_UNESCAPED_SLASHES);
+		}else{
+			
+			$output = json_encode(array(
+				'data' => $list,
+				'result' =>1,
+			),JSON_UNESCAPED_SLASHES);
+		}
+		$this->PushData($output);
+			
+		
+	}
+	
 	public function column_list($columnid){
 		
 	}
 	
 	public function section(){
 
-		$this->Expired = 1;
+		$this->Expired = 100;
 
-		if(!($section_list=$this->Getfile($this->config->item('section_list_path')))||isset($_GET['gen'])){
+		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||isset($_GET['gen'])){
 
 			$this->load->model('Section');
-			$section_list = $this->Section->Get_Section_list();
+			$data = $this->Section->Get_Section_list();
 			$section_list = json_encode(array(
-				'data'=>$section_list,
+				'data'=>$data,
 				'result' => 1
 			),JSON_UNESCAPED_SLASHES);
 
 			$this->Savefile($this->config->item('section_list_path'),$section_list);
 		}
-
+		else{
+			$data = $data['data'];
+		}
+		$extra = $this->index_section();
+		foreach($extra as $v){
+			$data[] = $v;
+		}
+		
+		$section_list = json_encode(array(
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
 		$this->PushData($section_list);
 	}
 	
