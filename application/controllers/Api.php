@@ -487,6 +487,7 @@ class Api extends DefaultApi{
 			"layout"				=> "",
 			"keyword"				=> array(),
 			"related_news"			=> array(),
+			"topic"					=> array(),
 		);
 		foreach ($detail as $i => $d) {
 			if($i=='content'){
@@ -520,13 +521,10 @@ class Api extends DefaultApi{
 	
 	public function highlight()
 	{
-		if($cat)
-		{
-			var_dump($cat);
-		}else{
-			$this->load->model('Highlight');
-			$data = $this->Highlight->Get_highlight_list();
-		}
+	
+		$this->load->model('Highlight');
+		$data = $this->Highlight->Get_highlight_list();
+		
 	}
 
 	
