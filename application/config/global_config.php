@@ -80,9 +80,9 @@ else{
 		
 	}
 }
-
-$config['total_topic'] = 20;
-
+$config['day_before'] = 90;
+$config['total_topic'] = 20;		
+$config['total_list_item'] = 100;	//topic instant
 
 
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
@@ -104,8 +104,7 @@ $app_config['img']['instant_img_url'] =		$config['instant_img_url'];
 $app_config['img']['popnews_img_url'] =		$config['popnews_img_url'];
 $app_config['img']['life_img_url'] =		$config['life_img_url'];
 $app_config['img']['column_img_url'] =		$config['column_img_url'];
-$app_config['img']['hl_app_img_url'] =			$config['hl_app_img_url'];
-
+$app_config['img']['hl_app_img_url'] =		$config['hl_app_img_url'];
 
 
 $app_config['vdo']['popnews_vdo_url'] =		$config['popnews_vdo_url'];
@@ -115,8 +114,9 @@ $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_detail'] =			"detail/[section]/[id]";
 $app_config['api']['api_column_list'] =		"column/[columnid]";
+$app_config['api']['api_list'] =			"topic_list/[cat]";//新闻列表
 $app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
-$app_config['api']['api_section_cat'] =		"section";//栏目分类列表
+$app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
 
 $app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
 $app_config['api']['api_search'] =			"search/[keyword]/[page]";
@@ -131,5 +131,9 @@ $app_config['api']['api_topic'] =			"topic/";
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 $app_config['api']['api_detail_ads'] = 		"ads/detail/";
 $app_config['api']['api_columns_ads'] = 	"ads/columns/";
+
+// foreach($app_config['api'] as $k=>$v){
+	// $app_config['api'][$k] = $v.'?real&gen';
+// }
 
 $config['app_config'] = $app_config;
