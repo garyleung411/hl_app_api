@@ -337,14 +337,14 @@ class Api extends DefaultApi{
 		}
 		return $return_data;
 	}
-	public function ads($session,$cat=false)
+	public function Highlight($session,$cat=false)
 	{
 		if($cat)
 		{
 			var_dump($cat);
 		}else{
-			$this->load->model('Ads');
-			$data = $this->Ads->Get_Ads_list();
+			$this->load->model('Highlight');
+			$data = $this->Highlight->Get_highlight_list();
 		}
 	}
 	
