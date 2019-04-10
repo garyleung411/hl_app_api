@@ -111,7 +111,7 @@ $app_config['vdo']['popnews_vdo_url'] =		$config['popnews_vdo_url'];
 $app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
 $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
-
+$app_config['api']['api_highlight'] = 		"highlight";
 $app_config['api']['api_detail'] =			"detail/[section]/[id]";
 $app_config['api']['api_column_list'] =		"column/[columnid]";
 $app_config['api']['api_list'] =			"topic_list/[cat]";//新闻列表
@@ -123,14 +123,13 @@ $app_config['api']['api_search'] =			"search/[keyword]/[page]";
 $app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
 
 $app_config['api']['api_hit_list'] =		"hit_list/[section]";//十大熱門daily or instant only
-$app_config['api']['api_interest'] =		"interest/";
+$app_config['api']['api_interest'] =		"interest";
+$app_config['api']['api_special'] =			"special";
 
-$app_config['api']['api_special'] =			"special/";
-$app_config['api']['api_topic'] =			"topic/";
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-$app_config['api']['api_detail_ads'] = 		"ads/detail/";
-$app_config['api']['api_columns_ads'] = 	"ads/columns/";
+$app_config['api']['api_detail_ads'] = 		"ads/detail";
+$app_config['api']['api_columns_ads'] = 	"ads/columns";
 
 // foreach($app_config['api'] as $k=>$v){
 	// $app_config['api'][$k] = $v.'?real&gen';

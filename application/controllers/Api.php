@@ -518,6 +518,18 @@ class Api extends DefaultApi{
 		return $return_data;
 	}
 	
+	public function highlight()
+	{
+		if($cat)
+		{
+			var_dump($cat);
+		}else{
+			$this->load->model('Highlight');
+			$data = $this->Highlight->Get_highlight_list();
+		}
+	}
+
+	
 	public function demo()
 	{
 		// var_dump($cat
