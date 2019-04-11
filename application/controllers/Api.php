@@ -524,7 +524,7 @@ class Api extends DefaultApi{
 		return $return_data;
 	}
 	
-	public function Highlight()
+	public function highlight()
 	{
 
 		$this->load->model('Highlight');
