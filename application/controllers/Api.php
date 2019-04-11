@@ -525,11 +525,11 @@ class Api extends DefaultApi{
 	}
 	
 	public function Highlight()
--	{
--
--		$this->load->model('Highlight');
--		$data = $this->Highlight->Get_highlight_list();
--	}
+	{
+
+		$this->load->model('Highlight');
+		$data = $this->Highlight->Get_highlight_list();
+	}
 	
 	public function demo()
 	{

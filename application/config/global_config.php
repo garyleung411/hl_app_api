@@ -64,7 +64,7 @@ else{
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-	// if(isset($_GET['real'])){
+	if(isset($_GET['real'])){
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
@@ -78,7 +78,7 @@ else{
 		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 		
-	// }
+	}
 }
 
 $config['day_before'] = 90;			//For date limit
