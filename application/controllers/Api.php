@@ -55,7 +55,6 @@ class Api extends DefaultApi{
 			$this->Savefile($this->config->item('app_config_path'),$app_config);
 		}
 		$data['special'] = array();
-
 		$tmp = json_decode($this->special(true), true);
 		if($tmp['result']==1){
 			$data['special'] = $tmp['data'];
@@ -68,6 +67,64 @@ class Api extends DefaultApi{
 		$this->PushData($app_config);
 	}
 	
+	public function special($is_return = false){
+		$this->load->model('Special');
+		$special = $this->Special->get_special();
+		$empty = false;
+		if(count($special)>0){
+			$special = $special[0];
+		}		
+		else{
+			$empty = true;
+		}
+		
+		if($empty){
+			$output = json_encode(array(
+				'result' =>0,
+			),JSON_UNESCAPED_SLASHES);
+		}
+		else{
+			$output = json_encode(array(
+				'result' =>1,
+				'data' => $special,
+			),JSON_UNESCAPED_SLASHES);
+		}
+		
+		if($is_return){
+			return $output;
+		}
+		else{
+			$this->PushData($output);
+		}
+	}
+	
+	public function topic($is_return = false){
+		$this->load->model('Topic');
+		$all_topic = $this->Topic->get_all_topic();
+		$empty = false;
+		if(count($all_topic)==0){
+			$empty = true;
+		}
+		if($empty){
+			$output = json_encode(array(
+				'result' =>0,
+			),JSON_UNESCAPED_SLASHES);
+		}
+		else{
+			$output = json_encode(array(
+				'result' =>1,
+				'data' => $all_topic,
+			),JSON_UNESCAPED_SLASHES);
+		}
+		
+		if($is_return){
+			return $output;
+		}
+		else{
+			$this->PushData($output);
+		}
+	}
+	
 	public function hot_search(){
 		
 		$json = json_decode( file_get_contents($this->config->item('hot_search_path')),true);
@@ -75,13 +132,10 @@ class Api extends DefaultApi{
 			$json[$k] = ncr2str($v);
 			
 		}
-		$output = array(
-			'data'=>$json,
-			'result'=>1,
-		);
+		$output = array('data'=>$json);
+		$output['result'] = 1;
 		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
-
 	}
 	
 	//For daily & instant only
@@ -120,7 +174,6 @@ class Api extends DefaultApi{
 					if($section == 1){
 						$v['newsId'] = $v['newsId'] - 500000;
 					}
-
 					$video = isset($v['video_path_1'])&&!empty($v['video_path_1'])?$v['video_path_1']:"";
 					$writer = array();	
 					if(isset($v['columnistID'])&&$is_column){
@@ -138,7 +191,7 @@ class Api extends DefaultApi{
 						'layout'=>"",//日報為空
 					);
 					$this->load->model($SectionName);
-					// var_dump($section);
+					// var_dump($output['data']);exit;
 					$this->$SectionName->SetImg($output['data'],array());
 					
 					
@@ -149,10 +202,8 @@ class Api extends DefaultApi{
 		else{
 			$output['result'] = 0;
 		}
-		
 		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
-
 			
 	}
 
@@ -225,12 +276,14 @@ class Api extends DefaultApi{
 				$data = $this->$section_name->GetDetail($id);
 				// var_dump($data);
 				if($data){
+					
 					$data = $this->detail_cast($data['data']);
 					$output = json_encode(array(
 						'data'=>$data,
 						'result' => 1
 					),JSON_UNESCAPED_SLASHES);
 					$this->Savefile($path,$output);
+					
 				}else{
 					$output = json_encode(array(
 						'result' =>0
@@ -244,6 +297,22 @@ class Api extends DefaultApi{
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}
+		
+		$data = json_decode($output,true);
+		if(isset($data['data'])){
+			$data = $data['data'];
+			if($data["section"]==1){
+				$this->load->model("Topic");
+				$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
+			}
+			
+			$output = json_encode(array(
+				'data'=>$data,
+				'result' => 1
+			),JSON_UNESCAPED_SLASHES);
+		}
+		
+		
 		$this->PushData($output);
 	}
 	
@@ -253,8 +322,10 @@ class Api extends DefaultApi{
 			return;
 		}
 		
+		
 		$error = true;
 		$this->load->model('Section');
+		
 		if($cat==''){
 			$error = false;
 		}else{
@@ -282,12 +353,13 @@ class Api extends DefaultApi{
 				
 				$data = $this->$SectionName->GetList();
 				if($data){
+					
 					$data = $this->list_cast($data['data']);
+					
 					$output = json_encode(array(
 						'data'=>$data,
 						'result' => 1
 					),JSON_UNESCAPED_SLASHES);
-
 				}
 				// var_dump($path);
 				$this->Savefile($path,$output);
@@ -302,37 +374,6 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function special($is_return = false){
-		$this->load->model('Special');
-		$special = $this->Special->get_special();
-		$empty = false;
-		if(count($special)>0){
-			$special = $special[0];
-		}		
-		else{
-			$empty = true;
-		}
-		
-		if($empty){
-			$output = json_encode(array(
-				'result' =>0,
-			),JSON_UNESCAPED_SLASHES);
-		}
-		else{
-			$output = json_encode(array(
-				'result' =>1,
-				'data' => $special,
-			),JSON_UNESCAPED_SLASHES);
-		}
-		
-		if($is_return){
-			return $output;
-		}
-		else{
-			$this->PushData($output);
-		}
-	}
-
 	private function topic_list($cat){
 		$empty = false;
 		$this->load->model('Topic');
@@ -346,7 +387,8 @@ class Api extends DefaultApi{
 			if(in_array($cat,array_column($topic,'id'))){
 				$i = array_search($cat,array_column($topic,'id'));
 				$keyword = array_column($topic,'keyword')[$i];
-				$list = $this->Topic->get_topic_list_by_keyword($keyword);
+				$this->load->model('Instant');
+				$list = $this->Instant->get_list_by_keyword($keyword);
 				if(count($list)<1){
 					$empty = true;
 				}
@@ -361,7 +403,11 @@ class Api extends DefaultApi{
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}else{
-			
+			foreach($list as $k => $v){
+				$v['section'] = 'topic';
+				$v['cat'] = $cat;
+				$list[$k] = $v;
+			}
 			$output = json_encode(array(
 				'data' => $list,
 				'result' =>1,
@@ -445,10 +491,9 @@ class Api extends DefaultApi{
 			"writer"				=> array(),
 			"layout"				=> "",
 			"keyword"				=> array(),
-			"topic"					=> array(),
 			"related_news"			=> array(),
+			"topic"					=> array(),
 		);
-		
 		foreach ($detail as $i => $d) {
 			if($i=='content'){
 				$return_data[$i] = array(
@@ -465,47 +510,32 @@ class Api extends DefaultApi{
 					unset($keyword[0]);
 				}
 				$data['keyword'] = $keyword;
+				
+				
 			}
 			$return_data[$i] = isset($data[$i])?$data[$i]:$d;
  		}
+		
+
+		
 		if(count($return_data["related_news"])>0){
 			$return_data["related_news"] = $this->list_cast($return_data["related_news"]);
 		}
 		return $return_data;
 	}
+	
 	public function Highlight()
+-	{
+-
+-		$this->load->model('Highlight');
+-		$data = $this->Highlight->Get_highlight_list();
+-	}
+	
+	public function demo()
 	{
-
-		$this->load->model('Highlight');
-		$data = $this->Highlight->Get_highlight_list();
+		// var_dump($cat
+		// $this->load->model('Instant');
+		// $this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
 	}
-	
-	public function topic($is_return = false){
-		$this->load->model('Topic');
-		$all_topic = $this->Topic->get_all_topic();
-		$empty = false;
-		if(count($all_topic)==0){
-			$empty = true;
-		}
-		if($empty){
-			$output = json_encode(array(
-				'result' =>0,
-			),JSON_UNESCAPED_SLASHES);
-		}
-		else{
-			$output = json_encode(array(
-				'result' =>1,
-				'data' => $all_topic,
-			),JSON_UNESCAPED_SLASHES);
-		}
-		
-		if($is_return){
-			return $output;
-		}
-		else{
-			$this->PushData($output);
-		}
-	}
-	
 	
 }
