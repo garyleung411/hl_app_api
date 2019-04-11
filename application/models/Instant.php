@@ -417,7 +417,7 @@ class Instant extends CI_Model
 		$this->db = $this->load->database('instant',TRUE);	
 		$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo 
 		FROM `st_inews_main_$year1` 
-		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND `status` =1 AND `publish_datetime` >= $day ORDER BY `publish_Datetime` DESC LIMIT $total");
+		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND `status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 		
 		$list1 = $results->result_array();
 		$count = count($list1);
@@ -426,7 +426,7 @@ class Instant extends CI_Model
 			$total = $total - $count;
 			$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo 
 			FROM `st_inews_main_$year2` 
-			WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND	`status` =1 AND `publish_datetime` >= $day ORDER BY `publish_Datetime` DESC LIMIT $total");
+			WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND	`status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 			$list2 = $results->result_array();
 			foreach($list2 as $v){
 				$list1[] = $v;

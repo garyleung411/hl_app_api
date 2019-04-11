@@ -527,12 +527,20 @@ class Api extends DefaultApi{
 		return $return_data;
 	}
 	
-	public function highlight()
-	{
+	public function highlight(){
 
 		$this->load->model('Highlight');
 		$data = $this->Highlight->Get_highlight_list();
 		// var_dump($data);
+		$data[50] = array ( 
+			'id' => '81665', 
+			'title' => '《鐵探》演出獲激讚              姜皓文直認恨攞視帝', 
+			'section' => "3", 
+			'cat' => '3', 
+			'publish_datetime' => '2019-04-11 23:00:00', 
+			'vdo' => 'hkheadline/instant_video/2019/0411/186c944aaab36304e61635dfacc5e488.mp4', 
+			'imgs' => array ( 0 => array ( 'path' => '/2019/04/11/Img_81665_500_190411153139.jpg', 'isCover' => '1', ), ), 
+		);
 		$data = $this->list_cast($data);
 		$highlight_list = json_encode(array(
 			'data'=>$data,
@@ -540,6 +548,14 @@ class Api extends DefaultApi{
 		),JSON_UNESCAPED_SLASHES);
 		
 		$this->PushData($highlight_list);
+	}
+	
+	private function show_error(){
+		$output = json_encode(array(
+				'result' =>0
+			),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
+		exit;
 	}
 	
 	public function demo()
