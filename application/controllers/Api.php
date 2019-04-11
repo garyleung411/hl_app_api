@@ -249,8 +249,11 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 
-	public function detail($section, $id){
-		
+	public function detail($section, $id, $cat = null){
+		if($section == "topic"){
+			$this->detail("1", $id);
+			return;
+		}
 		$this->load->model('Section');
 		$res = $this->Section->Get_Section($section);
 		$error = true;
@@ -529,6 +532,14 @@ class Api extends DefaultApi{
 
 		$this->load->model('Highlight');
 		$data = $this->Highlight->Get_highlight_list();
+		// var_dump($data);
+		$data = $this->list_cast($data);
+		$highlight_list = json_encode(array(
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
+		
+		$this->PushData($highlight_list);
 	}
 	
 	public function demo()

@@ -113,7 +113,7 @@ $app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
 $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_highlight'] = 		"highlight";
-$app_config['api']['api_detail'] =			"detail/[section]/[id]";
+$app_config['api']['api_detail'] =			"detail/[section]/[id]/[!cat]";
 $app_config['api']['api_column_list'] =		"column/[columnid]";
 $app_config['api']['api_list'] =			"topic_list/[cat]";//新闻列表
 $app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表

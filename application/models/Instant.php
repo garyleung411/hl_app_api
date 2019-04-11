@@ -376,7 +376,7 @@ class Instant extends CI_Model
     public function Get_highlight_News_list($id)
     {
 
-         $this->db = $this->load->database('instant',TRUE);
+        $this->db = $this->load->database('instant',TRUE);
             
         $this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,newstype as cat');
         $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
@@ -395,6 +395,7 @@ class Instant extends CI_Model
            $list_id[] = $value['id'];
            $data[$key]['section'] = $this->SectionID;
            $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
+		   $data[$key]['content'] = mb_substr($value['content'],0,50,'utf-8');
             if($value['vdo']!=''){
                 // var_dump($value['vdo']);
                 $data[$key]['vdo'] = date('Ymd',strtotime($value['datetime'])).'/'.$value['vdo'];

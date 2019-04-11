@@ -48,7 +48,8 @@ class Highlight extends CI_Model  {
 			$request_data[$list_order_by[$value['id']]] = $value;
 		}
 		ksort($request_data);
-		echo json_encode($request_data);
+	
+		return $request_data;
 		
 	}
 

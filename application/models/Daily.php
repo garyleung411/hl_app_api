@@ -481,6 +481,7 @@ class Daily extends CI_Model
             unset($data[$key]['newsID']);
             $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
             $data[$key]['section'] = $this->SectionID;
+			$data[$key]['content'] = mb_substr($value['content'],0,50,'utf-8');
             if($value['vdo']!=''&&$value['vdo']!=0){
 				$video_id_list[] = $value['vdo'];
 			}

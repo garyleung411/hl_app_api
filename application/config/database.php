@@ -250,7 +250,7 @@ else {
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	if( isset($_GET['real'])){
+	if( isset($_GET['real'])||true){
 		$db['hl_app'] = array(
 			'dsn'	=> '',
 			'hostname' => '192.168.148.103',
