@@ -38,10 +38,17 @@ class Highlight extends CI_Model  {
 			{
 				$section_name = $section_info[0]->section_name;
 				$this->load->model($section_name);
-				$data = array_merge($data,$this->$section_name->Get_Ads_News_list($value));
+				$this->$section_name->SetSectionId($key);
+				$data = array_merge($data,$this->$section_name->Get_highlight_News_list($value));
 			}
 		}
-		echo json_encode($data);
+		$request_data = array();
+
+		foreach ($data as $value) {
+			$request_data[$list_order_by[$value['id']]] = $value;
+		}
+		ksort($request_data);
+		echo json_encode($request_data);
 		
 	}
 

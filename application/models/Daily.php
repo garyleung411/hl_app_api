@@ -82,7 +82,7 @@ class Daily extends CI_Model
 	/**
 	*	设置图片
 	*/
-    public function SetImg(&$data,$Imgs,$is_list = true)
+    public function SetImg(&$data,$Imgs,$is_list = true,$max=3)
     {
 		if(count($Imgs)==0&&count($data)>0){
 			$Imgs =array();
@@ -116,7 +116,7 @@ class Daily extends CI_Model
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
 	    					}
-							if($is_list && count($data[$key]['imgs'])==3){
+							if($is_list && count($data[$key]['imgs'])==$max){
 								break;
 							}
 	    				}
@@ -444,7 +444,7 @@ class Daily extends CI_Model
     /**
     *	推荐文章获取
     */
-    public function Get_Ads_News_list($id)
+    public function Get_highlight_News_list($id)
     {
 		
     	$this->db = $this->load->database('daily',TRUE);
@@ -467,11 +467,31 @@ class Daily extends CI_Model
 		// $this->db->where('publishDatetime >=',$this->maxdate );
 
 
-		
-		$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+		$this->db->select('1 as layout,dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as cat');
 		$res = $this->db->get();
-		return $res->result_array();
+		$data = $res->result_array();
+        $list_id = array();
+        $video_id_list = array();
+
+        $s = $this->Section->Get_cat_list($this->SectionID);
+		$map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
 		
+        foreach ($data as $key => $value) {
+            $list_id[] = $value['newsID'];
+            unset($data[$key]['newsID']);
+            $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
+            $data[$key]['section'] = $this->SectionID;
+            if($value['vdo']!=''&&$value['vdo']!=0){
+				$video_id_list[] = $value['vdo'];
+			}
+        }
+        $this->SetImg($data,$list_id,true,1);
+        if(count($video_id_list)>0){
+        	// var_dump(123);	
+			$this->SetVideo($data,$video_id_list);
+		}
+
+        return $data;
     }
 
 }

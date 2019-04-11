@@ -53,8 +53,9 @@ $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 // $route['app_config'] = 'Api/app_config';
+$route['(hit_list|hot_search|detail|column|list|section|sp_search|search|interest|ads|app_config|highlight)(:any)*'] = 'Api/$1/$2';
 
-$route['(highlight|topic_list|topic|special|hit_list|hot_search|detail|column|list|section|sp_search|search|interest|ads|app_config)(/(.*)){0,1}'] = 'Api/$1$2';
+$route['(hit_list|hot_search|detail|column|list|section|sp_search|search|interest|ads|app_config|highlight)(/(.*)){1}'] = 'Api/$1$2';
 
 
 
