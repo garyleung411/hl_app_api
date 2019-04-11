@@ -80,7 +80,8 @@ else{
 		
 	}
 }
-$config['day_before'] = 90;
+
+$config['day_before'] = 90;			//For date limit
 $config['total_topic'] = 20;		
 $config['total_list_item'] = 100;	//topic instant
 

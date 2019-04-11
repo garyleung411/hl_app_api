@@ -387,7 +387,8 @@ class Api extends DefaultApi{
 			if(in_array($cat,array_column($topic,'id'))){
 				$i = array_search($cat,array_column($topic,'id'));
 				$keyword = array_column($topic,'keyword')[$i];
-				$list = $this->Topic->get_topic_list_by_keyword($keyword);
+				$this->load->model('Instant');
+				$list = $this->Instant->get_list_by_keyword($keyword);
 				if(count($list)<1){
 					$empty = true;
 				}
@@ -402,7 +403,11 @@ class Api extends DefaultApi{
 				'result' =>0
 			),JSON_UNESCAPED_SLASHES);
 		}else{
-			
+			foreach($list as $k => $v){
+				$v['section'] = 'topic';
+				$v['cat'] = $cat;
+				$list[$k] = $v;
+			}
 			$output = json_encode(array(
 				'data' => $list,
 				'result' =>1,
@@ -487,6 +492,7 @@ class Api extends DefaultApi{
 			"layout"				=> "",
 			"keyword"				=> array(),
 			"related_news"			=> array(),
+			"topic"					=> array(),
 		);
 		foreach ($detail as $i => $d) {
 			if($i=='content'){
@@ -524,32 +530,5 @@ class Api extends DefaultApi{
 		// $this->load->model('Instant');
 		// $this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
 	}
-	
-	// private function interest_cast($data){
-	// 	$return_data = array();
-	// 	$list = array(
-	// 		"id"					=> "",
-	// 		"title"					=> "",
-	// 		"content"				=> "",
-	// 		"section"				=> "",
-	// 		"cat"					=> "",
-	// 		"publish_datetime"		=> "",
-	// 		"vdo"					=> "",
-	// 		"imgs"					=> array(),
-	// 		"writer"				=> array(),
-	// 		"layout"				=> "",
-	// 	);
-		
-	// 	foreach($data as $i => $d){
-	// 		$tmp = $list;
-	// 		foreach($tmp as $k => $v){
-	// 			$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
-	// 		}
-	// 		$return_data[] = $tmp;
-	// 	}
-	// 	return $return_data;
-	// }
-
-	
 	
 }
