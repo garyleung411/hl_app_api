@@ -330,11 +330,9 @@ class Instant extends CI_Model
         $this->CatId = $data['cat'];
         $catid = $this->GetCatID();
         // var_dump($keyword);
-        if($keyword!=''){
-            $keyword = explode(';',$keyword);
-            if($keyword[0]==''){
-                unset($keyword[0]);
-            }
+        $keyword = explode(';',$keyword);
+        if($keyword[0]==''){
+            unset($keyword[0]);
         }
         // var_dump($keyword);
         $res = $this->Get_All_News_list($catid,5,0,false,$keyword,true);
@@ -379,8 +377,7 @@ class Instant extends CI_Model
     /**
     *   推荐文章获取
     */
-    public function Get_Ads_News_list($id)
-    {
+    public function Get_Ads_News_list($id){
 
          $this->db = $this->load->database('instant',TRUE);
             
