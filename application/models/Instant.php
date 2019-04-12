@@ -281,7 +281,7 @@ class Instant extends CI_Model
     private function GetCatID()
     {
         $this->load->model('News_category_list');
-        return $this->News_category_list->Mapping($this->SectionID,$this->CatId)[0]->CatID;
+        return $this->News_category_list->Mapping($this->SectionID,$this->CatId)['CatID'];
     }
 
     /**

@@ -550,19 +550,61 @@ class Api extends DefaultApi{
 		$this->PushData($highlight_list);
 	}
 	
-	private function show_error(){
+	public function show_error($error_code = 0){
 		$output = json_encode(array(
-				'result' =>0
+				'result' =>$error_code,
 			),JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 		exit;
 	}
 	
-	public function demo()
-	{
+	public function demo(){
 		// var_dump($cat
 		// $this->load->model('Instant');
 		// $this->Instant->SetSectionId(1)->Get_All_News_list('a',50,0,false);
+	}
+	
+	public function test($section, $cat, $page =1){
+		if($section == "topic"){
+			$this->topic_list($cat);
+			return;
+		}
+		$this->load->model('News_category_list');
+		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
+		if($is_cat){
+			$map_cat = $this->News_category_list-> Mapping($section,$cat);
+			$this->load->model('Section');
+			$section_name = $this->Section->Get_Section($section)[0]->section_name;
+			$this->load->model($section_name);
+			$this->$section_name->page($page);
+			$this->Expired = $this->config->item("list_time");
+			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
+			$path = str_replace('{cat}',$cat,$path);
+			$path = str_replace('.json','_'.(int)$page.'json',$path);
+			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
+				$list = $this->$section_name->GetList($map_cat);
+				if($list){
+					foreach($list as $k=>$v){
+						// var_dump($list);exit;
+						$v["section"] = $section;
+						$v["cat"] = $cat;
+						$list[$k] = $v;
+					}
+					$list = $this->list_cast($list);
+					$output = json_encode(array(
+						'PageNums' =>$page,
+						'data'=>$list,
+						'result' => 1
+					),JSON_UNESCAPED_SLASHES);
+					$this->Savefile($path,$output);
+				}
+			}
+
+		}else{
+			$this->show_error();
+		}
+
+		$this->PushData($output);
 	}
 	
 }

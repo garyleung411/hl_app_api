@@ -12,7 +12,6 @@ class Daily extends CI_Model
     {
 		$this->year = date('Y');
     	$this->load->model('Section');
-    	// $this->DetailPath = $this->config->item('detail_path');
     }
 
     /**
@@ -21,18 +20,6 @@ class Daily extends CI_Model
     public function SetSectionId($SectionId)
     {
 		$this->SectionID = $SectionId;
-		return $this;
-    }
-    
-    /**
-    *	设置CatID
-    */
-    public function SetCatId($CatId)
-    {
-    	if($this->CheckCat($CatId)){
-			$this->CatId = $CatId;
-		}
-		// var_dump(123);
 		return $this;
     }
    
@@ -44,17 +31,13 @@ class Daily extends CI_Model
     /**
     *	获取列表
     */
-    public function GetList($page=0)
+    public function GetList($cat, $page=0)
     {
-    	$CatID = $this->GetCatID();
+    	
     	$Page = ($this->Page>0)?$this->Page-1:0;
 		$PageSize	= 100;
-		$count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
-		$list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
-		
-		$s = $this->Section->Get_cat_list($this->SectionID);
-		$map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
-		$CatID = $map_cat[$CatID];
+		$count = $this->Get_All_News_list($cat,$PageSize,$Page,true);
+		$list = $this->Get_All_News_list($cat,$PageSize,$Page,false);
 		
 		$img_id_list = array();
 		$video_id_list = array();
@@ -63,8 +46,7 @@ class Daily extends CI_Model
 			if($v['vdo']!=''&&$v['vdo']!=0){
 				$video_id_list[] = $v['vdo'];
 			}
-			$v['section'] = $this->SectionID;
-			$v['cat'] = $CatID;
+			$v['publish_datetime'] = date('Y-m-d', strtotime($v['publish_datetime']));
 			$v['content'] = mb_substr($v['content'],0,50,'utf-8');
 			$list[$k] = $v;
 
@@ -73,10 +55,11 @@ class Daily extends CI_Model
 		if(count($video_id_list)>0){
 			$this->SetVideo($list,$video_id_list);
 		}
-		return array(
-			'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
-			'data'	=>$list//this->list_cast($list)
-		);
+		return $list;
+		// return array(
+			// 'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
+			// 'data'	=>$list//this->list_cast($list)
+		// );
     }
 
 	/**
@@ -295,27 +278,6 @@ class Daily extends CI_Model
 		$res = $this->db->get();
 		return $res->result_array();
 	}
-	
-	 /**
-    *	检查cat是否属于当前栏目
-    */
-    private function CheckCat($cat){
-
-    	$num = $this->Section->Check_cat_list($this->SectionID,$cat);
-
-    	return ($num!=0);
-
-    }
-	
-	
-    /**
-    *	获取Catid
-    */
-    private function GetCatID()
-    {
-    	$this->load->model('News_category_list');
-    	return $this->News_category_list->Mapping($this->SectionID,$this->CatId)[0]->CatID;
-    }
 
     /**
     *	获取作者

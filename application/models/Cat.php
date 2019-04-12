@@ -11,7 +11,7 @@ class Cat extends CI_Model
 		$this->load->model('News');
 		$this->load->model('News_category_list');
 
-		$cat_id = $this->News_category_list->Mapping($section,$cat_id)[0]->CatID;
+		$cat_id = $this->News_category_list->Mapping($section,$cat_id)['CatID'];
 		//找到旧表对应的catid
 
 		$Page = ($page>0)?$page-1:0;
