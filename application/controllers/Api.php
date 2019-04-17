@@ -530,9 +530,9 @@ class Api extends DefaultApi{
 	public function highlight(){
 
 		$this->load->model('Highlight');
-		$data = $this->Highlight->Get_highlight_list();
+		$tmp = $this->Highlight->Get_highlight_list();
 		// var_dump($data);
-		$data[50] = array ( 
+		$tmp[50] = array ( 
 			'id' => '81665', 
 			'title' => '《鐵探》演出獲激讚              姜皓文直認恨攞視帝', 
 			'section' => "3", 
@@ -541,7 +541,13 @@ class Api extends DefaultApi{
 			'vdo' => 'hkheadline/instant_video/2019/0411/186c944aaab36304e61635dfacc5e488.mp4', 
 			'imgs' => array ( 0 => array ( 'path' => '/2019/04/11/Img_81665_500_190411153139.jpg', 'isCover' => '1', ), ), 
 		);
-		$data = $this->list_cast($data);
+		$tmp = $this->list_cast($tmp);
+		$data = array();
+		foreach($tmp as $k => $v){
+			if(!count($v['imgs'])==0){
+				$data[] = $tmp[$k];
+			}
+		}
 		$highlight_list = json_encode(array(
 			'data'=>$data,
 			'result' => 1
