@@ -250,6 +250,12 @@ class Api extends DefaultApi{
 	}
 
 	public function detail($section, $id, $cat = null){
+		// if($section == "other" && $cat != null){
+			// switch($cat){
+				
+			// }
+		// }
+		
 		if($section == "topic"){
 			$this->detail("1", $id);
 			return;
