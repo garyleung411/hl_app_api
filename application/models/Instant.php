@@ -117,7 +117,8 @@ class Instant extends CI_Model
             $time = strtotime($value['datetime']);
             $data[$value['rec_id']][] = array(
                 'path' => date('Ymd',$time).'/'.$value['path'],
-                'isCover' => (($value['type'])?1:0)
+				'caption' => $value['caption'],
+                'isCover' => (($value['type'])?1:0),
             );
         }
         return $data;
@@ -141,6 +142,10 @@ class Instant extends CI_Model
                             unset($imglist[$value['id']][1]);
                         }
                         $data[$key]['imgs'] = $imglist[$value['id']];
+						foreach($data[$key]['imgs'] as $k => $v){
+							unset($v['caption']);
+							$data[$key]['imgs'][$k] = $v;
+						}
                     }
                 }
             }
