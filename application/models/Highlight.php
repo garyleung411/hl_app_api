@@ -20,8 +20,7 @@ class Highlight extends CI_Model  {
 		return $res->result_array();
 	}
 
-	public function Get_highlight_list()
-	{
+	public function Get_highlight_list(){
 		$list = $this->Get_highlight();
 		$list_id = array();//根据session分类
 		$list_order_by = array();//对应排序
@@ -44,7 +43,6 @@ class Highlight extends CI_Model  {
 					$tmp[$k]['section'] = $section_info[0]->section_id;
 				}
 				$data = array_merge($data,$tmp);
-				
 			}
 		}
 		

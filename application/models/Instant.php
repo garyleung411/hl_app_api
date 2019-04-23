@@ -173,7 +173,7 @@ class Instant extends CI_Model
         $this->db = $this->load->database('instant',TRUE);  
 		
 
-        $this->db->select('datetime, main.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+        $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
         $this->db->from('st_inews_main_'.$first_year.' as main');
         $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             
@@ -203,7 +203,7 @@ class Instant extends CI_Model
 
         if(($first_year!=$second_year)&&(count($list)<$total)){
 			
-            $this->db->select('datetime, main.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+            $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
             $this->db->from('st_inews_main_'.$first_year.' as main');
             $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             $this->db->where('main.status',1);

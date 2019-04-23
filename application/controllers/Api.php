@@ -573,8 +573,8 @@ class Api extends DefaultApi{
 			);
 			$this->load->model('News_category_list');
 			foreach($data as $k=>$v){
-				if(isset($data['map_cat'])){
-					$data['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+				if(isset($v['map_cat'])){
+					$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 				}
 				
 				
