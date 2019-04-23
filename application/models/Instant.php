@@ -7,13 +7,10 @@ class Instant extends CI_Model
 {
     public $Expired = 1;
     public $Page = 1;
-    public $year;
-    public $maxdate;
 
     public function __construct()
     {
         parent::__construct();
-        // $this->year = date('Y');
         $this->load->model('Section');
     }
 
@@ -101,6 +98,7 @@ class Instant extends CI_Model
 				$time = strtotime($value['datetime']);
 				$data[$value['rec_id']][] = array(
 					'path' => date('Ymd',$time).'/'.$value['path'],
+					'caption' => $value['caption'],
 					'isCover' => (($value['type'])?1:0)
 				);
 			}
@@ -126,6 +124,11 @@ class Instant extends CI_Model
                             unset($imglist[$value['id']][1]);
                         }
                         $data[$key]['imgs'] = $imglist[$value['id']];
+						foreach($data[$key]['imgs'] as $k => $v){
+							unset($v['caption']);
+							$data[$key]['imgs'][$k] = $v;
+						}
+
                     }
                 }
             }
@@ -202,15 +205,12 @@ class Instant extends CI_Model
         //list第一个结果
 
         if(($first_year!=$second_year)&&(count($list)<$total)){
-			
             $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
             $this->db->from('st_inews_main_'.$first_year.' as main');
             $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             $this->db->where('main.status',1);
             $this->db->where('publish_datetime >=',$day);
             $this->db->where('st.newstype',$cat);
-
-
             if(count($keyword)>0){
                  $this->db->group_start();
                 foreach ($keyword as $v) {

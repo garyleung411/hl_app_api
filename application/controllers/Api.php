@@ -557,7 +557,6 @@ class Api extends DefaultApi{
 	
 	public function highlight()	{
 		$this->Expired = 100;
-
 		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||isset($_GET['gen'])){
 			
 			$this->load->model('Highlight');
@@ -580,22 +579,24 @@ class Api extends DefaultApi{
 				
 			}
 			$data = $this->list_cast($data);
-			
-			$highlight_list = json_encode(array(
-				'data'=>$data,
-				'result' => 1
-			),JSON_UNESCAPED_SLASHES);
-			$this->Savefile($this->config->item('highlight_path'),$highlight_list);
-
-		} else{
-			$data = $data['data'];
+			if(count($data)>0){
+				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
+			}
+		} 
+		
+		$data2 = array();
+		foreach($data as $k => $v){
+			if(!count($v['imgs'])==0){
+				$data2[] = $data[$k];
+			}
 		}
 
+		
+		
 		$highlight_list = json_encode(array(
-			'data'=>$data,
+			'data'=>$data2,
 			'result' => 1
 		),JSON_UNESCAPED_SLASHES);
-
 		$this->PushData($highlight_list);
 
 	}
