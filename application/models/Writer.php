@@ -10,17 +10,46 @@
 			$this->db = $this->load->database('daily',TRUE);
 			
 		}
-		public function GetWriter($creatId)
-		{
-			$this->db->select('columnistID,writer,trait');
-			$this->db->from('news_writer_list');
-			$this->db->where('status',1);
-            if(is_array($creatId)&&count($creatId)>1){
-                $this->db->where_in('columnistID',$creatId);
-            }else{
-                $this->db->where('columnistID',$creatId);
-            }
-			$res = $this->db->get();
-			return $res->result();
+		public function GetWriter($newsid,$year){
+			$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,neb.newsid');
+			$data = array();
+			if(is_array($year))
+			{
+				foreach ($year as $value) {
+					# code..}
+					$this->db->from('news_extra_base_'.$value.' as neb');
+					$this->db->join('daily_hl_extra_'.$value.' as dhe','neb.extraID = dhe.extraID');
+					$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID');
+					if(is_array($newsid)){
+						$this->db->where_in('neb.newsID',$newsid);
+					}else{
+						$this->db->where('neb.newsID',$newsid);
+					}
+
+					$res = $this->db->get();
+					foreach ($res->result_array() as $v){
+						$newsid = $v['newsid'];
+						unset($v['newsid']);
+						$data[$newsid] = $v;
+					}
+				}
+			}else{
+				$this->db->from('news_extra_base_'.$year.' as neb');
+				$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
+				$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID');
+				if(is_array($newsid)){
+					$this->db->where_in('neb.newsID',$newsid);
+				}else{
+					$this->db->where('neb.newsID',$newsid);
+				}
+
+				$res = $this->db->get();
+				foreach ($res->result_array() as $v){
+					$newsid = $v['newsid'];
+					unset($v['newsid']);
+					$data[$newsid] = $v;
+				}
+			}
+			return $data;
 		}
 	}

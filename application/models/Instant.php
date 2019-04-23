@@ -13,75 +13,58 @@ class Instant extends CI_Model
     public function __construct()
     {
         parent::__construct();
-        $this->year = date('Y');
+        // $this->year = date('Y');
         $this->load->model('Section');
     }
 
-    public function GetInterestList()
-    {
+    public function GetInterestList(){
+		$day_before = $this->config->item('day_before');
+		$day = date('Y-m-d',strtotime("today - $day_before days"));
+		$year1 = date('Y',strtotime("today"));
+		$year2 = date('Y',strtotime($day));
+		
         $this->db = $this->load->database('instant',TRUE);
-    	$this->db->select($this->SectionID.' As section , rec_id as id,content,content2,content3,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo');
-    	$this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
+    	$this->db->select('st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, newstype as map_cat');
+    	$this->db->from("(SELECT * FROM `st_inews_main_$year1` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
+		$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
     	$this->db->order_by(rand(0,1), 'RANDOM');
     	$this->db->limit(100);
     	$res = $this->db->get();
         $data = $res->result_array();
         $list_id = array();
-        foreach ($data as $value) {
-           $list_id[] = $value['id'];
+        foreach ($data as $key => $value) {
+			$data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
+			$list_id[] = $value['id'];
+			
         }
         $this->SetImg($data,$list_id);
         // SetImg
     	return $data;
     }
 
-    public function GetDetail($id)
-    {
-        $this->load->model('News');
-
-        $s = $this->Section->Get_cat_list($this->SectionID);
-        $cat = array();
-        foreach ($s as $v) {
-            $cat[]=$v->mapping_catid;
-        }
-        $res = $this->Get_News($cat,$id);
-        // var_dump($res);
-        if(count($res)>0){
-            $map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
-            $res[0]['section'] = $this->SectionID;
-            $res[0]['cat'] = $map_cat[$res[0]['cat']];
-            
+    public function GetDetail($id){
+        $res = $this->Get_News($id);
+        
+        if(count($res)>0){ 
             $this->SetImg($res[0],array(),false);
-            
             if($res[0]['vdo']){
                 $res[0]['vdo'] = date('Ymd',strtotime($res[0]['datetime'])).'/'.$res[0]['vdo'];
             }
-            // $this->SetWriter($res[0]);
+			$content = array();
+			if(isset($res[0]['content'])){
+				$content[] = $res[0]['content'];
+			}
+			if(isset($res[0]['content2'])){
+				$content[] = $res[0]['content2'];
+			}
+			if(isset($res[0]['content3'])){
+				$content[] = $res[0]['content3'];
+			}
+			$res[0]['content'] = $content;			
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
-            return array(
-                'data'  =>$res[0]
-            );
+            return $res[0];
+           
         }
-    }
-
-    /**
-    *   设置SectionID
-    */
-    public function SetSectionId($SectionId)
-    {
-        $this->SectionID = $SectionId;
-        return $this;
-    }
-
-    /**
-    *   设置CatID
-    */
-    public function SetCatId($CatId)
-    {
-        if($this->CheckCat($CatId)){
-            $this->CatId = $CatId;
-        }
-        return $this;
     }
 
     public function Page($page){
@@ -90,40 +73,42 @@ class Instant extends CI_Model
     }
 
     private function GetImg($newID){
-        
-        $this->db = $this->load->database('instant',TRUE);
-        $this->db->select('i.photo_content_for_headline as path,i.type,i.news_main_id,i.caption_content_for_headline as caption,m.rec_id,m.datetime');
-        $this->db->from('st_inews_img_'.$this->year.' as i');
-        $this->db->join('st_inews_main_'.$this->year.' as m','i.news_main_id = m.news_main_id');
+        $day_before = $this->config->item('day_before');
+		$day = date('Y-m-d',strtotime("today - $day_before days"));
+		$years = array(date('Y',strtotime("today")),date('Y',strtotime("today - 1 years ")));
+		$data = array();
+		$this->db = $this->load->database('instant',TRUE);
+		foreach($years as $year){
+			$this->db->select('i.photo_content_for_headline as path,i.type,i.news_main_id,i.caption_content_for_headline as caption,m.rec_id,m.datetime');
+			$this->db->from('st_inews_img_'.$year.' as i');
+			$this->db->join('st_inews_main_'.$year.' as m','i.news_main_id = m.news_main_id');
 
-        if(is_array($newID)&&count($newID)>0)
-        {
-            $this->db->where_in('m.rec_id',$newID);
-                
-        }else if($newID!=null&&$newID!='')
-        {
-            $this->db->where('m.rec_id',$newID);
-        }
-        
-        $this->db->where_in('i.type',array(0,5));
-        $this->db->where_in('i.deleted',array(0,null));
-
-        
-        $this->db->order_by('type','desc');
-        $res = $this->db->get();
-        // var_dump($this->db->last_query());
-        $data = array();
-        foreach($res->result_array() as $value){
-            $time = strtotime($value['datetime']);
-            $data[$value['rec_id']][] = array(
-                'path' => date('Ymd',$time).'/'.$value['path'],
-                'isCover' => (($value['type'])?1:0)
-            );
-        }
+			if(is_array($newID)&&count($newID)>0)
+			{
+				$this->db->where_in('m.rec_id',$newID);
+					
+			}else if($newID!=null&&$newID!='')
+			{
+				$this->db->where('m.rec_id',$newID);
+			}
+			
+			$this->db->where_in('i.type',array(0,5));
+			$this->db->where_in('i.deleted',array(0,null));
+			$this->db->order_by('type','desc');
+			$res = $this->db->get();
+			
+			foreach($res->result_array() as $value){
+				$time = strtotime($value['datetime']);
+				$data[$value['rec_id']][] = array(
+					'path' => date('Ymd',$time).'/'.$value['path'],
+					'isCover' => (($value['type'])?1:0)
+				);
+			}
+		}
         return $data;
     }
-    public function SetImg(&$data,$Imgs,$is_list = true,$max = 3)
-    {
+    
+	public function SetImg(&$data,$Imgs,$is_list = true,$max = 3){
 
         if($is_list){
             if(count($Imgs)>0){
@@ -152,27 +137,11 @@ class Instant extends CI_Model
 
 
     /**
-    *   获取列表
-    */
-    public function GetList($page=0)
-    {
-        $MaxPage = 100;
-        $CatID = $this->GetCatID();
-        $Page = ($this->Page>0)?$this->Page-1:0;
-        $PageSize   = 100;
-
-        $count = $this->Get_All_News_list($CatID,$PageSize,$Page,true);
-
-        if($count>$MaxPage){
-            $count = $MaxPage;
-        }
-
-        if(($Page+1)>((int)($count/$PageSize)+((($count%$PageSize)>0)?1:0)))
-        {
-            $Page = 0;
-        }
-
-        $list = $this->Get_All_News_list($CatID,$PageSize,$Page,false);
+     *   获取列表
+     */
+	public function GetList($cat, $page=0){
+        $rows = $this->config->item('total_list_item');
+        $list = $this->Get_All_News_list($rows, $cat);
         $img_id_list = array();
 
         
@@ -181,180 +150,142 @@ class Instant extends CI_Model
                 $v['vdo'] = date('Ymd',strtotime($v['datetime'])).'/'.$v['vdo'];
             }
             $img_id_list[] = $v['id'];
-            $v['section'] = $this->SectionID;
-            $v['cat'] = $this->CatId;
-            $v['content'] = mb_substr($v['content'],0,50,'utf-8');
+            $v['content'] = mb_substr(strip_tags($v['content']),0,50,'utf-8');
             $list[$k] = $v;
-
-            $keyword = explode(';',$v['keyword']);
-            if($keyword[0]==''){
-                unset($keyword[0]);
-            }
-            $v['keyword'] = $keyword;
-
         }
         $this->SetImg($list,$img_id_list);
-        return array(
-            'PageNums' =>(int)($count/$PageSize)+((($count%$PageSize)>0)?1:0),
-            'data'  =>$list//this->list_cast($list)
-        );
+		return $list;
     }
 
-    public function Get_All_News_list($cat=-1,$PageSize=100,$Page=0,$count=FALSE,$keyword=array(),$rand = false)
-    {
-        
-        $this->db = $this->load->database('instant',TRUE);
-        if($cat){
-            // if(!$this->maxdate = $this->Get_Max_Date($cat,$this->year))
-            // {
-            //     $this->maxdate  = $this->Get_Max_Date($cat,($this->year-1));
-            // }
-            // $this->year = date('Y',strtotime($this->maxdate ));
-            // $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
+	
+	public function Get_All_News_list($rows, $cat = -1, $keyword=array(), $rand = false){
+
+        $total = $rows;
+        $day_before = $this->config->item('day_before');
+
+
+        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+       
+		$first_year = date('Y',strtotime("today"));//今年
+		$second_year = date('Y',strtotime($day));//最后一年
+      
+
+        $this->db = $this->load->database('instant',TRUE);  
+		
+
+        $this->db->select('datetime, main.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+        $this->db->from('st_inews_main_'.$first_year.' as main');
+        $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             
-            $this->db->select($this->SectionID.' As section , datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as cat');
-            $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
+
+        $this->db->where('main.status',1);
+        $this->db->where('publish_datetime >=',$day);
+		if($cat != -1)
+			$this->db->where('st.newstype',$cat);
 
 
+        if(count($keyword)>0){
+             $this->db->group_start();
+            foreach ($keyword as $v) {
+                $this->db->or_like('keyword',$v);
+            }
+            $this->db->group_end();
+        }
 
-            $this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'left');
-            // if(is_array($cat)&&count($cat)>0)
-            // {
-            //     $this->db->where_in('dhn.newsCat',$cat);
-                
-            // }else if($cat!=null&&$cat!='')
-            // {
-            //     $this->db->where('dhn.newsCat',$cat);
-            // }
-            
+        $this->db->order_by('publish_Datetime','desc');
+        if($rand){
+            $this->db->order_by(rand(0,1), 'RANDOM');
+        }
+        $this->db->limit($total);
+        $res = $this->db->get();
+        $list = $res->result_array();
+        //list第一个结果
+
+        if(($first_year!=$second_year)&&(count($list)<$total)){
+			
+            $this->db->select('datetime, main.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+            $this->db->from('st_inews_main_'.$first_year.' as main');
+            $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
+            $this->db->where('main.status',1);
+            $this->db->where('publish_datetime >=',$day);
             $this->db->where('st.newstype',$cat);
 
-            // $this->db->where()
+
             if(count($keyword)>0){
                  $this->db->group_start();
                 foreach ($keyword as $v) {
-                    // $this->db->or_like('adviertisement',$value.',','after');
-                    // $this->db->or_like('adviertisement',','.$value,'before');
                     $this->db->or_like('keyword',$v);
                 }
-                 $this->db->group_end();
+                $this->db->group_end();
             }
-           
-        
-            // $this->db->where('publishDatetime >=',$this->maxdate );
+
+            $this->db->order_by('publish_Datetime','desc');
             if($rand){
                 $this->db->order_by(rand(0,1), 'RANDOM');
             }
-            $this->db->order_by('tmp.publish_Datetime','desc');
-            // $this->db->order_by('tmp.rec_id','desc');
-            
-            if(!$count){
-            //     $this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
-                $this->db->limit($PageSize,$Page*$PageSize);
-                $res = $this->db->get();
-                return $res->result_array();
-                // var_dump($this->db->last_query());
-                // echo json_encode($res->result_array());
-            }else{
-                // $this->db->limit($PageSize,$Page*$PageSize);
-                return $this->db->count_all_results();
 
-                // echo $this->db->count_all_results();
-            }
+            $this->db->limit($total-count($list));
+            $res2 = $this->db->get();
+            $list2 = $res2->result_array();
+
+            $list = array_merge($list,$list2);
+			
         }
+        return $list;
     }
-
-    /**
-    *   检查cat是否属于当前栏目
-    */
-    private function CheckCat($cat){
-
-        $num = $this->Section->Check_cat_list($this->SectionID,$cat);
-
-        return ($num!=0);
-
-    }
-
-    /**
-    *   获取Catid
-    */
-    private function GetCatID()
-    {
-        $this->load->model('News_category_list');
-        return $this->News_category_list->Mapping($this->SectionID,$this->CatId)['CatID'];
-    }
+	
 
     /**
     *   獲取文章
     */
-    public function Get_News($cat=-1,$id=-1)
-    {
+    public function Get_News($id){
         $this->db = $this->load->database('instant',TRUE);
-        if($cat&&$id){
-
-            $this->db->select($this->SectionID.' As section , datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as cat');
-            $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
-
-
-
-            $this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'left');
-
-            
-            if(is_array($cat)&&count($cat)>0)
-            {
-                $this->db->where_in('st.newstype',$cat);
-                
-            }else if($cat!=null&&$cat!='')
-            {
-                $this->db->where('st.newstypet',$cat);
-            }
-            
-            // $this->db->where('dhn.status',1);
-            $this->db->where('tmp.rec_id',(int)$id);
-        
-            $res = $this->db->get();
-            return $res->result_array();
-        }else{
-            return false;
-        }
+        $day_before = $this->config->item('day_before');
+        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+		$this->db->select("year");
+		$this->db->from("st_inews");
+		$this->db->where('rec_id',$id);
+		$res = $this->db->get();
+		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
+		
+		if($year >= date('Y',strtotime($day))){
+			$year = $res->result_array()[0]['year'];
+			
+			$this->db->select('datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as map_cat');
+			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
+			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
+			$this->db->where('tmp.rec_id',(int)$id);
+			$res = $this->db->get();
+			return $res->result_array();
+		}
+		return array();     
     }
 
     /**
     *   获取相关新闻
     */
-    private function Set_related_news(&$data, $id,$keyword='')
-    {
+    private function Set_related_news(&$data, $id, $keyword=''){
         // $this->load->model('Cat');
         // var_dump($data);
-        $this->CatId = $data['cat'];
-        $catid = $this->GetCatID();
         $keyword = explode(';',$keyword);
         if($keyword[0]==''){
             unset($keyword[0]);
         }
-        $res = $this->Get_All_News_list($catid,5,0,false,$keyword,true);
+        $res = $this->Get_All_News_list(5, -1, $keyword, true);
         $imglist = array();
         $video_id_list = array();
+		
         $return_data = array();
-        
         foreach ($res as $key => $value) {
             if($value['id']==$id){
                 unset($res[$key]);
                 continue;
             }
-            // if($value['vdo']!=''&&$value['vdo']!=0){
-            //  $video_id_list[] = $value['vdo'];
-            // }
-            
             $return_data[] = array(
                 'id'=>$value['id'],
                 'title'=>$value['title'],
-                'section'=>$this->SectionID,
-                'cat'=>$data['cat'],
-                'publish_datetime'=>$data['publish_datetime'],
-                'keyword'=>$data['keyword']
-                // 'vdo'=>$data['vdo'],
-
+                'publish_datetime'=>$value['publish_datetime'],
+				'map_cat'=>$value['map_cat'],
             );
             $imglist[] = $value['id'];
         }
@@ -363,39 +294,38 @@ class Instant extends CI_Model
         }
         $this->SetImg($return_data,$imglist);
 
-        // if(count($video_id_list)>0){
-        //  $this->SetVideo($return_data,$video_id_list);
-        // }
+
         $data['related_news'] = $return_data;
-        // var_dump($return_data);
+
     }
 
     /**
     *   推荐文章获取
     */
-    public function Get_highlight_News_list($id)
-    {
-
+    public function Get_highlight_News_list($id){
+		$day_before = $this->config->item('day_before');
+		$day = date('Y-m-d',strtotime("today - $day_before days"));
+		$years = array(date('Y',strtotime("today")),date('Y',strtotime("today - 1 years ")));
+		$data = array();
         $this->db = $this->load->database('instant',TRUE);
-            
-        $this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,newstype as cat');
-        $this->db->from('(SELECT * FROM `st_inews_main_'.$this->year.'` WHERE `status` =1 and `publish_datetime` >= NOW() - INTERVAL 3 MONTH )  tmp');
+		foreach($years as $year){
+			$this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,newstype as map_cat');
+			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
 
-        $this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'left');
-        
-        $this->db->where_in('tmp.rec_id',$id);
+			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
+			
+			$this->db->where_in('tmp.rec_id',$id);
 
-        $res = $this->db->get();
+			$res = $this->db->get();
 
-        $data = $res->result_array();
+			
+			$data = array_merge($data,$res->result_array());
+		}
         $list_id = array();
-         $s = $this->Section->Get_cat_list($this->SectionID);
-        $map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
+         
         foreach ($data as $key => $value) {
            $list_id[] = $value['id'];
-           $data[$key]['section'] = $this->SectionID;
-           $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
-		   $data[$key]['content'] = mb_substr($value['content'],0,50,'utf-8');
+		   $data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
             if($value['vdo']!=''){
                 // var_dump($value['vdo']);
                 $data[$key]['vdo'] = date('Ymd',strtotime($value['datetime'])).'/'.$value['vdo'];
@@ -438,7 +368,7 @@ class Instant extends CI_Model
                 $v['vdo'] = date('Ymd',strtotime($v['datetime'])).'/'.$v['vdo'];
             }
             $img_id_list[] = $v['id'];
-            $v['content'] = mb_substr($v['content'],0,50,'utf-8');
+            $v['content'] = mb_substr(strip_tags($v['content']),0,50,'utf-8');
             $list1[$k] = $v;
         }
         $this->SetImg($list1,$img_id_list);

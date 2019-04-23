@@ -103,7 +103,7 @@ $config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
 $config['interest_list_path'] = 'json/interest/list_{page}.json';
-
+$config['highlight_path'] = 'json/highlight.json';
 
 
 

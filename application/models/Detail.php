@@ -71,9 +71,9 @@ class Detail extends CI_Model
     private function SetWriter(&$data)
     {
     	$this->load->model('Writer');
-    	$Writer = $this->Writer->GetWriter($data['writer']);
+    	$Writer = $this->Writer->GetWriter($data['newsID'],date('Y',strtotime($data['publish_datetime'])));
     	if(count($Writer)>0){
-    		$data['writer'] = $Writer[0];
+    		$data['writer'] = $Writer[$data['newsID']];
     	}
     }
     private function SetAbout(&$data)
