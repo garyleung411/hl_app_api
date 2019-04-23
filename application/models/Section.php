@@ -67,17 +67,6 @@ class Section extends CI_Model
             );
         }
         return $data;
-    }
-
-    /**
-    *   检查欄目下分類信息
-    */
-    public function Check_cat_list($sectionID,$CatID)
-    {
-        $this->load->model('News_category_list');
-        return $this->News_category_list->Check_Cat($sectionID,$CatID);
-        
-    }
-	
+    }	
 }
 ?>

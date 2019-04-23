@@ -20,6 +20,7 @@ class News_category_list extends CI_Model
         if($Section!='all')
         {
             $this->db->where('section_id',$Section);
+			$this->db->where('status',1);
         }
         
         $res = $this->db->get();
@@ -29,30 +30,40 @@ class News_category_list extends CI_Model
     *   獲取欄目下的類別
     *   Section 欄目id
     */
-    public function Check_Cat($Section,$Cat)
-    {
+    public function Check_Cat($Section,$Cat){
         $this->db->from($this->tablename);
         $this->db->where('section_id',$Section);
         $this->db->where('cat_id',$Cat);
-        return $this->db->count_all_results();
+		$this->db->where('status',1);
+        return $this->db->count_all_results() > 0;
     }
 
     /**
     *   返回Cat映射id
     *
     */
-    public function Mapping($Section,$CatID)
+    public function cat2mapcat($Section,$CatID)
     {
-        $this->db->select('mapping_catid as CatID');
+        $this->db->select('mapping_catid');
         $this->db->from($this->tablename);
         $this->db->where('section_id',$Section);
-        if(is_array($CatID)&&count($CatID)>0){
-            $this->db->where_in('cat_id',$CatID);
-        }else{
-            $this->db->where('cat_id',$CatID);
-        }
+		$this->db->where('status',1);
+		$this->db->where('cat_id',$CatID);
+        
         $res = $this->db->get();
-        return $res->result();
+        return $res->result_array()[0]['mapping_catid'];
+    }
+	
+	public function mapcat2cat($Section,$mapcat)
+    {
+        $this->db->select('cat_id');
+        $this->db->from($this->tablename);
+        $this->db->where('section_id',$Section);
+		$this->db->where('status',1);
+		$this->db->where('mapping_catid',$mapcat);
+        
+        $res = $this->db->get();
+        return $res->result_array()[0]['cat_id'];
     }
 }
 ?>
