@@ -292,7 +292,8 @@ class Instant extends CI_Model
     /**
     *   推荐文章获取
     */
-    public function Get_highlight_News_list($id){
+    public function Get_News_list_by_ID($id){
+		
 		$day_before = $this->config->item('day_before');
 		$day = date('Y-m-d',strtotime("today - $day_before days"));
 		$years = array(date('Y',strtotime("today")),date('Y',strtotime("today - 1 years ")));
@@ -322,6 +323,7 @@ class Instant extends CI_Model
             }
             unset($data[$key]['datetime']);
         }
+		
         $this->SetImg($data,$list_id,true,1);
         return $data;
     }
