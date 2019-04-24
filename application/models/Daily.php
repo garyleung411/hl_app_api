@@ -344,7 +344,7 @@ class Daily extends CI_Model
     /**
     *	推荐文章获取
     */
-    public function Get_highlight_News_list($id){
+    public function Get_News_list_by_ID($id){
 		
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$data = array();

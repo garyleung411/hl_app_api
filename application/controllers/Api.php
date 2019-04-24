@@ -155,47 +155,56 @@ class Api extends DefaultApi{
 		if(!$error){
 			$this->load->model('Section');
 			$cat_list = $this->Section->Get_cat_list($section);
-			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
+			
 			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
-			// var_dump($file);
 			$tmp = json_decode(file_get_contents($file),true);
 			foreach($tmp as $name => $list){
 				if($name != 'day'){
 					continue;
 				}
+			
+				$list_id = array();
+				$sort_list = array();
 				foreach($list as $k=>$v){
 					//top 10 only
 					$is_column = $v['catID']==9 && $section == 2;
+					
 					if($k>9){
 						break;
 					}
 					if($section == 1){
 						$v['newsId'] = $v['newsId'] - 500000;
+						$list_id[$section][] = $v['newsId'];
 					}
-					$video = isset($v['video_path_1'])&&!empty($v['video_path_1'])?$v['video_path_1']:"";
-					$writer = array();	
-					if(isset($v['columnistID'])&&$is_column){
-						// $writer = array('name'=>'test');
+					else{
+						if($is_column){
+							$list_id["5"][] = $v['newsId'];
+						}
+						else{
+							$list_id[$section][] = $v['newsId'];
+						}
 					}
-					
-					$output['data'][]= array(
-						'id' => $v['newsId'],
-						'title' => $v['title'],
-						'section' => $is_column?'5':$section,
-						'cat'	=> $is_column?'1':$map_cat[$v['catID']],
-						'publish_datetime'=>$v['publishDatetime'],
-						'vdo'=>$video,
-						'writer'=>$writer,//專欄顯示
-						'layout'=>"",//日報為空
-					);
+					$sort_list[$v['newsId']] = count($sort_list);
+				}
+				
+				$sections = array_keys($list_id);
+				$data =array();
+				foreach($sections as $s ){
+					$SectionName = $this->Section->Get_Section($s)[0]->section_name;
 					$this->load->model($SectionName);
-					// var_dump($output['data']);exit;
-					$this->$SectionName->SetImg($output['data'],array());
-					
-					
+					$list = $this->$SectionName->Get_News_list_by_ID($list_id[$s]);
+					foreach($list as $key=> $value ){
+						$value['section'] = $s.'';
+						if(isset($value['map_cat'])){
+							
+							$value['cat'] = $this->News_category_list->mapcat2cat($s, $value['map_cat']);
+						}
+						
+						$data[$sort_list[intval($value['id'])]] =  $value;
+					}
 				}
 			}
-			$output['data'] = $this->list_cast($output['data']);
+			$output['data'] = $this->list_cast($data);
 		}
 		else{
 			$output['result'] = 0;
