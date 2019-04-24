@@ -42,16 +42,15 @@ class Section extends CI_Model
     /**
     *   获取所有Section以及cat并关联
     */
-    public function Get_Section_list()
-    {
+    public function Get_Section_list(){
         $Section = $this->Get_Section();
         $Cat = $this->Get_cat_list();
         $data = array();
         foreach ($Section as $value) {
             $Catlist = array();
             foreach ($Cat as $key => $v) {
-                if($v->section_id==$value->section_id)
-                {
+                if($v->section_id==$value->section_id){
+					
                     $Catlist[] = array(
                         'CatID' => $v->cat_id,
                         'CatName'=>$v->cat_cname,
