@@ -427,45 +427,42 @@ class Columns extends CI_Model
     /**
     *	推荐文章获取
     */
-    public function Get_highlight_News_list($id)
-    {
+    public function Get_highlight_News_list($id)    {
 		 
-    	$this->db = $this->load->database('daily',TRUE);
-		
+    	$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
+		$data = array();
+		foreach($years as $year){
+			$this->db = $this->load->database('daily',TRUE);
+			$this->db->from('daily_hl_news as dhn');
+			$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, 'inner');
+			if(is_array($id)&&count($id)>0)
+			{
+				$this->db->where_in('dhn.dailyID',$id);
+				
+			}else if($id!=null&&$id!='')
+			{
+				$this->db->where('dhn.dailyID',$id);
+			}
 			
-		$this->db->from('daily_hl_news as dhn');
-		$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year, 'inner');
-		if(is_array($id)&&count($id)>0)
-		{
-			$this->db->where_in('dhn.dailyID',$id);
-			
-		}else if($id!=null&&$id!='')
-		{
-			$this->db->where('dhn.dailyID',$id);
+			$this->db->where('dhn.status',1);
+			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as map_cat');
+			$res = $this->db->get();
+			$data = array_merge($data, $res->result_array());
 		}
-
-		$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as cat');
-		$res = $this->db->get();
-		$data = $res->result_array();
         $list_id = array();
         $video_id_list = array();
-
-        $s = $this->Section->Get_cat_list($this->SectionID);
-		$map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
 		
         foreach ($data as $key => $value) {
             $list_id[] = $value['newsID'];
             unset($data[$key]['newsID']);
-            $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
-            $data[$key]['section'] = (string)$this->SectionID;
-            $data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
-
+			$data[$key]['publish_datetime'] = date('Y-m-d',strtotime($value['publish_datetime']));
+			$data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
             if($value['vdo']!=''&&$value['vdo']!=0){
 				$video_id_list[] = $value['vdo'];
 			}
         }
         $this->SetImg($data,$list_id,true,1);
-        if(count($video_id_list)>0){
+        if(count($video_id_list)>0){	
 			$this->SetVideo($data,$video_id_list);
 		}
 
