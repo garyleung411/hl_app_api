@@ -86,6 +86,7 @@ else{
 //select limit
 $config['day_before'] = 90;			//For date limit
 $config['column_day_before'] = 30;			//For date limit
+$config['total_popnews'] = 20;	
 $config['total_topic'] = 20;		
 $config['total_list_item'] = 100;	//topic instant
 

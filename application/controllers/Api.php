@@ -289,11 +289,15 @@ class Api extends DefaultApi{
 				if($data){
 					$data['section'] = $section;
 					if(isset($data['keyword'])){
+						
 						$keyword = explode(';',$data['keyword']);
 						if($keyword[0]==''){
 							unset($keyword[0]);
 						}
 						$data['keyword'] = $keyword;
+					}
+					else{
+						$data['keyword'] = array();
 					}
 					if(isset($data['map_cat'])){
 						$this->load->model('News_category_list');
@@ -301,6 +305,7 @@ class Api extends DefaultApi{
 					}
 					if($data["section"]==1){
 						$this->load->model("Topic");
+						
 						$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
 					}
 					$content = array("","","");
@@ -380,6 +385,9 @@ class Api extends DefaultApi{
 						// var_dump($section);exit;
 						$v["section"] = $section;
 						$v["cat"] = $cat;
+						if(isset($v["map_cat"])){
+							$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+						}
 						$list[$k] = $v;
 					}
 					$list = $this->list_cast($list);
@@ -482,9 +490,24 @@ class Api extends DefaultApi{
 		$this->Expired = 100;
 
 		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||isset($_GET['gen'])){
-
 			$this->load->model('Section');
 			$data = $this->Section->Get_Section_list();
+			foreach($data as $key => $value){
+				foreach($value['CatList'] as $k => $cat){
+					if($cat['CatID']==0){
+						$Catlist = array();
+						$Catlist[] = array(
+							'CatID' => $cat['CatID'],
+							'CatName'=>$cat['CatName'],
+							'MappingCatID'=>$cat['MappingCatID'],
+						);
+						$data[$key]['CatList'] = $Catlist;
+						
+						break;
+					}
+				}
+			}
+			
 			$section_list = json_encode(array(
 				'data'=>$data,
 				'result' => 1
