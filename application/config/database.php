@@ -228,12 +228,9 @@ else {
 	);
 	$db['popnews'] = array(
 		'dsn'	=> '',
-		// 'hostname' => '192.168.149.98',
-		// 'username' => 'video_rw',
-		// 'password' => 'fFxFpKSMNJb6yR5C',
-		'hostname' => '192.168.148.98',
-		'username' => 'video_ro',
-		'password' => 'D8ePM7YYR2Wq59tX',
+		'hostname' => '192.168.149.98',
+		'username' => 'video_rw',
+		'password' => 'fFxFpKSMNJb6yR5C',
 		'database' => 'video',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
