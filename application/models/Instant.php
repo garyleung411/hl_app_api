@@ -48,15 +48,7 @@ class Instant extends CI_Model
                 $res[0]['vdo'] = date('Ymd',strtotime($res[0]['datetime'])).'/'.$res[0]['vdo'];
             }
 			$content = array();
-			if(isset($res[0]['content'])){
-				$content[] = $res[0]['content'];
-			}
-			if(isset($res[0]['content2'])){
-				$content[] = $res[0]['content2'];
-			}
-			if(isset($res[0]['content3'])){
-				$content[] = $res[0]['content3'];
-			}
+			
 			$res[0]['content'] = $content;			
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
             return $res[0];

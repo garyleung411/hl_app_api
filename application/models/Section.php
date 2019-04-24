@@ -24,6 +24,7 @@ class Section extends CI_Model
             }
         }
 		$this->db->where('status',1);
+		$this->db->order_by('pos asc');
         $res = $this->db->get();
         return $res->result();
     }

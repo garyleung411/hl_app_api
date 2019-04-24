@@ -265,7 +265,6 @@ class Api extends DefaultApi{
 
 			$section_name = $res[0]->section_name;
 			$this->load->model($section_name);
-			// $this->$section_name->SetSectionId($section);
 			$this->Expired = $this->$section_name->Expired;
 			
 			
@@ -295,6 +294,17 @@ class Api extends DefaultApi{
 						$this->load->model("Topic");
 						$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
 					}
+					$content = array();
+					if(isset($data['content'])){
+						$content[] = $data['content'];
+					}
+					if(isset($data['content2'])){
+						$content[] = $data['content2'];
+					}
+					if(isset($data['content3'])){
+						$content[] = $data['content3'];
+					}
+					$data['content'] = $content;
 					
 					$data = $this->detail_cast($data);
 					if(count($data["related_news"])>0){
@@ -355,6 +365,7 @@ class Api extends DefaultApi{
 			$path = str_replace('.json','_'.(int)$page.'json',$path);
 			if(!($list=json_decode($this->Getfile($path)))||isset($_GET['gen'])){
 				$list = $this->$section_name->GetList($map_cat);
+				
 				if($list){
 					foreach($list as $k=>$v){
 						// var_dump($section);exit;
@@ -425,50 +436,34 @@ class Api extends DefaultApi{
 		
 	}
 	
-	public function column($columnid){
-		
-		$section = 5;
-		$cat = $columnid;
-		$page = 1;
+	public function columns($columnid){
 
-		$this->load->model('News_category_list');
-		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
-		if($is_cat){
-			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-			$this->load->model('Section');
-			$section_name = $this->Section->Get_Section($section)[0]->section_name;
-
-			$this->load->model($section_name);
-			$this->$section_name->page($page);
-			$this->Expired = $this->config->item("list_time");
-
-			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
-			$path = str_replace('{cat}',$cat,$path);
-			$path = str_replace('.json','_'.(int)$page.'json',$path);
+		$this->load->model('Columns');
+		$this->Expired = 1;
+		$path = str_replace('{id}',(int)$columnid,$this->config->item('columns_path'));
 
 
-			if(!($output=$this->Getfile($path))||isset($_GET['gen'])){
-				$list = $this->$section_name->GetList($section,$map_cat[0]->CatID,$columnid);
-				if($list){
-					foreach($list as $k=>$v){
-						// var_dump($list);exit;
-						$v["section"] = (string)$section;
-						$v["cat"] = $cat;
-						$list[$k] = $v;
-					}
-					$list = $this->list_cast($list);
-					$output = json_encode(array(
-						'PageNums' =>$page,
-						'data'=>$list,
-						'result' => 1
-					),JSON_UNESCAPED_SLASHES);
-					$this->Savefile($path,$output);
+		if(!($data=json_decode($this->Getfile($path),true))||isset($_GET['gen'])){
+
+			$data = $this->Columns->column($columnid,11);
+			if($data){
+				foreach($data['list'] as $k =>$v){
+					$data['list'][$k]['section'] = "5"; 
+				}
+				$data['list'] = $this->list_cast($data['list']);
+				if(count($data['list'])>0){
+					$this->Savefile($path,json_encode($data, JSON_UNESCAPED_SLASHES));
 				}
 			}
-
-		}else{
-			$this->show_error();
+			else{
+				$this->show_error();
+			}
+			// var_dump($data['list']);exit;
 		}
+		$output = json_encode(array(
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 
 	}
@@ -514,7 +509,7 @@ class Api extends DefaultApi{
 			"publish_datetime"		=> "",
 			"vdo"					=> "",
 			"imgs"					=> array(),
-			"writer"				=> array(),
+			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
 		);
 		
@@ -539,7 +534,7 @@ class Api extends DefaultApi{
 			"publish_datetime"		=> "",
 			"vdo"					=> "",
 			"imgs"					=> array(),
-			"writer"				=> array(),
+			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
 			"keyword"				=> array(),
 			"related_news"			=> array(),
