@@ -32,6 +32,7 @@ class Columns extends CI_Model
 			if($v['vdo']!=''&&$v['vdo']!=0){
 				$video_id_list[] = $v['vdo'];
 			}
+			$v['publish_datetime'] = date('Y-m-d',strtotime($v['publish_datetime']));
 			$v['content'] = mb_substr(strip_tags($v['content']),0,50,'utf-8');
 			$list[$k] = $v;
 		}
@@ -381,7 +382,7 @@ class Columns extends CI_Model
 		
 		if(count($res)>0){
 			$this->SetImg($res,array(),false);
-			
+			$res[0]['publish_datetime'] = date('Y-m-d',strtotime($res[0]['publish_datetime']));
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
 				$this->SetVideo($res[0]);
 			}else{
