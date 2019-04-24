@@ -294,15 +294,15 @@ class Api extends DefaultApi{
 						$this->load->model("Topic");
 						$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
 					}
-					$content = array();
+					$content = array("","","");
 					if(isset($data['content'])){
-						$content[] = $data['content'];
+						$content[0] = $data['content'];
 					}
 					if(isset($data['content2'])){
-						$content[] = $data['content2'];
+						$content[1] = $data['content2'];
 					}
 					if(isset($data['content3'])){
-						$content[] = $data['content3'];
+						$content[2] = $data['content3'];
 					}
 					$data['content'] = $content;
 					
