@@ -37,7 +37,6 @@ class Highlight extends CI_Model  {
 			{
 				$section_name = $section_info[0]->section_name;
 				$this->load->model($section_name);
-				// $this->$section_name->SetSectionId($key);
 				$tmp = $this->$section_name->Get_highlight_News_list($value);
 				foreach($tmp as $k => $v) {
 					$tmp[$k]['section'] = $section_info[0]->section_id;

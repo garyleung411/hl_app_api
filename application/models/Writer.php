@@ -10,7 +10,21 @@
 			$this->db = $this->load->database('daily',TRUE);
 			
 		}
-		public function GetWriter($newsid,$year){
+		// public function GetWriter($creatId)
+		// {
+		// 	$this->db->select('columnistID,writer,trait');
+		// 	$this->db->from('news_writer_list');
+		// 	$this->db->where('status',1);
+  //           if(is_array($creatId)&&count($creatId)>1){
+  //               $this->db->where_in('columnistID',$creatId);
+  //           }else{
+  //               $this->db->where('columnistID',$creatId);
+  //           }
+		// 	$res = $this->db->get();
+		// 	return $res->result();
+		// }
+		public function GetWriter($newsid,$year)
+		{
 			$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,neb.newsid');
 			$data = array();
 			if(is_array($year))
@@ -51,5 +65,19 @@
 				}
 			}
 			return $data;
+		}
+		public function GetWriter_by_ID($id)
+		{
+
+			$this->db->select('columnistID,columnTitle,writer,trait');
+			$this->db->from('news_writer_list');
+			if(is_array($id)){
+				$this->db->where_in('columnistID',$id);
+			}else{
+				$this->db->where('columnistID',$id);
+			}
+			$this->db->where('status',1);
+			$res = $this->db->get();
+			return $res->result_array();
 		}
 	}

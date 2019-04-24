@@ -85,6 +85,7 @@ else{
 
 //select limit
 $config['day_before'] = 90;			//For date limit
+$config['column_day_before'] = 30;			//For date limit
 $config['total_topic'] = 20;		
 $config['total_list_item'] = 100;	//topic instant
 
@@ -104,7 +105,7 @@ $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
 $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
-
+$config['columns_path'] = 'json/columns/list_{id}.json';
 
 
 //app_config
@@ -122,7 +123,7 @@ $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_highlight'] = 		"highlight";
 $app_config['api']['api_detail'] =			"detail/[section]/[id]/[!cat]";
-$app_config['api']['api_column_list'] =		"column/[columnid]";
+$app_config['api']['api_column_list'] =		"columns/[columnid]";
 $app_config['api']['api_list'] =			"topic_list/[cat]";//新闻列表
 $app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
 $app_config['api']['api_section_cat'] =		"section/";//栏目分类列表

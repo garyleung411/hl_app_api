@@ -5,25 +5,13 @@ class Columns extends CI_Model
 
 	public $Expired = 1;
 	public $Page = 1;
-	public $year;
-	public $maxdate;
 	
-    public function __construct()
-    {
-		$this->year = date('Y');
+	
+    public function __construct(){
+		
     	$this->load->model('Section');
     	// $this->DetailPath = $this->config->item('detail_path');
     }
-
-    /**
-    *	设置SectionID
-    */
-    public function SetSectionId($SectionId)
-    {
-		$this->SectionID = $SectionId;
-		return $this;
-    }
-    
    
     public function Page($page){
     	$this->Page = $page;
@@ -33,12 +21,10 @@ class Columns extends CI_Model
     /**
     *	获取列表
     */
-    public function GetList($section,$CatID,$new=1)
-    {
+    public function GetList($CatID,$new=1){
 
-		$PageSize	= 100;
-		$list = $this->Get_All_News_list($CatID,$PageSize,false,($new==1));
 		
+		$list = $this->Get_All_News_list($CatID,-1,($new==1));
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
@@ -46,12 +32,10 @@ class Columns extends CI_Model
 			if($v['vdo']!=''&&$v['vdo']!=0){
 				$video_id_list[] = $v['vdo'];
 			}
-			$v['section'] = $section;
-			$v['cat'] = $CatID;
-			$v['content'] = mb_substr($v['content'],0,50,'utf-8');
+			$v['content'] = mb_substr(strip_tags($v['content']),0,50,'utf-8');
 			$list[$k] = $v;
-
 		}
+
 		$this->SetImg($list,$img_id_list);
 		if(count($video_id_list)>0){
 			$this->SetVideo($list,$video_id_list);
@@ -63,8 +47,7 @@ class Columns extends CI_Model
 	/**
 	*	设置图片
 	*/
-    public function SetImg(&$data,$Imgs,$is_list = true,$max=3)
-    {
+    public function SetImg(&$data,$Imgs,$is_list = true,$max=3){
 		if(count($Imgs)==0&&count($data)>0){
 			$Imgs =array();
 			foreach ($data as $value) {
@@ -83,8 +66,6 @@ class Columns extends CI_Model
 					if(!isset($value['newsID'])){
 						$value['newsID'] = $this->Get_newsID_by_ID($value['id']);
 					}
-					
-					$this->year = date('Y',strtotime($value['publish_datetime'] ));
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
@@ -126,9 +107,6 @@ class Columns extends CI_Model
 	    }
     }
 
-
-
-	
     /**
 	*	设置视频
 	*/
@@ -169,103 +147,147 @@ class Columns extends CI_Model
 		return isset($res->result_array()[0]['newsID'])?$res->result_array()[0]['newsID']:-1;
 	}
 	
-	private function Get_All_News_list($cat=-1,$PageSize=10,$count=FALSE,$new=true)
-    {
-		
+	private function Get_All_News_list($cat=-1,$PageSize = -1,$new=true){
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat){
-			if(!$this->maxdate = $this->Get_Max_Date($cat,$this->year))
-			{
-				$this->maxdate  = $this->Get_Max_Date($cat,($this->year-1));
-			}
-			$this->year = date('Y',strtotime($this->maxdate ));
-			// $this->db->select('nm.title,nm.newsID as id,nm.content,nm.content2,nm.content3,nm.publishDatetime,nm.keyword,nm.videoID,nm.createdBy,dhn.newsCat');
-			
-			$this->db->from('daily_hl_news as dhn');
-			$this->db->join('news_main_'.date('Y',strtotime($this->maxdate )).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year, 'inner');
-			// $this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year.', \'inner\'', 'right');
-			if(is_array($cat)&&count($cat)>0)
-			{
-				$this->db->where_in('dhn.newsCat',$cat);
-				
-			}else if($cat!=null&&$cat!='')
-			{
-				$this->db->where('dhn.newsCat',$cat);
-			}
-			$this->db->where('nm.createdBy !=',0);
-			$this->db->where('dhn.status',1);
-			
+			$year = date('Y');//当年
+			$date = date('Y-m-d');//当天
+			$day_before = $this->config->item("column_day_before");
+			$date_second = date('Y-m-d', strtotime("-$day_before day"));
+			$year_second = date('Y',strtotime($date_second));
 			if($new){
-				$this->db->where('publishDatetime >=',$this->maxdate );
-			}else{
-				$this->db->where('publishDatetime <',$this->maxdate );
-			}
-			// if($rand){
-   //              $this->db->order_by(rand(0,1), 'RANDOM');
-   //          }
-	
-			if(!$count){
-				$this->db->select('1 as layout,dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
-				$this->db->limit($PageSize);
+				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+				
+				$this->db->from('daily_hl_news as dhn');
+				$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
+				if(is_array($cat)&&count($cat)>0)
+				{
+					$this->db->where_in('dhn.newsCat',$cat);
+					
+				}else if($cat!=null&&$cat!='')
+				{
+					$this->db->where('dhn.newsCat',$cat);
+				}
+				// $this->db->where('nm.createdBy !=',0);
+				$this->db->where('dhn.status',1);
+
+				$this->db->where('publishDatetime >=',date('Y-m-d') );
+				if($PageSize != -1){
+					$this->db->limit($PageSize);
+				}
 				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				return $res->result_array();
-			}else{
-				return $this->db->count_all_results();
+
 			}
+			else{
+				//其它
+				if($year_second!=$year)
+				{
+					$year = array($year,$year_second);
+				}
+				if(is_array($year)){
+					$return_data = array();
+					$num = 0;
+					foreach ($year as $value) {
+						$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+						//layout默认1
+						$this->db->from('daily_hl_news as dhn');
+						$this->db->join('news_main_'.$value.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$value, ' inner');
+						if(is_array($cat)&&count($cat)>0)
+						{
+							$this->db->where_in('dhn.newsCat',$cat);
+							
+						}else if($cat!=null&&$cat!='')
+						{
+							$this->db->where('dhn.newsCat',$cat);
+						}
+						$this->db->where('dhn.status',1);
+
+						$this->db->where('publishDatetime <',$date );
+						$this->db->where('publishDatetime >=',$date_second);
+						
+						if($PageSize != -1){
+							$this->db->limit($PageSize-$num);
+						}
+						
+						$this->db->order_by('nm.publishDatetime','desc');
+						$res = $this->db->get();
+						$data = $res->result_array();
+						// var_dump($this->db->last_query());
+						$return_data = array_merge($return_data,$data);
+						// var_dump($data);
+						$num = count($data);
+
+						if($num>=$PageSize)
+						{
+							break;
+						}
+
+					}
+					return $return_data;
+
+				}
+				else{
+
+					$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
+				
+					$this->db->from('daily_hl_news as dhn');
+					$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
+					if(is_array($cat)&&count($cat)>0)
+					{
+						$this->db->where_in('dhn.newsCat',$cat);
+						
+					}else if($cat!=null&&$cat!='')
+					{
+						$this->db->where('dhn.newsCat',$cat);
+					}
+					// $this->db->where('nm.createdBy !=',0);
+					$this->db->where('dhn.status',1);
+
+					$this->db->where('publishDatetime <',$date );
+					$this->db->where('publishDatetime >=',$date_second);
+
+					if($PageSize != -1){
+						$this->db->limit($PageSize-$num);
+					}
+
+					$this->db->order_by('nm.publishDatetime','desc');
+					$res = $this->db->get();
+					return $res->result_array();
+
+				}
+			}
+				
 		}
     }
 	
-	
-	
-	private function Get_Max_Date($cat,$year)
-	{
-		$this->db = $this->load->database('daily',TRUE);
-		$this->db->select_max('nm.publishDatetime');
+	private function GetImg($newID){
+		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
+		$imgs = array();
+		foreach($years as $year){
+			$this->db = $this->load->database('daily',TRUE);
+			$this->db->select('img.path,info.isCover,img.newsID,info.caption');
+			$this->db->from('news_img_src_'.$year.' as img');
+			$this->db->join('daily_hl_news as dhn',"dhn.newsID = img.newsID AND dhn.year = '$year'", 'inner');
+			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.imgID', 'left');
+			if(is_array($newID)&&count($newID)>0)
+			{
+				$this->db->where_in('img.newsID',$newID);
+					
+			}else if($newID!=null&&$newID!='')
+			{
+				$this->db->where('img.newsID',$newID);
+			}
 			
-		$this->db->from('daily_hl_news as dhn');
-		$this->db->join("news_main_$year as nm",'dhn.newsID = nm.newsID and dhn.year = '.$year, 'inner');
-			
-		if(is_array($cat)&&count($cat)>0)
-		{
-			$this->db->where_in('dhn.newsCat',$cat);
-			
-		}else if($cat!=null&&$cat!='')
-		{
-			$this->db->where('dhn.newsCat',$cat);
+			$this->db->where('img.status',1);
+			$res = $this->db->get();
+			$imgs = array_merge($imgs, $res->result_array());
 		}
-			
-		$this->db->where('dhn.status',1);
-		$this->db->where('nm.createdBy !=',0);
-		
-		$res = $this->db->get();
-		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
+		return $imgs;
 	}
 	
-	private function GetImg($newID)
-	{
-		
-		$this->db = $this->load->database('daily',TRUE);
-		$this->db->select('img.path,info.isCover,img.newsID,info.caption');
-		$this->db->from('news_img_src_'.$this->year.' as img');
-		$this->db->join('news_img_info_'.$this->year.' as info','info.imgID = img.imgID', 'left');
-		if(is_array($newID)&&count($newID)>0)
-		{
-			$this->db->where_in('img.newsID',$newID);
-				
-		}else if($newID!=null&&$newID!='')
-		{
-			$this->db->where('img.newsID',$newID);
-		}
-		
-		$this->db->where('img.status',1);
-		
-		$res = $this->db->get();
-		return $res->result_array();
-	}
-	
-	private function GetNewsVideo($id)
-	{
+	private function GetNewsVideo($id){
 		$this->db = $this->load->database('popnews',TRUE);
 		$this->db->select('id,headline,video_path,cover_path');
 		
@@ -281,23 +303,10 @@ class Columns extends CI_Model
 		return $res->result_array();
 	}
 	
-	 /**
-    *	检查cat是否属于当前栏目
-    */
-    private function CheckCat($cat){
-
-    	$num = $this->Section->Check_cat_list($this->SectionID,$cat);
-
-    	return ($num!=0);
-
-    }
-	
-
     /**
     *	获取作者
     */
-    private function SetWriter(&$data)
-    {
+    private function SetWriter(&$data){
     	$this->load->model('Writer');
     	$Writer = $this->Writer->GetWriter($data['newsID'],date('Y',strtotime($data['publish_datetime'])));
     	if(count($Writer)>0){
@@ -307,8 +316,7 @@ class Columns extends CI_Model
     /**
     *	获取作者列表
     */
-    private function SetWriters(&$data)
-    {
+    private function SetWriters(&$data){
     	$this->load->model('Writer');
     	$newsID = array();
     	$date = array();
@@ -336,58 +344,42 @@ class Columns extends CI_Model
     /**
     *	获取相关新闻
     */
-	private function Set_related_news(&$data, $id)
-    {
-    	$res = $this->Get_All_News_list($data['mapcat'],5,0,false,false);
-    	$imglist = array();
-		$video_id_list = array();
+	private function Set_related_news(&$data, $id){
+    	$res = $this->Get_News_By_column($data['writer']['columnistID'],5,true);
     	$return_data = array();
-		
-    	foreach ($res as $key => $value) {
-    		if($value['id']==$id){
-    			unset($res[$key]);
-    			continue;
-    		}
-			
-    		$return_data[] = array(
-    			'id'=>$value['id'],
-    			'title'=>$value['title'],
-    			'section'=>(string)$this->SectionID,
-    			'cat'=>$data['cat'],
-				'publish_datetime'=>$data['publish_datetime'],
-				// 'vdo'=>$data['vdo'],
-
-    		);
-    		$imglist[] = $value['newsID'];
-    	}
+    	if($res){//存在作者
+			$imglist = array();
+			foreach ($res as $key => $value) {
+				if($value['id']==$data['id'])
+				{
+					continue;
+				}
+				$imglist[] = $value['newsID'];
+				$return_data[] = array(
+	    			'id'=>$value['id'],
+	    			'title'=>$value['title'],
+	    			
+	    			'content' =>  mb_substr(strip_tags($value['content']),0,50,'utf-8'),
+					'publish_datetime'=>$value['publish_datetime']
+				);
+			}
+		}
+    	$this->SetImg($return_data,$imglist);
     	if(count($return_data)==5){
     		unset($return_data[4]);
     	}
-    	$this->SetImg($return_data,$imglist);
-
-		// if(count($video_id_list)>0){
-		// 	$this->SetVideo($return_data,$video_id_list);
-		// }
     	$data['related_news'] = $return_data;
     }
 
-    public function GetDetail($id)
-    {
+    public function GetDetail($id){
     	// $this->load->model('Section');
     	$this->load->model('News');
 
-    	$s = $this->Section->Get_cat_list($this->SectionID);
 		$cat = array(9);
-		foreach ($s as $v) {
-			$cat[]=$v->mapping_catid;
-		}
-		$res = $this->Get_News($cat,$id);
+		
+		$res = $this->Get_News($id);
 		
 		if(count($res)>0){
-			// $map_cat = array_combine (array_column($s,'mapping_catid'), array_column($s,'cat_id'));
-			$res[0]['section'] = $this->SectionID;
-			$res[0]['cat'] = 9;
-			
 			$this->SetImg($res,array(),false);
 			
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
@@ -397,13 +389,8 @@ class Columns extends CI_Model
 			}
 			$this->SetWriter($res[0]);
 			$this->Set_related_news($res[0],$id);
-			
-			return array(
-				'data'	=>$res[0]
-			);
+			return $res[0];
 		}
-		// return false;
-    	
     }
 
     
@@ -411,32 +398,30 @@ class Columns extends CI_Model
     /**
 	*	獲取文章
 	*/
-    public function Get_News($cat=-1,$id=-1)
-    {
+    public function Get_News($id){
     	$this->db = $this->load->database('daily',TRUE);
-		if($cat&&$id){
-			$this->db->select('1 as layout,nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as mapcat,createdBy as writer');
+		$this->db->select("year");
+		$this->db->from("daily_hl_news");
+		$this->db->where('dailyID',$id);
+		$res = $this->db->get();
+		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
+		if($year >= date('Y',strtotime('today - 1 years '))){
+			
+			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as map_cat,createdBy as writer');
 
 			$this->db->from('daily_hl_news as dhn');
-			$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID', 'right');
+			$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID AND dhn.year = '.$year, 'inner');
 			
-			if(is_array($cat)&&count($cat)>0)
-			{
-				$this->db->where_in('dhn.newsCat',$cat);
-				
-			}else if($cat!=null&&$cat!='')
-			{
-				$this->db->where('dhn.newsCat',$cat);
-			}
-			$this->db->where('nm.createdBy !=',0);
+		
+			// $this->db->where('nm.createdBy !=',0);
 			$this->db->where('dhn.status',1);
 			$this->db->where('dhn.dailyID',(int)$id);
 		
 			$res = $this->db->get();
+			// var_dump($this->db->last_query());
 			return $res->result_array();
-		}else{
-			return false;
 		}
+		return array(); 
     }
 
     /**
@@ -444,13 +429,12 @@ class Columns extends CI_Model
     */
     public function Get_highlight_News_list($id)
     {
-		
+		 
     	$this->db = $this->load->database('daily',TRUE);
 		
 			
 		$this->db->from('daily_hl_news as dhn');
 		$this->db->join('news_main_'.$this->year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year, 'inner');
-		// $this->db->join('news_main_'.date('Y',strtotime($date)).' as nm','dhn.newsID = nm.newsID and dhn.year = '.$this->year.', \'inner\'', 'right');
 		if(is_array($id)&&count($id)>0)
 		{
 			$this->db->where_in('dhn.dailyID',$id);
@@ -460,7 +444,7 @@ class Columns extends CI_Model
 			$this->db->where('dhn.dailyID',$id);
 		}
 
-		$this->db->select('1 as layout,dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as cat');
+		$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as cat');
 		$res = $this->db->get();
 		$data = $res->result_array();
         $list_id = array();
@@ -474,7 +458,7 @@ class Columns extends CI_Model
             unset($data[$key]['newsID']);
             $data[$key]['cat'] = $map_cat[$data[$key]['cat']];
             $data[$key]['section'] = (string)$this->SectionID;
-            $data[$key]['content'] = mb_substr($value['content'],0,50,'utf-8');
+            $data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
 
             if($value['vdo']!=''&&$value['vdo']!=0){
 				$video_id_list[] = $value['vdo'];
@@ -482,11 +466,83 @@ class Columns extends CI_Model
         }
         $this->SetImg($data,$list_id,true,1);
         if(count($video_id_list)>0){
-        	// var_dump(123);	
 			$this->SetVideo($data,$video_id_list);
 		}
 
         return $data;
+    }
+
+    public function column($WriterId,$page=11){
+    	$this->load->model('Writer');
+    	$data = $this->Writer->GetWriter_by_ID($WriterId);
+    	if($data){//存在作者
+			
+    		$list = $this->Get_News_By_column($WriterId,$page);
+    		if($list)
+    		{
+    			$imglist = array();
+				// var_dump($list);exit;
+    			foreach ($list as $key => $value) {
+    				$imglist[] = $value['newsID'];
+    				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
+    			}
+				
+    			
+    		}
+    		$this->SetImg($list,$imglist);
+			$data[0]['list'] = $list;
+			return $data[0];
+    	}
+    	return false;
+
+    }
+
+    private function Get_News_By_column($columnid,$page=10,$rand=false){
+    	// 11
+    	$this->db = $this->load->database('daily',TRUE);
+    	$year = date('Y');
+    	$this->db->select("dhn.dailyID  as id,nm.title,nm.content,nm.publishDatetime as publish_datetime,nm.status,nm.keyword,nm.videoID,nm.newsID,dhe.columnistID");
+    	$this->db->from('news_main_'.$year.' as nm');
+    	$this->db->join('news_extra_base_'.$year.' as neb','neb.newsID = nm.newsID');
+    	$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
+    	$this->db->join('daily_hl_news as dhn','dhn.newsID = nm.newsID AND dhn.year = '.$year);
+
+    	$this->db->where('dhe.columnistID',$columnid);
+    	$this->db->where('nm.status',1);
+		if($rand){
+    			$this->db->order_by(rand(0,1), 'RANDOM');
+	    	}
+		else{
+			$this->db->order_by('nm.publishDatetime','desc');
+		}
+		
+    	$this->db->limit($page);
+    	$res = $this->db->get();
+    	$data = $res->result_array();
+		
+    	if(count($data)<$page)
+    	{
+    		$year = $year - 1;
+    		$this->db->select("dhn.dailyID as id,nm.title,nm.content,nm.publishDatetime as publish_datetime,nm.status,nm.keyword,nm.videoID,nm.newsID,dhe.columnistID");
+	    	$this->db->from('news_main_'.$year.' as nm');
+	    	$this->db->join('news_extra_base_'.$year.' as neb','neb.newsID = nm.newsID');
+	    	$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
+	    	$this->db->join('daily_hl_news as dhn','dhn.newsID = nm.newsID AND dhn.year = '.$year);
+	    	$this->db->where('dhe.columnistID',$columnid);
+	    	$this->db->where('nm.status',1);
+	    	if($rand){
+    			$this->db->order_by(rand(0,1), 'RANDOM');
+	    	}
+			else{
+				$this->db->order_by('nm.publishDatetime','desc');
+			}
+	    	$this->db->limit($page-count($data));
+	    	$res = $this->db->get();
+	    	$data = array_merge($data,$res->result_array());
+    	}
+    	return $data;
+
+
     }
 
 }

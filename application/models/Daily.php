@@ -154,7 +154,7 @@ class Daily extends CI_Model
 		return isset($res->result_array()[0]['newsID'])?$res->result_array()[0]['newsID']:-1;
 	}
 	
-	private function Get_All_News_list($PageSize, $cat,$Page=0,$count=false,$rand=false){
+	private function Get_All_News_list($PageSize, $cat = -1,$Page=0,$count=false,$rand=false){
 		$maxdate = null;
 		$year = date('Y', strtotime('today'));
     	$this->db = $this->load->database('daily',TRUE);
