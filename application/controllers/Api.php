@@ -359,7 +359,11 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function list($section, $cat, $page =1){
+	public function list($section, $cat = -1, $page =1){
+		if($cat == -1 && $section != '3'){
+			$this->show_error();
+		}
+		
 		if($section == "topic"){
 			$this->topic_list($cat);
 			return;
