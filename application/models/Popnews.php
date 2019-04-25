@@ -53,6 +53,7 @@ class Popnews extends CI_Model{
 			}
 		}
 		$this->db->where('catid != ','');
+		$this->db->where('video_status','1');
 		$this->db->order_by('publish_datetime','desc');
 		$this->db->limit($PageSize,$Page*$PageSize);
 		$res = $this->db->get();

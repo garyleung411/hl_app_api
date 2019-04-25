@@ -494,17 +494,17 @@ class Api extends DefaultApi{
 			$data = $this->Section->Get_Section_list();
 			foreach($data as $key => $value){
 				foreach($value['CatList'] as $k => $cat){
-					if($cat['CatID']==0){
-						$Catlist = array();
-						$Catlist[] = array(
-							'CatID' => $cat['CatID'],
-							'CatName'=>$cat['CatName'],
-							'MappingCatID'=>$cat['MappingCatID'],
-						);
-						$data[$key]['CatList'] = $Catlist;
+					// if($cat['CatID']==0){
+						// $Catlist = array();
+						// $Catlist[] = array(
+							// 'CatID' => $cat['CatID'],
+							// 'CatName'=>$cat['CatName'],
+							// 'MappingCatID'=>$cat['MappingCatID'],
+						// );
+						// $data[$key]['CatList'] = $Catlist;
 						
-						break;
-					}
+						// break;
+					// }
 				}
 			}
 			

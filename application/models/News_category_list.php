@@ -17,12 +17,11 @@ class News_category_list extends CI_Model
     public function Get_Cat($Section)
     {
         $this->db->from($this->tablename);
-        if($Section!='all')
-        {
+        if($Section!='all'){
             $this->db->where('section_id',$Section);
 			$this->db->where('status',1);
         }
-        
+        $this->db->order_by('cat_id','asc');
         $res = $this->db->get();
         return $res->result();
     }
