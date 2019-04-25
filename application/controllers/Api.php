@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends DefaultApi{
+	
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
@@ -362,6 +363,9 @@ class Api extends DefaultApi{
 	public function list($section, $cat = -1, $page =1){
 		if($cat == -1 && $section != '3'){
 			$this->show_error();
+		}
+		else if($cat == -1 && $section == '3'){
+			$cat = 1;
 		}
 		
 		if($section == "topic"){
