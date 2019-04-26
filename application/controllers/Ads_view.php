@@ -19,8 +19,10 @@ class Ads_view extends DefaultApi{
 				
 				"ads"=>$ads,
 				"ads_imgs"=>$ads_imgs,
+				"hl_app_img_url"=>$this->config->item("hl_app_img_url"),
+				
 			);
-			var_dump($ads_imgs);
+			// var_dump($ads_imgs);
 			$this->load->view('ads/ads',$data);
 		}
 		
