@@ -311,13 +311,13 @@ class Api extends DefaultApi{
 					}
 					$content = array("","","");
 					if(isset($data['content'])){
-						$content[0] = strip_tags(str_replace('<br />',"\n",$data['content']));
+						$content[0] = str_replace('<br />',"\n",$data['content']);
 					}
 					if(isset($data['content2'])){
-						$content[1] = strip_tags(str_replace('<br />',"\n",$data['content2']));
+						$content[1] = str_replace('<br />',"\n",$data['content2']);
 					}
 					if(isset($data['content3'])){
-						$content[2] =strip_tags(str_replace('<br />',"\n",$data['content3']));
+						$content[2] =str_replace('<br />',"\n",$data['content3']);
 					}
 					$data['content'] = $content;
 					
