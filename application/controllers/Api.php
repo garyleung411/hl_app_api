@@ -289,7 +289,7 @@ class Api extends DefaultApi{
 				
 				if($data){
 					$data['section'] = $section;
-					if(isset($data['keyword'])){
+					if(isset($data['keyword'])&&$data['keyword']!=''){
 						
 						$keyword = explode(';',$data['keyword']);
 						if($keyword[0]==''){
@@ -376,7 +376,7 @@ class Api extends DefaultApi{
 		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
 		if($is_cat){
 			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-			// var_dump($map_cat);
+			$map_cat = ($map_cat==-1)?0:$map_cat;
 			$this->load->model('Section');
 			$section_name = $this->Section->Get_Section($section)[0]->section_name;
 			$this->load->model($section_name);
@@ -547,16 +547,19 @@ class Api extends DefaultApi{
 			"section"				=> "",
 			"cat"					=> "",
 			"publish_datetime"		=> "",
-			"vdo"					=> "",
+			"vdo"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
 		);
-		
 		foreach($data as $i => $d){
 			$tmp = $list;
 			foreach($tmp as $k => $v){
-				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v;
+				if($k=='vdo'&&isset($d[$k])&&is_string($d[$k]))
+				{
+					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
+				}
 			}
 			$return_data[] = $tmp;
 		}
@@ -572,7 +575,7 @@ class Api extends DefaultApi{
 			"section"				=> "",
 			"cat"					=> "",
 			"publish_datetime"		=> "",
-			"vdo"					=> "",
+			"vdo"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
@@ -584,7 +587,11 @@ class Api extends DefaultApi{
 		
 		$tmp = $detail;
 		foreach($tmp as $k => $v){
-			$tmp[$k] = isset($data[$k])?$data[$k]:$v; 
+			$tmp[$k] = isset($data[$k])?$data[$k]:$v;
+			if($k=='vdo'&&isset($data[$k])&&is_string($data[$k]))
+			{
+				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
+			}
 		}
 		$return_data = $tmp;
 		return $return_data;
