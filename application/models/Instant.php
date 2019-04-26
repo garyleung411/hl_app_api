@@ -21,7 +21,7 @@ class Instant extends CI_Model
 		$year2 = date('Y',strtotime($day));
 		
         $this->db = $this->load->database('instant',TRUE);
-    	$this->db->select('st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, newstype as map_cat');
+    	$this->db->select('st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat');
     	$this->db->from("(SELECT * FROM `st_inews_main_$year1` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
 		$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
     	$this->db->order_by(rand(0,1), 'RANDOM');
@@ -35,7 +35,7 @@ class Instant extends CI_Model
 			
         }
         $this->SetImg($data,$list_id);
-        // SetImg
+ 
     	return $data;
     }
 
@@ -47,7 +47,11 @@ class Instant extends CI_Model
             if($res[0]['vdo']){
                 $res[0]['vdo'] = date('Ymd',strtotime($res[0]['datetime'])).'/'.$res[0]['vdo'];
             }
-					
+			if($res[0]['vid']!=''&&$res[0]['vid']>0){
+				$this->SetVideo($res[0]);
+			}else{
+				$res[0]['vid'] = "";
+			}
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
             return $res[0];
            
@@ -128,6 +132,54 @@ class Instant extends CI_Model
         }
     }
 
+	
+	/**
+	*	设置视频
+	*/
+    public function SetVideo(&$data,$video=false){
+    	if($video&&count($video)>0){
+	    	$videos = $this->GetNewsVideo($video);
+	    	if(count($videos)>0){
+	    		foreach ($data as $key => $value) {
+	    			if(count($videos)>0){
+	    				foreach ($videos as $k => $v) {
+	    					if($value['vid']==$v['id']){
+	    						$data[$key]['vid'] = $v['video_path'].'.mp4';
+	    						unset($videos[$k]);
+	    					}
+							
+	    				}
+	    			}else{
+	    				return;
+	    			}
+	    		}
+	    	}
+	    }
+		else if(!$video){
+	    	$videos = $this->GetNewsVideo($data['vid']);
+		    if(count($videos)>0){
+		    	$videos[0]['video_path'] = $videos[0]['video_path'].'.mp4';
+		    	$data['vid'] = $videos[0];
+		    }
+		    unset($data->videoID);
+	    }
+    }
+	
+	private function GetNewsVideo($id){
+		$this->db = $this->load->database('popnews',TRUE);
+		$this->db->select('id,headline,video_path,cover_path');
+		
+		$this->db->from('video_news');
+		
+		if(is_array($id)&&count($id)>=1){
+            $this->db->where_in('id',$id);
+        }else{
+            $this->db->where('id',$id);
+        }
+		$this->db->where('deleted',0);
+		$res = $this->db->get();
+		return $res->result_array();
+	}
 
     /**
      *   获取列表
@@ -166,7 +218,7 @@ class Instant extends CI_Model
         $this->db = $this->load->database('instant',TRUE);  
 		
 
-        $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+        $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,st.newstype as map_cat,keyword');
         $this->db->from('st_inews_main_'.$first_year.' as main');
         $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             
@@ -195,7 +247,7 @@ class Instant extends CI_Model
         //list第一个结果
 
         if(($first_year!=$second_year)&&(count($list)<$total)){
-            $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,st.newstype as map_cat,keyword');
+            $this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid, st.newstype as map_cat,keyword');
             $this->db->from('st_inews_main_'.$first_year.' as main');
             $this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
             $this->db->where('main.status',1);
@@ -241,7 +293,7 @@ class Instant extends CI_Model
 		if($year >= date('Y',strtotime($day))){
 			$year = $res->result_array()[0]['year'];
 			
-			$this->db->select('datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,keyword,newstype as map_cat');
+			$this->db->select('datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,keyword,newstype as map_cat');
 			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
 			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
 			$this->db->where('tmp.rec_id',(int)$id);
@@ -300,7 +352,7 @@ class Instant extends CI_Model
 		$data = array();
         $this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
-			$this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo,newstype as map_cat');
+			$this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,newstype as map_cat');
 			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' )  tmp");
 
 			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
@@ -337,7 +389,7 @@ class Instant extends CI_Model
 		
 		
 		$this->db = $this->load->database('instant',TRUE);	
-		$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo 
+		$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid 
 		FROM `st_inews_main_$year1` 
 		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND `status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 		
@@ -346,7 +398,7 @@ class Instant extends CI_Model
 		
 		if($count  < $total && $year1 !== $year2){
 			$total = $total - $count;
-			$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo 
+			$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid 
 			FROM `st_inews_main_$year2` 
 			WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND	`status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 			$list2 = $results->result_array();

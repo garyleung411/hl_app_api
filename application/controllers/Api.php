@@ -576,6 +576,7 @@ class Api extends DefaultApi{
 			"cat"					=> "",
 			"publish_datetime"		=> "",
 			"vdo"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
+			"vid"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
@@ -589,6 +590,10 @@ class Api extends DefaultApi{
 		foreach($tmp as $k => $v){
 			$tmp[$k] = isset($data[$k])?$data[$k]:$v;
 			if($k=='vdo'&&isset($data[$k])&&is_string($data[$k]))
+			{
+				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
+			}
+			if($k=='vid'&&isset($data[$k])&&is_string($data[$k]))
 			{
 				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
 			}
