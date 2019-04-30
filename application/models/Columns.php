@@ -384,9 +384,8 @@ class Columns extends CI_Model
 			$this->SetImg($res,array(),false);
 			$res[0]['publish_datetime'] = date('Y-m-d',strtotime($res[0]['publish_datetime']));
 			if($res[0]['vdo']!=''&&$res[0]['vdo']!=0){
+				
 				$this->SetVideo($res[0]);
-			}else{
-				$res[0]['vdo'] = new StdClass();
 			}
 			$this->SetWriter($res[0]);
 			$this->Set_related_news($res[0],$id);
