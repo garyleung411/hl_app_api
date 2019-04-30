@@ -85,10 +85,14 @@ else{
 
 //select limit
 $config['day_before'] = 90;			//For date limit
-$config['column_day_before'] = 30;			//For date limit
+$config['column_day_before'] = 30;	//For date limit
+
 $config['total_popnews'] = 20;	
 $config['total_topic'] = 20;		
 $config['total_list_item'] = 100;	//topic instant
+$config['total_column_list_item'] = 11;	
+$config['total_popnews_list_item'] = 20;	
+$config['total_life_list_item'] = 20;	
 
 //cache time(SEC)
 $config['list_time'] = 300;   

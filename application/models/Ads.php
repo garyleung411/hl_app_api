@@ -2,48 +2,29 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Ads extends CI_Model  {
 	
-	
+
 	public function __construct (){
 		parent::__construct();
 		$this->load->database('hl_app');
 	}
 	
-	public function Get_highlight($section=null){
-
-		$this->db->from('hl_app_highlight');
-		if($section!=null)
-		{
-			$this->db->where('section_id',$section);
-		}
-		$res = $this->db->get();
-
-		return $res->result_array();
+	public function select_ads($id){
+		$result = $this->db->query("SELECT `id`, `ads_code`, `title`, `content`, `ads_image`, `ads_type`, `landing_url`, `landing_type`, `detail_title`, `detail_content`, `publish_datetime`, `end_datetime`,  `status` 
+		FROM `hl_app_ads` haa WHERE id = $id LIMIT 1");
+		return $result->result_array();
 	}
-
-	public function Get_Ads_list()
-	{
-		$list = $this->Get_highlight();
-		$list_id = array();//根据session分类
-		$list_order_by = array();//对应排序
-		$data = array();
-		foreach ($list as $key => $value) {
-			$list_id[$value['section_id']][] = $value['newsID'];
-			$list_order_by[$value['newsID']] = $value['id'];
+	
+	
+	
+	public function select_ads_imgs($id){
+		if($id<1||$id==0){
+			return false;
 		}
-		$this->load->model('Section');
-
-		foreach ($list_id as $key => $value) {
-			$section_info = $this->Section->Get_Section($key);
-			if($section_info)
-			{
-				$section_name = $section_info[0]->section_name;
-				$this->load->model($section_name);
-				$data = array_merge($data,$this->$section_name->Get_Ads_News_list($value));
-			}
-		}
-		echo json_encode($data);
-		
+		$where = "WHERE `ads_id` = $id";
+		$where .= " AND `status` = 1 ";
+		$result = $this->db->query("SELECT `id`, `ads_id`, `src`, `caption`, `pos` FROM `ads_img` $where ORDER BY pos ");
+		return $result->result_array();
 	}
-
-
+	
+	
 }

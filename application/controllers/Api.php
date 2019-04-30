@@ -2,6 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends DefaultApi{
+	
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
@@ -288,7 +289,7 @@ class Api extends DefaultApi{
 				
 				if($data){
 					$data['section'] = $section;
-					if(isset($data['keyword'])){
+					if(isset($data['keyword'])&&$data['keyword']!=''){
 						
 						$keyword = explode(';',$data['keyword']);
 						if($keyword[0]==''){
@@ -310,13 +311,13 @@ class Api extends DefaultApi{
 					}
 					$content = array("","","");
 					if(isset($data['content'])){
-						$content[0] = strip_tags(str_replace('<br />',"\n",$data['content']));
+						$content[0] = str_replace('<br />',"\n",$data['content']);
 					}
 					if(isset($data['content2'])){
-						$content[1] = strip_tags(str_replace('<br />',"\n",$data['content2']));
+						$content[1] = str_replace('<br />',"\n",$data['content2']);
 					}
 					if(isset($data['content3'])){
-						$content[2] =strip_tags(str_replace('<br />',"\n",$data['content3']));
+						$content[2] =str_replace('<br />',"\n",$data['content3']);
 					}
 					$data['content'] = $content;
 					
@@ -359,7 +360,14 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function list($section, $cat, $page =1){
+	public function list($section, $cat = -1, $page =1){
+		if($cat == -1 && $section != '3'){
+			$this->show_error();
+		}
+		else if($cat == -1 && $section == '3'){
+			$cat = 1;
+		}
+		
 		if($section == "topic"){
 			$this->topic_list($cat);
 			return;
@@ -368,7 +376,7 @@ class Api extends DefaultApi{
 		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
 		if($is_cat){
 			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-			// var_dump($map_cat);
+			$map_cat = ($map_cat==-1)?0:$map_cat;
 			$this->load->model('Section');
 			$section_name = $this->Section->Get_Section($section)[0]->section_name;
 			$this->load->model($section_name);
@@ -539,16 +547,19 @@ class Api extends DefaultApi{
 			"section"				=> "",
 			"cat"					=> "",
 			"publish_datetime"		=> "",
-			"vdo"					=> "",
+			"vdo"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
 		);
-		
 		foreach($data as $i => $d){
 			$tmp = $list;
 			foreach($tmp as $k => $v){
-				$tmp[$k] = isset($d[$k])?$d[$k]:$v; 
+				$tmp[$k] = isset($d[$k])?$d[$k]:$v;
+				if($k=='vdo'&&isset($d[$k])&&is_string($d[$k]))
+				{
+					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
+				}
 			}
 			$return_data[] = $tmp;
 		}
@@ -564,7 +575,8 @@ class Api extends DefaultApi{
 			"section"				=> "",
 			"cat"					=> "",
 			"publish_datetime"		=> "",
-			"vdo"					=> "",
+			"vdo"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
+			"vid"					=> array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>''),
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
@@ -576,7 +588,15 @@ class Api extends DefaultApi{
 		
 		$tmp = $detail;
 		foreach($tmp as $k => $v){
-			$tmp[$k] = isset($data[$k])?$data[$k]:$v; 
+			$tmp[$k] = isset($data[$k])?$data[$k]:$v;
+			if($k=='vdo'&&isset($data[$k])&&is_string($data[$k]))
+			{
+				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
+			}
+			if($k=='vid'&&isset($data[$k])&&is_string($data[$k]))
+			{
+				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
+			}
 		}
 		$return_data = $tmp;
 		return $return_data;
