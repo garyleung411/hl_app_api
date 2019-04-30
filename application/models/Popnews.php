@@ -42,6 +42,7 @@ class Popnews extends CI_Model{
     			'path'=> $value['imgs'], 
     			'isCover'=> 0
     		));
+			$data[$key]['vdo'] .= '.mp4'; 
     	}
 
     	return $data;
