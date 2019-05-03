@@ -1,6 +1,7 @@
 <?php
 
-class Life extends CI_Model{
+class Life extends CI_Model
+{
 
 	public $Expired = 1;
 	public $Page = 1;
@@ -22,7 +23,7 @@ class Life extends CI_Model{
     public function GetList($cat, $page=0){
     	
     	$Page = ($this->Page>0)?$this->Page-1:0;
-		$rows = $this->config->item('total_list_item');
+		$rows = $this->config->item('total_life_list_item');
 		
 		if($cat=='0')
 		{
@@ -34,7 +35,7 @@ class Life extends CI_Model{
 			}
 		}
 
-		$list = $this->Get_All_News_list($rows, $cat, $Page,false);
+		$list = $this->Get_All_News_list($rows, $cat, $Page);
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
@@ -58,7 +59,8 @@ class Life extends CI_Model{
 	/**
 	*	设置图片
 	*/
-    public function SetImg(&$data,$Imgs,$is_list = true,$max=3){
+    public function SetImg(&$data,$Imgs,$is_list = true,$max=3)
+    {
 		if(count($Imgs)==0&&count($data)>0){
 			$Imgs =array();
 			foreach ($data as $value) {
@@ -161,16 +163,11 @@ class Life extends CI_Model{
 		return isset($res->result_array()[0]['newsID'])?$res->result_array()[0]['newsID']:-1;
 	}
 	
-	private function Get_All_News_list($PageSize, $cat = -1,$Page=0,$count=false,$rand=false){
-		$maxdate = null;
-		$year = date('Y', strtotime('today'));
+	private function Get_All_News_list($PageSize, $cat = -1,$Page=0,$rand=false){
+
     	$this->db = $this->load->database('daily',TRUE);
 		if($cat){
-			if(!$maxdate = $this->Get_Max_Date($cat,$year))
-			{
-				$maxdate  = $this->Get_Max_Date($cat,($year-1));
-			}
-			$year = date('Y',strtotime($maxdate));
+			$year = date('Y');
 			$this->db->from('hd_hl_news as hhn');
 			$this->db->join('news_main_'.$year.' as nm','hhn.newsID = nm.newsID and hhn.year = '.$year, 'inner');
 			if(is_array($cat)&&count($cat)>0)
@@ -184,21 +181,43 @@ class Life extends CI_Model{
 			
 			$this->db->where('hhn.status',1);
 		
-			$this->db->where('publishDatetime >=',$maxdate );
 			if($rand){
                 $this->db->order_by(rand(0,1), 'RANDOM');
             }
-	
-			if(!$count){
-				$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
-				$this->db->limit($PageSize,$Page*$PageSize);
+			
+			$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
+			$this->db->limit(40);
+			$this->db->order_by('nm.publishDatetime','desc');
+			$res = $this->db->get();
+			
+			$data = $res->result_array();
+			if(count($data)<40)
+			{
+				$year--;
+				$this->db->from('hd_hl_news as hhn');
+				$this->db->join('news_main_'.$year.' as nm','hhn.newsID = nm.newsID and hhn.year = '.$year, 'inner');
+				if(is_array($cat)&&count($cat)>0)
+				{
+					$this->db->where_in('hhn.newsCat',$cat);
+					
+				}else if($cat!=null&&$cat!='')
+				{
+					$this->db->where('hhn.newsCat',$cat);
+				}
+				
+				$this->db->where('hhn.status',1);
+				if($rand){
+	                $this->db->order_by(rand(0,1), 'RANDOM');
+	            }
+
+	            $this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
+				$this->db->limit(40-count($data));
 				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
-				// var_dump($this->db->last_query());
-				return $res->result_array();
-			}else{
-				return $this->db->count_all_results();
+				// var_dump(count($res->result_array()));
+				$data = array_merge($data,$res->result_array());
 			}
+			return $data;
 		}
     }
 	
@@ -272,7 +291,7 @@ class Life extends CI_Model{
     {
     	// $this->load->model('Cat');
     	// var_dump($data);
-    	$res = $this->Get_All_News_list(5, $data['map_cat'],0,false,true);
+    	$res = $this->Get_All_News_list(5, $data['map_cat'],0,true);
     	// var_dump($res);
     	$imglist = array();
 		$video_id_list = array();

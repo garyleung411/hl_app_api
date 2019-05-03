@@ -21,7 +21,7 @@ class Popnews extends CI_Model{
     */
     public function GetList($CatID,$page=0)
     {
-		$rows = $this->config->item('total_popnews');
+		$rows = $this->config->item('total_popnews_list_item');
     	$this->load->model('section');
 		
 		// 'Get_cat_list';
