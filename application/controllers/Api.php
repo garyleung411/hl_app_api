@@ -400,11 +400,11 @@ class Api extends DefaultApi{
 						$content[0] = str_replace('<br />',"\n",$data['content']);
 					}
 					if(isset($data['content2'])){
-						$content[1] = str_replace('<br>',"\n",$data['content']);
+						$content[1] = str_replace('<br>',"\n",$data['content2']);
 						$content[1] = str_replace('<br />',"\n",$data['content2']);
 					}
 					if(isset($data['content3'])){
-						$content[2] = str_replace('<br>',"\n",$data['content']);
+						$content[2] = str_replace('<br>',"\n",$data['content3']);
 						$content[2] =str_replace('<br />',"\n",$data['content3']);
 					}
 					$data['content'] = $content;
