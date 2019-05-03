@@ -86,6 +86,7 @@ class Instant extends CI_Model
 			
 			$this->db->where_in('i.type',array(0,5));
 			$this->db->where_in('i.deleted',array(0,null));
+			$this->db->order_by('display_order','asc');
 			$this->db->order_by('type','desc');
 			$res = $this->db->get();
 			
