@@ -104,10 +104,12 @@ $config['interest_time'] = 300;
 
 //json cache path
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
+$config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
+$config['hit_list_path'] = 'json/{section}_hit_list.json';
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
 $config['section_list_path'] = 'json/section_list.json';
-$config['list_path']	= 'json/{section}/list/{section}_list_{cat}.json';
+
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';

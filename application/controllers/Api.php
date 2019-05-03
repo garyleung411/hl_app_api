@@ -35,7 +35,6 @@ class Api extends DefaultApi{
 				"SectionName" => "topic",
 				"CatList"	=> $catlist,
 			);
-			
 		}
 		return array($other, $topic);
 		
@@ -129,7 +128,6 @@ class Api extends DefaultApi{
 		$json = json_decode( file_get_contents($this->config->item('hot_search_path')),true);
 		foreach($json as $k => $v){
 			$json[$k] = ncr2str($v);
-			
 		}
 		$output = array('data'=>$json);
 		$output['result'] = 1;
@@ -139,8 +137,8 @@ class Api extends DefaultApi{
 	
 	//For daily & instant only
 	//十大
-	//not fix
-	public function hit_list($section){
+	//"hit_list2" use while hit_list cannot fix problem, hit_list create too many request to DB
+	public function hit_list2($section){
 		$output = array('data'=>array());
 		$output['result'] = 1;
 		$error = false;
@@ -151,13 +149,78 @@ class Api extends DefaultApi{
 			$file = $this->config->item('daily_top_list_path');
 		}
 		else{
-			$error = true;
+			$this->show_error();
 		}
 		if(!$error){
 			$this->load->model('Section');
-			$cat_list = $this->Section->Get_cat_list($section);
+			$this->load->model('News_category_list');
+			$SectionName = $this->Section->Get_Section($section)[0]->section_name;
+			$data = array();
+			$tmp = json_decode(file_get_contents($file),true);
+			foreach($tmp as $name => $list){
+				if($name != 'day'){
+					continue;
+				}
+				foreach($list as $k=>$v){
+					//top 10 only
+					$s = $section;
+					$is_column = $v['catID']==9 && $section == 2;
+					if(count($data)==10){
+						break;
+					}
+					if($section == 1){
+						$v['newsId'] = $v['newsId'] - 500000;
+					}
+					$video = isset($v['video_path_1'])&&!empty($v['video_path_1'])?$v['video_path_1']:"";
+					$writer = array();	
+					if(isset($v['columnistID'])&&$is_column){
+						$s = 5;
+						// $writer = array('name'=>'test');
+					}
+					
+					$data[] = array(
+						'id' => $v['newsId'],
+						'title' => $v['title'],
+						'section' => $s,
+						'cat'	=> $this->News_category_list->mapcat2cat($s, $v['catID']),
+						'publish_datetime'=>$v['publishDatetime'],
+						'vdo'=>$video,
+						'writer'=>$writer,//專欄顯示
+						'layout'=>"",//日報為空
+					);
+					$this->load->model($SectionName);
+					$this->$SectionName->SetImg($data,array());
+				}
+			}
+			$output['data'] = $this->list_cast($data);
+			$output = json_encode($output,JSON_UNESCAPED_SLASHES);
+			$this->PushData($output);
+		}
+		
 			
-			$map_cat = array_combine (array_column($cat_list,'mapping_catid'), array_column($cat_list,'cat_id'));
+	}
+
+	
+	
+	public function hit_list($section){
+		$this->Expired = $this->config->item('list_time');
+		if($section == 1){
+			$file = $this->config->item('instant_top_list_path');
+			$sname = 'instant';
+		}
+		else if($section == 2){
+			$file = $this->config->item('daily_top_list_path');
+			$sname = 'daily';
+		}
+		else{
+			$this->show_error();
+		}
+		$path = $this->config->item('hit_list_path');
+		$path = str_replace('{section}',$sname,$path);
+		
+		if(!($data=json_decode($this->Getfile($path),true))||isset($_GET['gen'])){
+			$this->load->model('Section');
+			$this->load->model('News_category_list');
 			$tmp = json_decode(file_get_contents($file),true);
 			foreach($tmp as $name => $list){
 				if($name != 'day'){
@@ -169,8 +232,7 @@ class Api extends DefaultApi{
 				foreach($list as $k=>$v){
 					//top 10 only
 					$is_column = $v['catID']==9 && $section == 2;
-					
-					if($k>9){
+					if(count($sort_list)==10){
 						break;
 					}
 					if($section == 1){
@@ -205,17 +267,21 @@ class Api extends DefaultApi{
 					}
 				}
 			}
-			$output['data'] = $this->list_cast($data);
+			
+			if(count($data)>0){
+				$data = $this->list_cast($data);
+				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
+			}
 		}
-		else{
-			$output['result'] = 0;
-		}
+		$output = array(
+			'result' => 1,
+			'data'	=> $data,
+		);
 		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 			
 	}
 
-	//感興趣
 	public function interest(){
 
 		$this->Expired = $this->config->item('interest_time');
@@ -361,6 +427,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function list($section, $cat = -1, $page =1){
+		
 		if($cat == -1 && $section != '3'){
 			$this->show_error();
 		}
@@ -375,13 +442,13 @@ class Api extends DefaultApi{
 		$this->load->model('News_category_list');
 		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
 		if($is_cat){
+			$this->Expired = $this->config->item('list_time');
 			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
 			$map_cat = ($map_cat==-1)?0:$map_cat;
 			$this->load->model('Section');
 			$section_name = $this->Section->Get_Section($section)[0]->section_name;
 			$this->load->model($section_name);
 			$this->$section_name->page($page);
-			$this->Expired = $this->config->item("list_time");
 			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
 			$path = str_replace('{cat}',$cat,$path);
 			$path = str_replace('.json','_'.(int)$page.'json',$path);
