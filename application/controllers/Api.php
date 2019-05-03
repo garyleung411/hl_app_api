@@ -396,16 +396,20 @@ class Api extends DefaultApi{
 					}
 					$content = array("","","");
 					if(isset($data['content'])){
-						$content[0] = str_replace('<br>',"\n",$data['content']);
-						$content[0] = str_replace('<br />',"\n",$data['content']);
+						
+						$content[0] = $data['content'];
+						$content[0] = str_replace('<br>',"\n",$content[0]);
+						$content[0] = str_replace('<br />',"\n",$content[0]);
 					}
 					if(isset($data['content2'])){
-						$content[1] = str_replace('<br>',"\n",$data['content2']);
-						$content[1] = str_replace('<br />',"\n",$data['content2']);
+						$content[1] = $data['content2'];
+						$content[1] = str_replace('<br>',"\n",$content[1]);
+						$content[1] = str_replace('<br />',"\n",$content[1]);
 					}
 					if(isset($data['content3'])){
-						$content[2] = str_replace('<br>',"\n",$data['content3']);
-						$content[2] =str_replace('<br />',"\n",$data['content3']);
+						$content[2] = $data['content3'];
+						$content[2] = str_replace('<br>',"\n",$content[2]);
+						$content[2] =str_replace('<br />',"\n",$content[2]);
 					}
 					$data['content'] = $content;
 					
