@@ -120,15 +120,15 @@ class Instant extends CI_Model
 							echo '<pre>';
 							// var_dump($imglist[$value['id']]);exit;
 							foreach($imglist[$value['id']] as $k => $v){
-								var_dump($v['path']);
-								var_dump($name);
+								// var_dump($v['path']);
+								// var_dump($name);
 								if(strpos($v['path'], $name)){
-									var_dump($v['path']);
-									var_dump($name);
+									// var_dump($v['path']);
+									// var_dump($name);
 									unset($imglist[$value['id']][$k]);
 								}
 							}
-							var_dump($imglist[$value['id']]);exit;
+							// var_dump($imglist[$value['id']]);exit;
 						}
 					}
 				}
