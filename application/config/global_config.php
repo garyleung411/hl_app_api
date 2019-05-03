@@ -97,9 +97,10 @@ $config['total_popnews_list_item'] = 20;
 $config['total_life_list_item'] = 40;	
 
 //cache time(SEC)
-$config['list_time'] = 300;   
-$config['detail_time'] = 120;
-$config['interest_time'] = 120;
+$config['force_cache'] = -1;
+$config['list_time'] = 600;   
+$config['detail_time'] = 300;
+$config['interest_time'] = 300;
 
 //json cache path
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';

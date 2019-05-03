@@ -45,7 +45,7 @@ class Api extends DefaultApi{
 		/**
 		 *	Code for update app_config
 		 */
-		$this->Expired = 1;
+		$this->Expired = $this->config->item('force_cache');
 		$data = array();
 		if(!($data=json_decode($this->Getfile($this->config->item('app_config_path')),true))||isset($_GET['gen'])){
 			$data = $this->config->item("app_config");
@@ -218,7 +218,7 @@ class Api extends DefaultApi{
 	//感興趣
 	public function interest(){
 
-		$this->Expired = 1;
+		$this->Expired = $this->config->item('interest_time');
 		$path = $this->config->item('interest_list_path');
 		$fileid = rand(0,9);
 		$outputpath = str_replace('{page}',$fileid,$path);
@@ -275,7 +275,7 @@ class Api extends DefaultApi{
 
 			$section_name = $res[0]->section_name;
 			$this->load->model($section_name);
-			$this->Expired = $this->$section_name->Expired;
+			$this->Expired = $this->config->item('detail_time');
 			
 			
 			$path= $this->config->item('detail_path');
@@ -464,7 +464,7 @@ class Api extends DefaultApi{
 	public function columns($columnid){
 
 		$this->load->model('Columns');
-		$this->Expired = 1;
+		$this->Expired = $this->config->item('list_time');
 		$path = str_replace('{id}',(int)$columnid,$this->config->item('columns_path'));
 
 
@@ -495,27 +495,28 @@ class Api extends DefaultApi{
 	
 	public function section(){
 
-		$this->Expired = 100;
+		$this->Expired = $this->config->item('force_cache');
 
 		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||isset($_GET['gen'])){
 			$this->load->model('Section');
 			$data = $this->Section->Get_Section_list();
+			/*
 			foreach($data as $key => $value){
 				foreach($value['CatList'] as $k => $cat){
-					// if($cat['CatID']==0){
-						// $Catlist = array();
-						// $Catlist[] = array(
-							// 'CatID' => $cat['CatID'],
-							// 'CatName'=>$cat['CatName'],
-							// 'MappingCatID'=>$cat['MappingCatID'],
-						// );
-						// $data[$key]['CatList'] = $Catlist;
+					if($cat['CatID']==0){
+						$Catlist = array();
+						$Catlist[] = array(
+							'CatID' => $cat['CatID'],
+							'CatName'=>$cat['CatName'],
+							'MappingCatID'=>$cat['MappingCatID'],
+						);
+						$data[$key]['CatList'] = $Catlist;
 						
-						// break;
-					// }
+						break;
+					}
 				}
 			}
-			
+			*/
 			$section_list = json_encode(array(
 				'data'=>$data,
 				'result' => 1
@@ -603,7 +604,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function highlight()	{
-		$this->Expired = 100;
+		$this->Expired = $this->config->item('list_time');
 		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||isset($_GET['gen'])){
 			
 			$this->load->model('Highlight');
