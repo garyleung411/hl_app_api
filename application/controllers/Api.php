@@ -321,6 +321,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function detail($section, $id){
+		$this->Expired = $this->config->item('detail_time');
 		// if($section == "other" && $cat != null){
 			// switch($cat){
 				
@@ -341,7 +342,7 @@ class Api extends DefaultApi{
 
 			$section_name = $res[0]->section_name;
 			$this->load->model($section_name);
-			$this->Expired = $this->config->item('detail_time');
+			
 			
 			
 			$path= $this->config->item('detail_path');
@@ -427,7 +428,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function list($section, $cat = -1, $page =1){
-		
+		$this->Expired = $this->config->item('list_time');
 		if($cat == -1 && $section != '3'){
 			$this->show_error();
 		}
@@ -442,7 +443,7 @@ class Api extends DefaultApi{
 		$this->load->model('News_category_list');
 		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
 		if($is_cat){
-			$this->Expired = $this->config->item('list_time');
+			
 			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
 			$map_cat = ($map_cat==-1)?0:$map_cat;
 			$this->load->model('Section');
@@ -529,9 +530,9 @@ class Api extends DefaultApi{
 	}
 	
 	public function columns($columnid){
-
-		$this->load->model('Columns');
 		$this->Expired = $this->config->item('list_time');
+		$this->load->model('Columns');
+		
 		$path = str_replace('{id}',(int)$columnid,$this->config->item('columns_path'));
 
 

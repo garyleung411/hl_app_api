@@ -154,6 +154,7 @@ class Instant extends CI_Model
 					unset($img[$data['id']][$k]);
 				}
 			}
+			$img[$data['id']] = array_values($img[$data['id']]);
             $data['imgs'] = $img[$data['id']];
         }
     }
