@@ -117,7 +117,7 @@ class Instant extends CI_Model
 							
 							$tmp= array_filter($imglist[$value['id']], 'filterArray');
 							$name = str_replace('_popup.jpg','',$tmp[0]["path"]);
-							echo '<pre>';
+							// echo '<pre>';
 							// var_dump($imglist[$value['id']]);exit;
 							foreach($imglist[$value['id']] as $k => $v){
 								// var_dump($v['path']);
