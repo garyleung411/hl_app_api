@@ -117,18 +117,12 @@ class Instant extends CI_Model
 							
 							$tmp= array_filter($imglist[$value['id']], 'filterArray');
 							$name = str_replace('_popup.jpg','',$tmp[0]["path"]);
-							// echo '<pre>';
-							// var_dump($imglist[$value['id']]);exit;
 							foreach($imglist[$value['id']] as $k => $v){
-								// var_dump($v['path']);
-								// var_dump($name);
-								if(strpos($v['path'], $name)){
-									// var_dump($v['path']);
-									// var_dump($name);
+								if(strpos($v['path'], $name)!== false && $v['isCover']!= 1){
 									unset($imglist[$value['id']][$k]);
 								}
 							}
-							// var_dump($imglist[$value['id']]);exit;
+							
 						}
 					}
 				}
