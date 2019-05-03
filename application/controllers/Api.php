@@ -16,9 +16,27 @@ class Api extends DefaultApi{
 			"SectionName" => "other",
 			"CatList"	=> array(),
 		);
+		$catlist = array(
+			array(
+				"CatID" => "5-4",
+				"CatName" => "﻿金融High Tea",
+				"MappingCatID" => "1",
+			),
+			array(
+				"CatID" => "5-417",
+				"CatName" => "﻿巴士的點評",
+				"MappingCatID" => "1",
+			),
+			array(
+				"CatID" => "5-0",
+				"CatName" => "﻿Executive日記",
+				"MappingCatID" => "1",
+			),
+		);
+
+		
+		
 		$tmp = $this->topic(true);
-		
-		
 		if($tmp){
 			$catlist = array();
 			foreach($tmp as $v){

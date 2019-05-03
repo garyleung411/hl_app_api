@@ -251,7 +251,7 @@ class Life extends CI_Model
 			$this->db->select('img.path,info.isCover,img.newsID,info.caption');
 			$this->db->from('news_img_src_'.$year.' as img');
 			$this->db->join('hd_hl_news as hhn',"hhn.newsID = img.newsID AND hhn.year = '$year'", 'inner');
-			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.imgID', 'left');
+			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.imgID', 'inner');
 			if(is_array($newID)&&count($newID)>0)
 			{
 				$this->db->where_in('img.newsID',$newID);
@@ -262,6 +262,7 @@ class Life extends CI_Model
 			}
 			
 			$this->db->where('img.status',1);
+			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());
 		}
