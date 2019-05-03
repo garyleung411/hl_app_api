@@ -280,7 +280,7 @@ class Columns extends CI_Model
 			{
 				$this->db->where('img.newsID',$newID);
 			}
-			
+			$this->db->where('img.path NOT LIKE ','%.psd');
 			$this->db->where('img.status',1);
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());

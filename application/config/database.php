@@ -247,7 +247,7 @@ else {
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	if( isset($_GET['real'])||true){
+	if( isset($_GET['real'])){
 		$db['hl_app'] = array(
 			'dsn'	=> '',
 			'hostname' => '192.168.148.103',
@@ -271,7 +271,7 @@ else {
 		);
 		$db['daily'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.31',
+			'hostname' => '192.168.1.36',
 			'username' => 'hlapp_ro',
 			'password' => 'BBhTbKtR2ykP',
 			'database' => 'content_store',

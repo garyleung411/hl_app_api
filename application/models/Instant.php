@@ -5,6 +5,7 @@
 */
 class Instant extends CI_Model
 {
+	
     public $Expired = 1;
     public $Page = 1;
 
@@ -105,6 +106,33 @@ class Instant extends CI_Model
         if($is_list){
             if(count($Imgs)>0){
                 $imglist = $this->GetImg($Imgs);
+				
+				function filterArray($value){
+					return ($value['isCover'] == 1);
+				}
+				foreach ($data as $key => $value) {
+                    if(isset($imglist[$value['id']])){
+						if(count($imglist[$value['id']]) >= 3){
+							
+							
+							$tmp= array_filter($imglist[$value['id']], 'filterArray');
+							$name = str_replace('_popup.jpg','',$tmp[0]["path"]);
+							echo '<pre>';
+							// var_dump($imglist[$value['id']]);exit;
+							foreach($imglist[$value['id']] as $k => $v){
+								var_dump($v['path']);
+								var_dump($name);
+								if(strpos($v['path'], $name)){
+									var_dump($v['path']);
+									var_dump($name);
+									unset($imglist[$value['id']][$k]);
+								}
+							}
+							var_dump($imglist[$value['id']]);exit;
+						}
+					}
+				}
+				
                 foreach ($data as $key => $value) {
                     if(isset($imglist[$value['id']])){
                         if(count($imglist[$value['id']])>$max){
@@ -126,8 +154,14 @@ class Instant extends CI_Model
                     }
                 }
             }
-        }else{
+        }
+		else{
             $img = $this->GetImg($data['id']);
+			foreach($img[$data['id']] as $k => $v){
+				if($v['isCover']==1){
+					unset($img[$data['id']][$k]);
+				}
+			}
             $data['imgs'] = $img[$data['id']];
         }
     }
