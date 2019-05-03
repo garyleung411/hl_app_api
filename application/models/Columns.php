@@ -280,7 +280,7 @@ class Columns extends CI_Model
 			{
 				$this->db->where('img.newsID',$newID);
 			}
-			
+			$this->db->where('img.path NOT LIKE ','%.psd');
 			$this->db->where('img.status',1);
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());
@@ -470,11 +470,12 @@ class Columns extends CI_Model
     }
 
     public function column($WriterId,$page=11){
+		$rows = $this->config->item('total_columns_list_item');
     	$this->load->model('Writer');
     	$data = $this->Writer->GetWriter_by_ID($WriterId);
     	if($data){//存在作者
 			
-    		$list = $this->Get_News_By_column($WriterId,$page);
+    		$list = $this->Get_News_By_column($WriterId,$rows);
     		if($list)
     		{
     			$imglist = array();

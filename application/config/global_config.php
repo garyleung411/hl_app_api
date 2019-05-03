@@ -64,7 +64,7 @@ else{
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-	if(isset($_GET['real'])){
+	if(isset($_GET['real'])||true){
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
@@ -87,17 +87,20 @@ else{
 $config['day_before'] = 90;			//For date limit
 $config['column_day_before'] = 30;	//For date limit
 
-$config['total_popnews'] = 20;	
-$config['total_topic'] = 20;		
+//number_of_topic
+$config['total_topic'] = 20;	
+	
+//number_of_list_item
 $config['total_list_item'] = 100;	//topic instant
-$config['total_column_list_item'] = 11;	
+$config['total_columns_list_item'] = 11;	
 $config['total_popnews_list_item'] = 20;	
-$config['total_life_list_item'] = 20;	
+$config['total_life_list_item'] = 40;	
 
 //cache time(SEC)
-$config['list_time'] = 300;   
-$config['detail_time'] = 120;
-$config['interest_time'] = 120;
+$config['force_cache'] = -1;
+$config['list_time'] = 600;   
+$config['detail_time'] = 300;
+$config['interest_time'] = 300;
 
 //json cache path
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';

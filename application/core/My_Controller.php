@@ -19,6 +19,9 @@ class DefaultApi extends CI_Controller {
 	{
 		if(is_file($filepath))
 		{
+			if($this->Expired == -1){
+				return true;
+			}
 			$time = filemtime($filepath);
 			return ((time()-$time)<$this->Expired);
 		}

@@ -21,7 +21,7 @@ class Popnews extends CI_Model{
     */
     public function GetList($CatID,$page=0)
     {
-		$rows = $this->config->item('total_popnews');
+		$rows = $this->config->item('total_popnews_list_item');
     	$this->load->model('section');
 		
 		// 'Get_cat_list';
@@ -53,7 +53,7 @@ class Popnews extends CI_Model{
 		
     	$this->db = $this->load->database('popnews',TRUE);
 		
-		$this->db->select('id,video_path as vdo,catid as map_cat,length,thumb_path as imgs,deleted,publish_datetime,headline as title');
+		$this->db->select('id,video_path as vdo,catid as map_cat,length,thumb_294_path as imgs,deleted,publish_datetime,headline as title');
 		$this->db->from('video_news');
 		if($cat!=-1){
 			if(is_array($cat)){
@@ -96,7 +96,7 @@ class Popnews extends CI_Model{
         $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
     	$this->db = $this->load->database('popnews',TRUE);
 		
-		$this->db->select('id,video_path as vdo,catid as map_cat,length,thumb_path as imgs,publish_datetime,headline as title,');
+		$this->db->select('id,video_path as vdo,catid as map_cat,length,thumb_294_path as imgs,publish_datetime,headline as title,');
 		$this->db->from('video_news');
 		if(is_array($id)){
 			$this->db->where_in('id',$id);
