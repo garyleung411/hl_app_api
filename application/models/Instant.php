@@ -113,8 +113,6 @@ class Instant extends CI_Model
 				foreach ($data as $key => $value) {
                     if(isset($imglist[$value['id']])){
 						if(count($imglist[$value['id']]) >= 3){
-							
-							
 							$tmp= array_filter($imglist[$value['id']], 'filterArray');
 							$name = str_replace('_popup.jpg','',$tmp[0]["path"]);
 							foreach($imglist[$value['id']] as $k => $v){
@@ -122,7 +120,7 @@ class Instant extends CI_Model
 									unset($imglist[$value['id']][$k]);
 								}
 							}
-							
+							$imglist[$value['id']] = array_values($imglist[$value['id']]);
 						}
 					}
 				}

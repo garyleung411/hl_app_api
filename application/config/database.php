@@ -271,7 +271,7 @@ else {
 		);
 		$db['daily'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.36',
+			'hostname' => '192.168.1.25',
 			'username' => 'hlapp_ro',
 			'password' => 'BBhTbKtR2ykP',
 			'database' => 'content_store',
@@ -292,7 +292,7 @@ else {
 		);
 		$db['instant'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.33',
+			'hostname' => '192.168.1.36',
 			'username' => 'hlapp_ro',
 			'password' => 'BBhTbKtR2ykP',
 			'database' => 'st_breaking',
