@@ -186,12 +186,12 @@ class Life extends CI_Model
             }
 			
 			$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
-			$this->db->limit(40);
+			$this->db->limit($PageSize);
 			$this->db->order_by('nm.publishDatetime','desc');
 			$res = $this->db->get();
 			
 			$data = $res->result_array();
-			if(count($data)<40)
+			if(count($data)<$PageSize)
 			{
 				$year--;
 				$this->db->from('hd_hl_news as hhn');
@@ -211,7 +211,7 @@ class Life extends CI_Model
 	            }
 
 	            $this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
-				$this->db->limit(40-count($data));
+				$this->db->limit($PageSize-count($data));
 				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				// var_dump(count($res->result_array()));
