@@ -400,16 +400,20 @@ class Api extends DefaultApi{
 						$content[0] = $data['content'];
 						$content[0] = str_replace('<br>',"\n",$content[0]);
 						$content[0] = str_replace('<br />',"\n",$content[0]);
+						$content[0] = strip_tags($content[0]);
+						
 					}
 					if(isset($data['content2'])){
 						$content[1] = $data['content2'];
 						$content[1] = str_replace('<br>',"\n",$content[1]);
 						$content[1] = str_replace('<br />',"\n",$content[1]);
+						$content[1] = strip_tags($content[1]);
 					}
 					if(isset($data['content3'])){
 						$content[2] = $data['content3'];
 						$content[2] = str_replace('<br>',"\n",$content[2]);
 						$content[2] =str_replace('<br />',"\n",$content[2]);
+						$content[2] = strip_tags($content[2]);
 					}
 					$data['content'] = $content;
 					
