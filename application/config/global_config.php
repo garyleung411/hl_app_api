@@ -70,6 +70,13 @@ else{
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
+	$config['solr'] = array(
+		"project"       => "HL",
+		"http_root"     => "192.168.148.116:8986/solr/",
+		"debug"         => false,
+		"is_cloud_mode" => true,
+		"min_score"     => 0.1,
+	);
 	if(isset($_GET['real'])||true){
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
@@ -83,15 +90,15 @@ else{
 		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-		
+		$config['solr'] = array(
+			"project"       => "HL",
+			"http_root"     => "192.168.148.105:8986/solr/",
+			"debug"         => false,
+			"is_cloud_mode" => true,
+			"min_score"     => 0.1,
+		);
 	}
-	$config['solr'] = array(
-		"project"       => "HL",
-		"http_root"     => "192.168.148.116:8986/solr/",
-		"debug"         => false,
-		"is_cloud_mode" => true,
-		"min_score"     => 0.1,
-	);
+	
 }
 
 //text releated
@@ -158,7 +165,6 @@ $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 $app_config['api']['api_highlight'] = 		"highlight";
 $app_config['api']['api_detail'] =			"detail/[section]/[id]/[!cat]";
 $app_config['api']['api_column_list'] =		"columns/[columnid]";
-$app_config['api']['api_list'] =			"topic_list/[cat]";//新闻列表
 $app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
 $app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
 

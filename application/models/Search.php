@@ -24,6 +24,7 @@ class Search extends CI_Model
 		$lowlimit = $rows * ($page-1);
 		$numOfFound = 0;
 		$resultArray = array();
+		
 		$this->load->library('Solr', $this->config->item('solr'));
 		$searchCountArr = array(
 			"keyword"=>('"'.$keyword.'"'),
@@ -38,6 +39,7 @@ class Search extends CI_Model
 			)
 		);
 		$response = $this->solr->search($searchCountArr);
+		
 		if(isset($response['responseHeader']['status']) && $response['responseHeader']['status'] == 0){
 			$numOfFound = (isset($response['response']['numFound']))?$response['response']['numFound']:0;
 			$resultArray = (isset($response['response']['docs']))?$response['response']['docs']:array();
@@ -45,6 +47,8 @@ class Search extends CI_Model
 		
 		$data = array();
 		$this->load->model('News_category_list');
+		// var_dump($this->config->item('solr'));
+		// var_dump($resultArray);
 		foreach($resultArray as $k => $v){
 			$publish_datetime = date('Y-m-d', strtotime(explode("aa", $v['publishtime'])[0]));
 			$day_before = $this->config->item("column_day_before");
