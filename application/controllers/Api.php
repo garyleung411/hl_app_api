@@ -16,7 +16,7 @@ class Api extends DefaultApi{
 			"SectionName" => "other",
 			"CatList"	=> array(),
 		);
-		$catlist = array(
+		$other["CatList"] = array(
 			array(
 				"CatID" => "5-4",
 				"CatName" => "﻿金融High Tea",
@@ -398,21 +398,19 @@ class Api extends DefaultApi{
 					if(isset($data['content'])){
 						
 						$content[0] = $data['content'];
-						$content[0] = str_replace('<br>',"\n",$content[0]);
-						$content[0] = str_replace('<br />',"\n",$content[0]);
+						
+						$content[0] = str_replace($this->config->item("new_line"),"\n",$content[0]);
 						$content[0] = strip_tags($content[0]);
 						
 					}
 					if(isset($data['content2'])){
 						$content[1] = $data['content2'];
-						$content[1] = str_replace('<br>',"\n",$content[1]);
-						$content[1] = str_replace('<br />',"\n",$content[1]);
+						$content[1] = str_replace($this->config->item("new_line"),"\n",$content[1]);
 						$content[1] = strip_tags($content[1]);
 					}
 					if(isset($data['content3'])){
 						$content[2] = $data['content3'];
-						$content[2] = str_replace('<br>',"\n",$content[2]);
-						$content[2] =str_replace('<br />',"\n",$content[2]);
+						$content[2] =str_replace($this->config->item("new_line"),"\n",$content[2]);
 						$content[2] = strip_tags($content[2]);
 					}
 					$data['content'] = $content;
@@ -434,7 +432,8 @@ class Api extends DefaultApi{
 					
 					$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 					
-				}else{
+				}
+				else{
 					$this->show_error();
 				}
 
@@ -458,6 +457,10 @@ class Api extends DefaultApi{
 	
 	public function list($section, $cat = -1, $page =1){
 		$this->Expired = $this->config->item('list_time');
+		if($section == 5 && ($cat == 0 ||$cat == 4 ||$cat ==  417)){
+			$this->columns($cat);
+			return;
+		}
 		if($cat == -1 && $section != '3'){
 			$this->show_error();
 		}
@@ -753,5 +756,26 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 		exit;
 	}
+	
+	public function search($keyword,$page=1){
+		$this->load->model('search');
+		
+		$keyword = strip_tags(str_replace($this->config->item("search_filter"),"",urldecode($keyword)));
+		$data = null;
+		
+		if(isset($keyword)||trim($keyword)){
+			$search = $this->search->Getlist($keyword);
+			if($search&&count($search['data'])>0){
+				$search['data'] = $this->list_cast($search['data']);
+				$search['result'] = 1;
+				$this->PushData(json_encode($search,true));
+				return;
+			}
+		}
+		
+		$this->show_error();
+		
+	}
+
 	
 }
