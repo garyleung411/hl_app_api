@@ -36,7 +36,13 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-	
+	$config['solr'] = array(
+		"project"       => "HL",
+		"http_root"     => "192.168.148.105:8986/solr/",
+		"debug"         => false,
+		"is_cloud_mode" => true,
+		"min_score"     => 0.1,
+	);
 }
 
 /*
@@ -79,9 +85,26 @@ else{
 		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 		
 	}
+	$config['solr'] = array(
+		"project"       => "HL",
+		"http_root"     => "192.168.148.116:8986/solr/",
+		"debug"         => false,
+		"is_cloud_mode" => true,
+		"min_score"     => 0.1,
+	);
 }
 
+//text releated
 
+
+$config['new_line'] = array('<br>', '<br />');
+
+$config['search_filter'] = array(
+	"~","`","!","@","#","$","%","^","&","*","(",")","-","_","=","+","[","]","{","}","\\","|",";",":","'",'"',",",".","?","/","<",">",
+	"～","！","＠","＃","＄","％","＾","＆","＊","（","）","＿","－","＋","＝","｛","｝","［","］","＼","｜","；","：","＇","＂","．","／","＜","＞","，","？","｀",
+	"~","·","！","@","#","￥","%","……","&","*","（","）","——","-","+","=","【","】","{","}","、","|","；","：","‘","“","”","’","《","》","，","。","？","、",
+	"～","·","＠","＃","￥","％","……","＆","×","（","）","——","－","＋","＝","｛","｝","【","】","｜","＼","：","；","‘","“","”","《","》","，","、","　","＄","︿","＊","＿","＜","＞","／","［","］","‵","＂"
+);
 
 //select limit
 $config['day_before'] = 90;			//For date limit
@@ -95,6 +118,7 @@ $config['total_list_item'] = 100;	//topic instant
 $config['total_columns_list_item'] = 11;	
 $config['total_popnews_list_item'] = 20;	
 $config['total_life_list_item'] = 40;	
+$config['search_list_item'] = 50;	
 
 //cache time(SEC)
 $config['force_cache'] = -1;
