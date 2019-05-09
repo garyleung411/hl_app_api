@@ -58,7 +58,7 @@ class Search extends CI_Model
 			}
 			
 			$main_data = explode('@', $v["ID"]);
-			$section = $main_data[2]=="instant" ? '1' : (isset($main_data[3])&&trim($main_data[3])?'5':'2');
+			$section = $main_data[2]=="instant" ? '1' : (isset($main_data[3])&&trim($main_data[3])!=''?'5':'2');
 			$id = $section==1?($main_data[0]-500000) :$main_data[0];
 			$row = array(
 				"id"					=> $id,
