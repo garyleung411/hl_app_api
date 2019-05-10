@@ -21,10 +21,10 @@ class Columns extends CI_Model
     /**
     *	获取列表
     */
-    public function GetList($CatID,$new=1){
+    public function GetList($CatID){
 
 		
-		$list = $this->Get_All_News_list($CatID,-1,($new==1));
+		$list = $this->Get_All_News_list($CatID,-1,($CatID==1));
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
@@ -161,14 +161,9 @@ class Columns extends CI_Model
 				
 				$this->db->from('daily_hl_news as dhn');
 				$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
-				if(is_array($cat)&&count($cat)>0)
-				{
-					$this->db->where_in('dhn.newsCat',$cat);
-					
-				}else if($cat!=null&&$cat!='')
-				{
-					$this->db->where('dhn.newsCat',$cat);
-				}
+
+				$this->db->where('dhn.newsCat',9);
+				
 				// $this->db->where('nm.createdBy !=',0);
 				$this->db->where('dhn.status',1);
 
@@ -195,14 +190,7 @@ class Columns extends CI_Model
 						//layout默认1
 						$this->db->from('daily_hl_news as dhn');
 						$this->db->join('news_main_'.$value.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$value, ' inner');
-						if(is_array($cat)&&count($cat)>0)
-						{
-							$this->db->where_in('dhn.newsCat',$cat);
-							
-						}else if($cat!=null&&$cat!='')
-						{
-							$this->db->where('dhn.newsCat',$cat);
-						}
+						$this->db->where('dhn.newsCat',9);
 						$this->db->where('dhn.status',1);
 
 						$this->db->where('publishDatetime <',$date );
@@ -235,14 +223,7 @@ class Columns extends CI_Model
 				
 					$this->db->from('daily_hl_news as dhn');
 					$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
-					if(is_array($cat)&&count($cat)>0)
-					{
-						$this->db->where_in('dhn.newsCat',$cat);
-						
-					}else if($cat!=null&&$cat!='')
-					{
-						$this->db->where('dhn.newsCat',$cat);
-					}
+					$this->db->where('dhn.newsCat',9);
 					// $this->db->where('nm.createdBy !=',0);
 					$this->db->where('dhn.status',1);
 
