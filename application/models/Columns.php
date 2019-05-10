@@ -389,7 +389,7 @@ class Columns extends CI_Model
 		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
 		if($year >= date('Y',strtotime('today - 1 years '))){
 			
-			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as map_cat,createdBy as writer');
+			$this->db->select('nm.title,dhn.dailyID as id, nm.newsID as newsID, nm.content,nm.content2,nm.content3,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,createdBy as writer');
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID AND dhn.year = '.$year, 'inner');
@@ -427,7 +427,7 @@ class Columns extends CI_Model
 			}
 			
 			$this->db->where('dhn.status',1);
-			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as map_cat');
+			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo');
 			$res = $this->db->get();
 			$data = array_merge($data, $res->result_array());
 		}
