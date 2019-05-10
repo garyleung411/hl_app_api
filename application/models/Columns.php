@@ -24,7 +24,7 @@ class Columns extends CI_Model
     public function GetList($CatID){
 
 		
-		$list = $this->Get_All_News_list($CatID,-1,($CatID==1));
+		$list = $this->Get_All_News_list($CatID,100,($CatID==1));
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
