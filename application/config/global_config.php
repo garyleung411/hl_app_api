@@ -84,7 +84,7 @@ else{
 		$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 		$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
-		$config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
+		// $config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
 		
 		//vdo
 		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";

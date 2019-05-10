@@ -764,7 +764,7 @@ class Api extends DefaultApi{
 		$data = null;
 		
 		if(isset($keyword)||trim($keyword)){
-			$search = $this->search->Getlist($keyword);
+			$search = $this->search->Getlist($keyword, $page);
 			if($search&&count($search['data'])>0){
 				$search['data'] = $this->list_cast($search['data']);
 				$search['result'] = 1;
