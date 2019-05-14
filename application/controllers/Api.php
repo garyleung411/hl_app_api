@@ -37,8 +37,8 @@ class Api extends DefaultApi{
 		
 		
 		$tmp = $this->topic(true);
+		$catlist = array();
 		if($tmp){
-			$catlist = array();
 			foreach($tmp as $v){
 				$cat = array(
 					"CatID" => $v['id'],
@@ -47,13 +47,13 @@ class Api extends DefaultApi{
 				);
 				$catlist[] = $cat;
 			}
-			$topic = array(
-				"SectionID" => "topic",
-				"name" => "話題新聞",
-				"SectionName" => "topic",
-				"CatList"	=> $catlist,
-			);
 		}
+		$topic = array(
+			"SectionID" => "topic",
+			"name" => "話題新聞",
+			"SectionName" => "topic",
+			"CatList"	=> $catlist,
+		);
 		return array($other, $topic);
 		
 	}

@@ -59,7 +59,7 @@ else{
 	
 	//img_path
 	$config['daily_img_url'] = "http://192.168.148.107/stheadline/";
-	$config['instant_img_url'] = "http://192.168.148.107/stheadline/inewsmedia/";//+
+	$config['instant_img_url'] = "http://192.168.149.49/stheadline/inewsmedia/";//+
 	$config['popnews_img_url'] = "http://192.168.149.49/stheadline/pop/";
 	$config['life_img_url'] = "http://192.168.148.107/stheadline/";
 	$config['column_img_url'] = "http://192.168.148.107/stheadline/";
@@ -77,7 +77,7 @@ else{
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
 	);
-	if(false){
+	if(isset($_GET['real'])||true){ //false
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
