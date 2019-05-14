@@ -130,9 +130,9 @@ class Instant extends CI_Model
                     if(isset($imglist[$value['id']])){
                         if(count($imglist[$value['id']])>$max){
                             foreach ($imglist[$value['id']] as $k => $v) {
-                               if($k>=$max){
-                                unset($imglist[$value['id']][$k]);
-                               }
+								if($k>=$max){
+									unset($imglist[$value['id']][$k]);
+								}
                             }
                         }else if(count($imglist[$value['id']])==2)
                         {
