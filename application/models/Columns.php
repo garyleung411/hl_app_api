@@ -21,7 +21,7 @@ class Columns extends CI_Model
     /**
     *	获取列表
     */
-    public function GetList($CatID){
+    public function GetList($CatID, $page = 0){
 
 		
 		$list = $this->Get_All_News_list($CatID,100,($CatID==1));
@@ -182,9 +182,10 @@ class Columns extends CI_Model
 				{
 					$year = array($year,$year_second);
 				}
+				$num = 0;
 				if(is_array($year)){
 					$return_data = array();
-					$num = 0;
+					
 					foreach ($year as $value) {
 						$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
 						//layout默认1
