@@ -781,5 +781,20 @@ class Api extends DefaultApi{
 		
 	}
 
-	
+	public function ads($section='',$cat=''){	
+		// echo MD5(MD5('123123'));
+		$ads = ($section==''||(int)$section==0||$cat=='')?'index':$section.'-'.$cat;
+		$this->load->model('Ads');
+		$data = $this->Ads->GetAds($ads);
+		$ads = array();
+		if(count($data)>0){
+			$ads['data'] = $data;
+			$ads['result'] = 1;
+			$this->PushData(json_encode($ads,true));
+			return;
+		}
+		$this->show_error();
+
+	}
+
 }

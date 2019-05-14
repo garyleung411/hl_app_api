@@ -8,6 +8,49 @@ class Ads extends CI_Model  {
 		$this->load->database('hl_app');
 	}
 	
+	//根据section cat获取广告
+	public function GetAds($section='index')
+	{
+
+		$this->db->from('ads_publish_list as apl');
+		$this->db->join('hl_app_ads as ads','ads.id = apl.ads_id');
+
+
+		$this->db->where('apl.deleted',0);
+		$this->db->where('ads.status',1);
+		$this->db->where('apl.publish_datetime <=',date('Y-m-d'));
+		$this->db->where('apl.end_datetime >=',date('Y-m-d'));
+		$this->db->where('apl.section_cat_name',$section);
+		$res = $this->db->get();
+		$data = $res->result_array();
+		// echo '<pre>';
+		// var_dump($data);
+
+
+		return $this->ads_cast($data);
+	}
+	
+	public function ads_cast($data)
+	{
+		$return_data = array();
+		foreach ($data as $value) {
+			$return_data[] = array(
+				'id'			=>$value['id'],
+				'landing_type'	=>$value['landing_type'],
+				'landing_url'	=>($value['landing_type']==1)?$value['landing_url']:$this->config->item('base_url').'ads_view/'.$value['id'],
+				'title'			=>$value['title'],
+				'content'		=>$value['content'],
+				'cover'			=>$value['id'],
+				'pos'			=>$value['pos'],
+				'image'			=>$value['ads_image'],
+				'layout'				=>$value['ads_type']
+			);
+		}
+		return $return_data;
+
+	}
+
+	
 	public function select_ads($id){
 		$result = $this->db->query("SELECT `id`, `ads_code`, `title`, `content`, `ads_image`, `ads_type`, `landing_url`, `landing_type`, `detail_title`, `detail_content`, `publish_datetime`, `end_datetime`,  `status` 
 		FROM `hl_app_ads` haa WHERE id = $id LIMIT 1");
