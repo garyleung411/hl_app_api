@@ -475,9 +475,13 @@ class Api extends DefaultApi{
 		$this->load->model('News_category_list');
 		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
 		if($is_cat){
-			
-			$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-			$map_cat = ($map_cat==-1)?0:$map_cat;
+			if($section == 5){
+				$map_cat = $cat;
+			}
+			else{
+				$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
+				$map_cat = ($map_cat==-1)?0:$map_cat;
+			}
 			$this->load->model('Section');
 			$section_name = $this->Section->Get_Section($section)[0]->section_name;
 			$this->load->model($section_name);
