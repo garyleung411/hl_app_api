@@ -119,8 +119,16 @@ class Instant extends CI_Model
 							foreach($imglist[$value['id']] as $k => $v){
 								if(strpos($v['path'], $name)!== false && $v['isCover']!= 1){
 									unset($imglist[$value['id']][$k]);
+									continue;
+								}
+								if($v['isCover']== 1){
+									$imglist[$value['id']][$k]['path'] = str_replace('_popup.jpg', '_370.jpg', $v['path']);
+								}
+								else{
+									$imglist[$value['id']][$k]['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
 								}
 							}
+							
 							$imglist[$value['id']] = array_values($imglist[$value['id']]);
 						}
 					}

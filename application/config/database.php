@@ -189,7 +189,7 @@ else {
 		'hostname' => '192.168.148.103',
 		'username' => 'root',
 		'password' => 'jzwCvH7b2TWTsdxz',
-		'database' => 'hl_content_store',
+		'database' => 'content_store',//hl_content_store
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -210,7 +210,7 @@ else {
 		'hostname' => '192.168.148.103',
 		'username' => 'root',
 		'password' => 'jzwCvH7b2TWTsdxz',
-		'database' => 'hl_st_breaking',
+		'database' => 'st_breaking',//hl_st_breaking
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -247,7 +247,7 @@ else {
 		'failover' => array(),
 		'save_queries' => TRUE
 	);
-	if( isset($_GET['real'])){
+	if( false){
 		$db['hl_app'] = array(
 			'dsn'	=> '',
 			'hostname' => '192.168.148.103',
