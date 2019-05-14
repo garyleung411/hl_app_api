@@ -77,7 +77,7 @@ else{
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
 	);
-	if(isset(false){
+	if(false){
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
