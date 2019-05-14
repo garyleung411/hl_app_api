@@ -9,9 +9,7 @@ class Ads extends CI_Model  {
 	}
 	
 	//根据section cat获取广告
-	public function GetAds($section='index')
-	{
-
+	public function GetAds($section){
 		$this->db->from('ads_publish_list as apl');
 		$this->db->join('hl_app_ads as ads','ads.id = apl.ads_id');
 
