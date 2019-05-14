@@ -22,7 +22,7 @@ class Ads extends CI_Model  {
 		$this->db->where('apl.end_datetime >=',date('Y-m-d'));
 		$this->db->where('apl.section_cat_name',$section);
 		$res = $this->db->get();
-		var_dump($this->db->last_query());
+		// var_dump($this->db->last_query());
 		$data = $res->result_array();
 		// echo '<pre>';
 		// var_dump($data);
