@@ -304,8 +304,7 @@ class Columns extends CI_Model
     	$this->load->model('Writer');
     	$newsID = array();
     	$date = array();
-
-    	foreach ($data as $value) {
+    	foreach ($data as $key => $value) {
     		$newsID[] = $value['newsID'];
     		$year = date('Y',strtotime($value['publish_datetime']));
     		if(!in_array($year,$date))
@@ -437,7 +436,7 @@ class Columns extends CI_Model
 		
         foreach ($data as $key => $value) {
             $list_id[] = $value['newsID'];
-            unset($data[$key]['newsID']);
+            // unset($data[$key]['newsID']);
 			$data[$key]['publish_datetime'] = date('Y-m-d',strtotime($value['publish_datetime']));
 			$data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
             if($value['vdo']!=''&&$value['vdo']!=0){
@@ -448,7 +447,7 @@ class Columns extends CI_Model
         if(count($video_id_list)>0){	
 			$this->SetVideo($data,$video_id_list);
 		}
-
+		$this->SetWriters($data);
         return $data;
     }
 

@@ -423,20 +423,22 @@ class Instant extends CI_Model
 		$year1 = date('Y',strtotime("today"));
 		$year2 = date('Y',strtotime($day));
 		
-		
+
 		$this->db = $this->load->database('instant',TRUE);	
-		$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid 
-		FROM `st_inews_main_$year1` 
-		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND `status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
+		$results = $this->db->query("SELECT datetime, nm.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat  
+		FROM `st_inews_main_$year1` nm
+		INNER JOIN st_inews st ON st.rec_id = nm.rec_id
+		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND nm.`status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 		
 		$list1 = $results->result_array();
 		$count = count($list1);
 		
 		if($count  < $total && $year1 !== $year2){
 			$total = $total - $count;
-			$results = $this->db->query("SELECT datetime, rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid 
-			FROM `st_inews_main_$year2` 
-			WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND	`status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
+			$results = $this->db->query("SELECT datetime, nm.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat  
+		FROM `st_inews_main_$year2` nm
+		INNER JOIN st_inews st ON st.rec_id = nm.rec_id
+		WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND nm.`status` =1 AND `publish_datetime` >= '$day' ORDER BY `publish_Datetime` DESC LIMIT $total");
 			$list2 = $results->result_array();
 			foreach($list2 as $v){
 				$list1[] = $v;
