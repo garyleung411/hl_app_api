@@ -539,22 +539,25 @@ class Api extends DefaultApi{
 				if(count($list)<1){
 					$empty = true;
 				}
+				
 			}
 			else{
 				$empty = true;
 			}
 		}
-		$list = $this->list_cast($list);
+		
 		if($empty){
-			$output = json_encode(array(
-				'result' =>0
-			),JSON_UNESCAPED_SLASHES);
+			$this->show_error();
 		}else{
+			$this->load->model('News_category_list');
 			foreach($list as $k => $v){
 				$v['section'] = 'topic';
-				$v['cat'] = $cat;
+				if(isset($v['map_cat'])){
+					$v['cat'] = $this->News_category_list->mapcat2cat(1,$v['map_cat']);
+				}
 				$list[$k] = $v;
 			}
+			$list = $this->list_cast($list);
 			$output = json_encode(array(
 				'data' => $list,
 				'result' =>1,
