@@ -165,12 +165,12 @@ $app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
 $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_highlight'] = 		"highlight";
-$app_config['api']['api_detail'] =			"detail/[section]/[id]/[!cat]";
+$app_config['api']['api_detail'] =			"detail/[section]/[id]/";
 $app_config['api']['api_column_list'] =		"columns/[columnid]";
-$app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
+$app_config['api']['api_list'] =			"list/[section]/[cat]/";//新闻列表
 $app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
 
-$app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
+$app_config['api']['api_sp_search'] =		"sp_search/";
 $app_config['api']['api_search'] =			"search/[keyword]/[page]";
 $app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
 
@@ -180,8 +180,6 @@ $app_config['api']['api_special'] =			"special";
 
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-$app_config['api']['api_detail_ads'] = 		"ads/detail";
-$app_config['api']['api_columns_ads'] = 	"ads/columns";
 
 // foreach($app_config['api'] as $k=>$v){
 	// $app_config['api'][$k] = $v.'?real&gen';
@@ -214,7 +212,7 @@ $config['ads_cat_list_pos'] = array(
 	"3" => '影片',
 	"5" => '專欄',
 	"detail" => '文章內頁',		
-	"writer_list" => '個入專欄列表',
+	"columns" => '個入專欄列表',
 );
 
 $config['app_config'] = $app_config;

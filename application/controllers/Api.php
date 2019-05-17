@@ -771,6 +771,9 @@ class Api extends DefaultApi{
 	public function sp_search(){
 		// var_dump($_POST['data']);exit;
 		$list = getPostVal('data')['data'];
+		if(!isset($list)){
+			$this->show_error();
+		}
 		$this->load->model('Sp_search');
 		
 		$data = $this->Sp_search->Get_list_by_id($list);
