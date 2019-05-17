@@ -759,7 +759,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function sp_search(){
-		
+		var_dump($_REQUEST);exit;
 		$this->load->model('Sp_search');
 		
 		$data = $this->Sp_search->Get_list_by_id(null);
@@ -770,7 +770,7 @@ class Api extends DefaultApi{
 			}	
 		}
 		$data = $this->list_cast($data);
-		var_dump($_REQUEST);exit;
+		
 		$output = json_encode(array(
 			'data'=>$data,
 			'result' => 1
