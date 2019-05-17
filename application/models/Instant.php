@@ -121,12 +121,6 @@ class Instant extends CI_Model
 									unset($imglist[$value['id']][$k]);
 									continue;
 								}
-								if($v['isCover']== 1){
-									$imglist[$value['id']][$k]['path'] = str_replace('_popup.jpg', '_370.jpg', $v['path']);
-								}
-								else{
-									$imglist[$value['id']][$k]['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
-								}
 							}
 							
 							$imglist[$value['id']] = array_values($imglist[$value['id']]);
@@ -149,6 +143,14 @@ class Instant extends CI_Model
                         $data[$key]['imgs'] = $imglist[$value['id']];
 						foreach($data[$key]['imgs'] as $k => $v){
 							unset($v['caption']);
+							if($v['isCover']== 1){
+								$v['path'] = str_replace('_popup.jpg', '_370.jpg', $v['path']);
+								$v['path'] = str_replace('_popup.jpeg', '_370.jpeg', $v['path']);
+							}
+							else{
+								$v['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
+								$v['path'] = str_replace('.jpeg', '_370.jpeg', $v['path']);
+							}
 							$data[$key]['imgs'][$k] = $v;
 						}
 
@@ -162,7 +164,9 @@ class Instant extends CI_Model
 				if($v['isCover']==1){
 					unset($img[$data['id']][$k]);
 				}
-				$img[$data['id']][$k]['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
+				$v['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
+				$v['path'] = str_replace('.jpeg', '_370.jpeg', $v['path']);
+				$img[$data['id']][$k]['path'] = $v['path'];
 			}
 			$img[$data['id']] = array_values($img[$data['id']]);
             $data['imgs'] = $img[$data['id']];
