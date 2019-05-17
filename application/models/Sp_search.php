@@ -8,7 +8,7 @@ class Sp_search extends CI_Model
 	}
 	
 	public function Get_list_by_id($list){
-		
+		var_dump($list);
 		$list_id = array();//根据session分类
 		$list_order_by = array();//对应排序
 		$data = array();

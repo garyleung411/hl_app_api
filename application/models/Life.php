@@ -309,6 +309,7 @@ class Life extends CI_Model
 			
     		$return_data[] = array(
     			'id'=>$value['id'],
+				'newsID'=>$value['newsID'],
     			'title'=>$value['title'],
     			
     			'map_cat'=>$value['map_cat'],
@@ -398,7 +399,7 @@ class Life extends CI_Model
 		
         foreach ($data as $key => $value) {
             $list_id[] = $value['newsID'];
-            unset($data[$key]['newsID']);
+            // unset($data[$key]['newsID']);
 			$data[$key]['publish_datetime'] = date('Y-m-d',strtotime($value['publish_datetime']));
 			$data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
             if($value['vdo']!=''&&$value['vdo']!=0){
