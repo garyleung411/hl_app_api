@@ -650,6 +650,7 @@ class Api extends DefaultApi{
 		$return_data = array();
 		$list = array(
 			"id"					=> "",
+			"newsID"				=> "",
 			"title"					=> "",
 			"content"				=> "",
 			"section"				=> "",
@@ -716,6 +717,7 @@ class Api extends DefaultApi{
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
+			
 			$data[50] = array ( 
 				'id' => '81665', 
 				'title' => '《鐵探》演出獲激讚              姜皓文直認恨攞視帝', 
@@ -756,12 +758,8 @@ class Api extends DefaultApi{
 
 	}
 	
-	public function show_error($error_code = 0){
-		$output = json_encode(array(
-				'result' =>$error_code,
-			),JSON_UNESCAPED_SLASHES);
-		$this->PushData($output);
-		exit;
+	public function sp_search(){
+		var_dump($_POST);
 	}
 	
 	public function search($keyword,$page=1){
@@ -809,5 +807,13 @@ class Api extends DefaultApi{
 		$this->show_error();
 
 	}
-
+	
+	public function show_error($error_code = 0){
+		$output = json_encode(array(
+				'result' =>$error_code,
+			),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
+		exit;
+	}
+	
 }
