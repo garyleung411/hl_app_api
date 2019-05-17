@@ -759,7 +759,23 @@ class Api extends DefaultApi{
 	}
 	
 	public function sp_search(){
-		var_dump($_POST);
+		
+		$this->load->model('Sp_search');
+		
+		$data = $this->Sp_search->Get_list_by_id(null);
+		$this->load->model('News_category_list');
+		foreach($data as $k=>$v){
+			if(isset($v['map_cat'])){
+				$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+			}	
+		}
+		$data = $this->list_cast($data);
+		var_dump($_REQUEST);exit
+		$output = json_encode(array(
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
 	}
 	
 	public function search($keyword,$page=1){

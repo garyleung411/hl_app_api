@@ -5,19 +5,22 @@ class Sp_search extends CI_Model
 
 	public function __construct (){
 		parent::__construct();
-		$this->load->database('hl_app');
 	}
 	
 	public function Get_list_by_id($list){
+		
 		$list_id = array();//根据session分类
 		$list_order_by = array();//对应排序
 		$data = array();
-		foreach ($list as $key => $value) {
-			$list_id[$value['section_id']][] = $value['newsID'];
-			$list_order_by[$value['newsID']] = $value['id'];
+		foreach ($list as $key => $value) {	
+			$section = array_keys($value)[0];
+			$news_id = $value[$section];
+			
+			$list_id[$section][] = $value[$section];
+			$list_order_by[$news_id] = $key;
 		}
 		$this->load->model('Section');
-
+		
 		foreach ($list_id as $key => $value) {
 			$section_info = $this->Section->Get_Section($key);
 			if($section_info)
@@ -31,7 +34,7 @@ class Sp_search extends CI_Model
 				$data = array_merge($data,$tmp);
 			}
 		}
-		
+	
 		$sorting = array();
 
 		foreach ($data as $value) {
