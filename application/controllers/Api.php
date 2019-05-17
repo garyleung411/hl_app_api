@@ -769,10 +769,11 @@ class Api extends DefaultApi{
 	}
 	
 	public function sp_search(){
-		var_dump($_REQUEST);exit;
+		// var_dump($_POST['data']);exit;
+		$list = getPostVal('data')['data'];
 		$this->load->model('Sp_search');
 		
-		$data = $this->Sp_search->Get_list_by_id(null);
+		$data = $this->Sp_search->Get_list_by_id($list);
 		$this->load->model('News_category_list');
 		foreach($data as $k=>$v){
 			if(isset($v['map_cat'])){
