@@ -16,6 +16,7 @@ class Api extends DefaultApi{
 			"SectionName" => "other",
 			"CatList"	=> array(),
 		);
+		
 		$other["CatList"] = array(
 			array(
 				"CatID" => "5-4",
@@ -33,7 +34,16 @@ class Api extends DefaultApi{
 				"MappingCatID" => "1",
 			),
 		);
-
+		$this->load->model('News_category_list');
+		$life_cat = $this->News_category_list->Get_Cat('4');
+		foreach($life_cat as $cat){
+			$other["CatList"][] = array(
+				"CatID" => ("4-".$cat->cat_id) ,
+				"CatName" => $cat->cat_cname,
+				"MappingCatID" => $cat->mapping_catid,
+			);
+			
+		}
 		
 		
 		$tmp = $this->topic(true);
