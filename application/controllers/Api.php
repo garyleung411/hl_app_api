@@ -770,7 +770,7 @@ class Api extends DefaultApi{
 			}	
 		}
 		$data = $this->list_cast($data);
-		var_dump($_REQUEST);exit
+		var_dump($_REQUEST);exit;
 		$output = json_encode(array(
 			'data'=>$data,
 			'result' => 1
