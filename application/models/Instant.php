@@ -162,6 +162,7 @@ class Instant extends CI_Model
 				if($v['isCover']==1){
 					unset($img[$data['id']][$k]);
 				}
+				$img[$data['id']][$k]['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
 			}
 			$img[$data['id']] = array_values($img[$data['id']]);
             $data['imgs'] = $img[$data['id']];
