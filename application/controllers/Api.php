@@ -689,6 +689,7 @@ class Api extends DefaultApi{
 		$return_data = array();
 		$detail = array(
 			"id"					=> "",
+			"newsID"				=> "",
 			"title"					=> "",
 			"content"				=> array(),
 			"section"				=> "",
