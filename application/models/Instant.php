@@ -103,7 +103,7 @@ class Instant extends CI_Model
     }
     
 	public function SetImg(&$data,$Imgs,$is_list = true,$max = 3){
-
+		
         if($is_list){
             if(count($Imgs)>0){
                 $imglist = $this->GetImg($Imgs);
@@ -167,9 +167,9 @@ class Instant extends CI_Model
 					unset($img[$data['id']][$k]);
 				}
 				else{
-					if(strtotime($data['id']['datetime']) >= strtotime('2019-05-20')){
-						$v['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
-						$v['path'] = str_replace('.jpeg', '_370.jpeg', $v['path']);
+					if(strtotime($data['datetime']) >= strtotime('2019-05-20')){
+						$v['path'] = str_replace('.jpg', '_600.jpg', $v['path']);
+						$v['path'] = str_replace('.jpeg', '_600.jpeg', $v['path']);
 					}
 					$img[$data['id']][$k]['path'] = $v['path'];
 				}
@@ -373,6 +373,7 @@ class Instant extends CI_Model
             $return_data[] = array(
                 'id'=>$value['id'],
                 'title'=>$value['title'],
+				'datetime'=>$value['datetime'],
                 'publish_datetime'=>$value['publish_datetime'],
 				'map_cat'=>$value['map_cat'],
             );
