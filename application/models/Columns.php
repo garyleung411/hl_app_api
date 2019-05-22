@@ -498,6 +498,7 @@ class Columns extends CI_Model
 		
     	$this->db->limit($page);
     	$res = $this->db->get();
+		// var_dump($this->db->last_query());
     	$data = $res->result_array();
 		
     	if(count($data)<$page)
