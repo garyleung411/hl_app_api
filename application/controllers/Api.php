@@ -290,7 +290,9 @@ class Api extends DefaultApi{
 							
 							$value['cat'] = $this->News_category_list->mapcat2cat($s, $value['map_cat']);
 						}
-						
+						if($value['section']==5){
+							$value['cat'] = '1';
+						}
 						$data[$sort_list[intval($value['id'])]] =  $value;
 					}
 				}
@@ -398,6 +400,9 @@ class Api extends DefaultApi{
 					if(isset($data['map_cat'])){
 						$this->load->model('News_category_list');
 						$data['cat'] = $this->News_category_list->mapcat2cat($section,$data['map_cat']);
+					}
+					if($data["section"]==5){
+						$data["cat"] = "1";
 					}
 					if($data["section"]==1){
 						$this->load->model("Topic");
@@ -591,6 +596,7 @@ class Api extends DefaultApi{
 			if($data){
 				foreach($data['list'] as $k =>$v){
 					$data['list'][$k]['section'] = "5"; 
+					$data['list'][$k]['cat'] = "1"; 
 				}
 				$data['list'] = $this->list_cast($data['list']);
 				if(count($data['list'])>0){
