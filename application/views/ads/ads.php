@@ -79,11 +79,12 @@
 				height:100%;
 				margin: auto; 
 			}
+			
 		</style>
 		
 	</head>
 	<body style="">
-		<div id="container">
+		<div class="container">
 			<div class="layer_page">
 				<section>
 					<div id="detailVideo" class=""></div>
