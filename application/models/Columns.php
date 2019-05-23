@@ -432,6 +432,7 @@ class Columns extends CI_Model
 			$res = $this->db->get();
 			$data = array_merge($data, $res->result_array());
 		}
+		
         $list_id = array();
         $video_id_list = array();
 		
@@ -445,10 +446,12 @@ class Columns extends CI_Model
 			}
         }
         $this->SetImg($data,$list_id,true,1);
+		
         if(count($video_id_list)>0){	
 			$this->SetVideo($data,$video_id_list);
 		}
 		$this->SetWriters($data);
+		
         return $data;
     }
 
