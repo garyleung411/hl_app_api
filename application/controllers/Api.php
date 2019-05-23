@@ -498,7 +498,7 @@ class Api extends DefaultApi{
 			$this->$section_name->page($page);
 			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
 			$path = str_replace('{cat}',$cat,$path);
-			$path = str_replace('.json','_'.(int)$page.'json',$path);
+			$path = str_replace('.json','_'.(int)$page.'.json',$path);
 			if(!($list=json_decode($this->Getfile($path)))||isset($_GET['gen'])){
 				$list = $this->$section_name->GetList($map_cat);
 				
