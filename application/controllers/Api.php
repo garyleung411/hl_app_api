@@ -813,8 +813,8 @@ class Api extends DefaultApi{
 	}
 	
 	public function ads_section(){	
-		$ads_section = array_keys($this->config->item('ads_cat_list_pos'));
 		$ads_section = $this->config->item('ads_cat_list_pos');
+		
 		$ads['data'] = $ads_section;
 		$ads['result'] = 1;
 		$this->PushData(json_encode($ads,true));
