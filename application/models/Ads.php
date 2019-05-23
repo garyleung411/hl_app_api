@@ -24,13 +24,18 @@ class Ads extends CI_Model  {
 		$data = $res->result_array();
 		// echo '<pre>';
 		// var_dump($data);
-
-
-		return $this->ads_cast($data);
+		$ads_section = $this->config->item('ads_cat_list_pos');
+		foreach($data as $k => $ads){
+			$data[$k]['list_pos'] = strval($ads_section[$section][$ads['pos']-1]);
+		}
+		return  $this->ads_cast($data);
+		
+		
+		
 	}
 	
-	public function ads_cast($data)
-	{
+	public function ads_cast($data){
+		
 		$return_data = array();
 		foreach ($data as $value) {
 			$return_data[] = array(
@@ -41,8 +46,9 @@ class Ads extends CI_Model  {
 				'content'		=>$value['content'],
 				'cover'			=>$value['id'],
 				'pos'			=>$value['pos'],
+				'list_pos'		=>$value['list_pos'],
 				'image'			=>$value['ads_image'],
-				'layout'				=>$value['ads_type']
+				'layout'		=>$value['ads_type']
 			);
 		}
 		return $return_data;
