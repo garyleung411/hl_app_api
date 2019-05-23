@@ -743,9 +743,8 @@ class Api extends DefaultApi{
 				if(isset($v['map_cat'])){
 					$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 				}
-				
-				
 			}
+			
 			$data = $this->list_cast($data);
 			if(count($data)>0){
 				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
