@@ -223,9 +223,9 @@ class Daily extends CI_Model
 		foreach($years as $year){
 			$this->db = $this->load->database('daily',TRUE);
 			$this->db->select('img.path,info.isCover,img.newsID,info.caption');
-			$this->db->from('news_img_src_'.$year.' as img');
+			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('daily_hl_news as dhn',"dhn.newsID = img.newsID AND dhn.year = '$year'", 'inner');
-			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.imgID', 'inner');
+			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.parentImgID', 'inner');
 			if(is_array($newID)&&count($newID)>0)
 			{
 				$this->db->where_in('img.newsID',$newID);
@@ -234,7 +234,8 @@ class Daily extends CI_Model
 			{
 				$this->db->where('img.newsID',$newID);
 			}
-			
+			$this->db->where('img.path NOT LIKE ','%.psd');
+			$this->db->where('img.class',14);
 			$this->db->where('img.status',1);
 			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
