@@ -22,16 +22,19 @@ class Api extends DefaultApi{
 				"CatID" => "5-4",
 				"CatName" => "﻿金融High Tea",
 				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405050334300476075.jpg",
 			),
 			array(
 				"CatID" => "5-417",
 				"CatName" => "﻿巴士的點評",
 				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20150327042040701019288.jpg",
 			),
 			array(
 				"CatID" => "5-0",
 				"CatName" => "﻿Executive日記",
 				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405045803512634278.jpg",
 			),
 		);
 		$this->load->model('News_category_list');
@@ -41,6 +44,7 @@ class Api extends DefaultApi{
 				"CatID" => ("4-".$cat->cat_id) ,
 				"CatName" => $cat->cat_cname,
 				"MappingCatID" => $cat->mapping_catid,
+				"icon" => '',
 			);
 			
 		}
@@ -54,6 +58,7 @@ class Api extends DefaultApi{
 					"CatID" => $v['id'],
 					"CatName" => $v['title'],
 					"MappingCatID" => "",
+					"icon" => $this->config->item('hl_app_img_url').$v['icon'],
 				);
 				$catlist[] = $cat;
 			}

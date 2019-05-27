@@ -54,7 +54,8 @@ class Section extends CI_Model
                     $Catlist[] = array(
                         'CatID' => $v->cat_id,
                         'CatName'=>$v->cat_cname,
-                        'MappingCatID'=>$v->mapping_catid
+                        'MappingCatID'=>$v->mapping_catid,
+						"icon" => '',
                     );
                     unset($Cat[$key]);
                 }
