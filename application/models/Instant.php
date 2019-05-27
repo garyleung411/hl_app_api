@@ -291,6 +291,7 @@ class Instant extends CI_Model
         }
         $this->db->limit($total);
         $res = $this->db->get();
+		// var_dump($this->db->last_query());
         $list = $res->result_array();
         //list第一个结果
 
