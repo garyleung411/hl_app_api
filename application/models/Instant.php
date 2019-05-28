@@ -116,6 +116,7 @@ class Instant extends CI_Model
 						if(count($imglist[$value['id']]) >= 3){
 							$tmp= array_filter($imglist[$value['id']], 'filterArray');
 							$name = str_replace('_popup.jpg','',$tmp[0]["path"]);
+							$name = str_replace('_popup.jpeg','',$tmp[0]["path"]);
 							foreach($imglist[$value['id']] as $k => $v){
 								if(strpos($v['path'], $name)!== false && $v['isCover']!= 1){
 									unset($imglist[$value['id']][$k]);
