@@ -268,6 +268,9 @@ class Columns extends CI_Model
 			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());
+			if(count($imgs)>0){
+				break;
+			}
 		}
 		return $imgs;
 	}
