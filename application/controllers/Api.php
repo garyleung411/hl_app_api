@@ -411,7 +411,6 @@ class Api extends DefaultApi{
 					}
 					if($data["section"]==1){
 						$this->load->model("Topic");
-						
 						$data["topic"] = $this->Topic->is_topic_keyword($data["keyword"]);
 					}
 					$content = array("","","");
@@ -442,6 +441,9 @@ class Api extends DefaultApi{
 							if(isset($v['map_cat'])){
 								$this->load->model('News_category_list');
 								$v['cat'] = $this->News_category_list->mapcat2cat($section,$v['map_cat']);
+							}
+							if($v['section']==5){
+								$v['cat'] = '1';
 							}
 							$data["related_news"][$k] = $v;
 						}
@@ -753,6 +755,9 @@ class Api extends DefaultApi{
 			foreach($data as $k=>$v){
 				if(isset($v['map_cat'])){
 					$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+				}
+				if($v['section']==5){
+					$data[$k]['cat'] = '1';
 				}
 			}
 			
