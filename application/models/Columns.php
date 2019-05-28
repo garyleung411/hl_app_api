@@ -350,6 +350,7 @@ class Columns extends CI_Model
 					'publish_datetime'=>$value['publish_datetime']
 				);
 			}
+			
 		}
     	$this->SetImg($return_data,$imglist);
     	if(count($return_data)==5){
