@@ -186,6 +186,7 @@ class Daily extends CI_Model
 				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat as map_cat');
 				$this->db->limit($PageSize,$Page*$PageSize);
 				$this->db->order_by('nm.publishDatetime','desc');
+				$this->db->order_by('dhn.dailyID','asc');
 				$res = $this->db->get();
 				// var_dump($this->db->last_query());
 				return $res->result_array();
