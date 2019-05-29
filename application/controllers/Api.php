@@ -417,18 +417,26 @@ class Api extends DefaultApi{
 					if(isset($data['content'])){
 						
 						$content[0] = $data['content'];
-						
+						if($section == '5' || $section == '2'){
+							$content[0] = str_replace("\n","<br /><br />",$content[0]);
+						}
 						// $content[0] = str_replace($this->config->item("new_line"),"\n",$content[0]);
 						// $content[0] = strip_tags($content[0]);
 						
 					}
 					if(isset($data['content2'])){
 						$content[1] = $data['content2'];
+						if($section == '5' || $section == '2'){
+							$content[1] = str_replace("\n","<br /><br />",$content[1]);
+						}
 						// $content[1] = str_replace($this->config->item("new_line"),"\n",$content[1]);
 						// $content[1] = strip_tags($content[1]);
 					}
 					if(isset($data['content3'])){
 						$content[2] = $data['content3'];
+						if($section == '5' || $section == '2'){
+							$content[2] = str_replace("\n","<br /><br />",$content[2]);
+						}
 						// $content[2] =str_replace($this->config->item("new_line"),"\n",$content[2]);
 						// $content[2] = strip_tags($content[2]);
 					}
