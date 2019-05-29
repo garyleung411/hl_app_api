@@ -816,7 +816,7 @@ class Api extends DefaultApi{
 		$keyword = strip_tags(str_replace($this->config->item("search_filter"),"",urldecode($keyword)));
 		$data = null;
 		
-		if(isset($keyword)||trim($keyword)){
+		if(isset($keyword)&&strlen(trim($keyword))>=1){
 			$search = $this->search->Getlist($keyword, $page);
 			if($search&&count($search['data'])>0){
 				$search['data'] = $this->list_cast($search['data']);
