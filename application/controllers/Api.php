@@ -749,16 +749,6 @@ class Api extends DefaultApi{
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
-			
-			$data[50] = array ( 
-				'id' => '81665', 
-				'title' => '《鐵探》演出獲激讚              姜皓文直認恨攞視帝', 
-				'section' => "3", 
-				'cat' => '3', 
-				'publish_datetime' => '2019-04-11 23:00:00', 
-				'vdo' => 'hkheadline/instant_video/2019/0411/186c944aaab36304e61635dfacc5e488.mp4', 
-				'imgs' => array ( 0 => array ( 'path' => '/2019/04/11/Img_81665_500_190411153139.jpg', 'isCover' => '1', ), ), 
-			);
 			$this->load->model('News_category_list');
 			foreach($data as $k=>$v){
 				if(isset($v['map_cat'])){

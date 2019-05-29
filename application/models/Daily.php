@@ -336,6 +336,9 @@ class Daily extends CI_Model
 
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID', 'inner');
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('dhn.status',1);
 			$this->db->where('dhn.dailyID',(int)$id);
 		
@@ -366,7 +369,9 @@ class Daily extends CI_Model
 			{
 				$this->db->where('dhn.dailyID',$id);
 			}
-			
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('dhn.status',1);
 			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as map_cat');
 			$res = $this->db->get();

@@ -178,7 +178,9 @@ class Life extends CI_Model
 			{
 				$this->db->where('hhn.newsCat',$cat);
 			}
-			
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('hhn.status',1);
 		
 			if($rand){
@@ -204,7 +206,9 @@ class Life extends CI_Model
 				{
 					$this->db->where('hhn.newsCat',$cat);
 				}
-				
+				$day_before = $this->config->item('day_before');
+				$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+				$this->db->where('nm.publishDatetime >=',$day);
 				$this->db->where('hhn.status',1);
 				if($rand){
 	                $this->db->order_by(rand(0,1), 'RANDOM');
@@ -362,6 +366,9 @@ class Life extends CI_Model
 
 			$this->db->from('hd_hl_news as hhn');
 			$this->db->join('news_main_'.$year.' as nm','hhn.newsID = nm.newsID', 'inner');
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('hhn.status',1);
 			$this->db->where('hhn.hdID',(int)$id);
 		
@@ -392,7 +399,9 @@ class Life extends CI_Model
 			{
 				$this->db->where('hhn.hdID',$id);
 			}
-			
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('hhn.status',1);
 			$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,hhn.newsCat as map_cat');
 			$res = $this->db->get();
