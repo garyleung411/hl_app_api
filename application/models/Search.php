@@ -39,45 +39,36 @@ class Search extends CI_Model
 			)
 		);
 		$response = $this->solr->search($searchCountArr);
-		
 		if(isset($response['responseHeader']['status']) && $response['responseHeader']['status'] == 0){
 			$numOfFound = (isset($response['response']['numFound']))?$response['response']['numFound']:0;
 			$resultArray = (isset($response['response']['docs']))?$response['response']['docs']:array();
 		}
 		
-		$data = array();
 		$this->load->model('News_category_list');
-		// var_dump($this->config->item('solr'));
-		// var_dump($resultArray);
-		foreach($resultArray as $k => $v){
-			$publish_datetime = date('Y-m-d', strtotime(explode("aa", $v['publishtime'])[0]));
-			$day_before = $this->config->item("column_day_before");
-			$day = date('Y-m-d', strtotime("-$day_before day"));
-			if(strtotime($publish_datetime) <  strtotime($day)){
-				continue;	
-			}
-			
-			$main_data = explode('@', $v["ID"]);
-			$section = $main_data[2]=="instant" ? '1' : (isset($main_data[3])&&trim($main_data[3])!=''?'5':'2');
-			$id = $section==1?($main_data[0]-500000) :$main_data[0];
-			$row = array(
-				"id"					=> $id,
-				"title"					=> $v['title'],
-				"content"				=> mb_substr(strip_tags($v['content']),0,50,'utf-8'),
-				"section"				=> $section,
-				"publish_datetime"		=> $publish_datetime,
-				"layout"				=> "1",
-			);
-			$row["cat"] = $this->News_category_list->mapcat2cat($row["section"], $main_data[1]);
-			
-			$data[] = $row;
+		$data = array();
+		foreach($resultArray as $v){
+			$data[$v['section']][] = $v['id'];
 		}
-		
+		$this->load->model('Section');
+		$return_data = array();
+		foreach ($data as $key => $value) {
+			$section_info = $this->Section->Get_Section($key);
+			if($section_info)
+			{
+				$section_name = $section_info[0]->section_name;
+				$this->load->model($section_name);
+				$tmp = $this->$section_name->Get_News_list_by_ID($value);
+				foreach($tmp as $i => $d) {
+					$tmp[$i]['section'] = $section_info[0]->section_id;
+				}
+				$return_data = array_merge($return_data,$tmp);
+			}
+		}
 		return array(
 			'page_size'	 => $rows,
 			'page_md5' => md5(json_encode($data)),
 			'page_now' => $page,
-			'data'	=> $data
+			'data'	=> $return_data
 		);
 	}
 	
