@@ -784,7 +784,7 @@ class Api extends DefaultApi{
 	
 	public function sp_search(){
 		// var_dump($_POST['data']);exit;
-		$list = getPostVal('data');
+		$list = getPostVal('data')['data'];
 		if(!isset($list)){
 			$this->show_error();
 		}
