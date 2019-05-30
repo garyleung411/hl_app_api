@@ -118,13 +118,14 @@ class Popnews extends CI_Model{
     {
     	// var_dump($id);
     	$data = $this->Get_video($id);
+		// var_dump($data);
     	foreach ($data as $key => $value) {
     		$data[$key]['imgs'] = array(array(
     			'path'=> $value['imgs'],
     			'isCover'=> 1
     		));
-    		$data[$key]['map_cat'] = $value['cat'];
-    		unset($data[$key]['cat']);
+    		// $data[$key]['map_cat'] = $value['cat'];
+    		// unset($data[$key]['cat']);
     	}
     	
     	return $data;
