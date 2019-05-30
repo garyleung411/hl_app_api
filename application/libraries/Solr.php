@@ -16,7 +16,7 @@ class Solr
 	protected $minScore = 0.1;
 	
 	public function __construct($config){
-		$this->project = (isset($config['project']) && !empty($config['project']) && in_array($config['project'], self::$ALLOWED_PRODUCT))?$config['project']:$this->error(SOLR_ERROR_NO_PROJECT);
+		$this->project = (isset($config['project']) && !empty($config['project']))?$config['project']:$this->error(SOLR_ERROR_NO_PROJECT);
 		$this->httpRoot = isset($config['http_root'])?$config['http_root']:$this->error(SOLR_CONFIG_ERROR);
 		$this->debug = isset($config['debug'])?$config['debug']:false;
 		$this->isCloudMode = isset($config['is_cloud_mode'])?$config['is_cloud_mode']:$this->error(SOLR_CONFIG_ERROR);

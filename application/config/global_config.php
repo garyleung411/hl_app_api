@@ -37,8 +37,8 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 	$config['solr'] = array(
-		"project"       => "HL",
-		"http_root"     => "192.168.148.105:8986/solr/",
+		"project"       => "appcollect",
+		"http_root"     => "192.168.149.106:8983/solr/",
 		"debug"         => false,
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
@@ -71,8 +71,8 @@ else{
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 	$config['solr'] = array(
-		"project"       => "HL",
-		"http_root"     => "192.168.148.116:8986/solr/",
+		"project"       => "appcollect",
+		"http_root"     => "192.168.149.106:8983/solr/",
 		"debug"         => false,
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
@@ -91,8 +91,8 @@ else{
 		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 		$config['solr'] = array(
-			"project"       => "HL",
-			"http_root"     => "192.168.148.105:8986/solr/",
+			"project"       => "appcollect",
+			"http_root"     => "192.168.149.106:8983/solr/",
 			"debug"         => false,
 			"is_cloud_mode" => true,
 			"min_score"     => 0.1,
