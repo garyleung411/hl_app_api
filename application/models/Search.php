@@ -35,7 +35,8 @@ class Search extends CI_Model
 			"start"=>$lowlimit,
 			"rows"=>$rows,
 			"sort"=>array(
-				"publishtime"=>"desc"
+				
+				"publishtime"=>"desc",
 			)
 		);
 		$response = $this->solr->search($searchCountArr);

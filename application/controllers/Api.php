@@ -789,7 +789,10 @@ class Api extends DefaultApi{
 		if(!isset($list)){
 			$this->show_error();
 		}
-		$list = json_decode($list,true);
+		if(!is_array($list )){
+			$list = json_decode($list,true);
+		}
+		
 	
 		$this->load->model('Sp_search');
 		
