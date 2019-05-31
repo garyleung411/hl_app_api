@@ -292,7 +292,7 @@ class Instant extends CI_Model
 				$this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
 				$this->db->where('main.status',1);
 				$this->db->where('publish_datetime >=',$day);
-				$this->db->where('`publish_datetime` <=', 'NOW()');
+				$this->db->where('`publish_datetime` <= NOW()');
 				if($cat != -1)
 					$this->db->where('st.newstype',$cat);
 

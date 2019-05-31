@@ -65,7 +65,7 @@ class Popnews extends CI_Model{
 		$day_before = $this->config->item('day_before');
 		$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 		$this->db->where('publish_datetime >=',$day);
-		$this->db->where('publish_datetime <=','NOW()');
+		$this->db->where('publish_datetime <= NOW()');
 		$this->db->where('catid != ','');
 		$this->db->where('video_status','1');
 		$this->db->order_by('publish_datetime','desc');
