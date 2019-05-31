@@ -339,7 +339,7 @@ class Daily extends CI_Model
 			$day_before = $this->config->item('day_before');
 			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 			$this->db->where('nm.publishDatetime >=',$day);
-			$this->db->where('nm.publishDatetime <=','NOW()');
+			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('dhn.status',1);
 			$this->db->where('dhn.dailyID',(int)$id);
 		
@@ -373,7 +373,7 @@ class Daily extends CI_Model
 			$day_before = $this->config->item('day_before');
 			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 			$this->db->where('nm.publishDatetime >=',$day);
-			$this->db->where('nm.publishDatetime <=','NOW()');
+			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('dhn.status',1);
 			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as map_cat');
 			$res = $this->db->get();
