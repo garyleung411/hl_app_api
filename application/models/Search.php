@@ -44,10 +44,11 @@ class Search extends CI_Model
 			$numOfFound = (isset($response['response']['numFound']))?$response['response']['numFound']:0;
 			$resultArray = (isset($response['response']['docs']))?$response['response']['docs']:array();
 		}
-		
 		$this->load->model('News_category_list');
 		$data = array();
+		$order = array();
 		foreach($resultArray as $v){
+			$order[] = array($v['section'],$v['id']);
 			$data[$v['section']][] = $v['id'];
 		}
 		$this->load->model('Section');
@@ -65,11 +66,17 @@ class Search extends CI_Model
 				$return_data = array_merge($return_data,$tmp);
 			}
 		}
+		
+		foreach($return_data as $v){
+			$k = array_search(array($v['section'],$v['id']),$order);
+			$list[$k]= $v; 
+		}
+		ksort($list);
 		return array(
 			'page_size'	 => $rows,
 			'page_md5' => md5(json_encode($data)),
 			'page_now' => $page,
-			'data'	=> $return_data
+			'data'	=> $list,
 		);
 	}
 	
