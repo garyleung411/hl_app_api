@@ -167,7 +167,8 @@ class Columns extends CI_Model
 				// $this->db->where('nm.createdBy !=',0);
 				$this->db->where('dhn.status',1);
 
-				$this->db->where('publishDatetime >=',date('Y-m-d') );
+				$this->db->where('nm.publishDatetime >=',date('Y-m-d') );
+				$this->db->where('nm.publishDatetime <=','NOW()');
 				if($PageSize != -1){
 					$this->db->limit($PageSize);
 				}
@@ -405,6 +406,7 @@ class Columns extends CI_Model
 			$day_before = $this->config->item('day_before');
 			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 			$this->db->where('nm.publishDatetime >=',$day);
+			$this->db->where('nm.publishDatetime <=','NOW()');
 			$this->db->where('dhn.dailyID',(int)$id);
 		
 			$res = $this->db->get();
