@@ -62,23 +62,32 @@ class Search extends CI_Model
 				$tmp = $this->$section_name->Get_News_list_by_ID($value);
 				foreach($tmp as $i => $d) {
 					$tmp[$i]['section'] = $section_info[0]->section_id;
+					if(isset($tmp[$i]['map_cat'])){
+							
+						$tmp[$i]['cat'] = $this->News_category_list->mapcat2cat($tmp[$i]['section'], $tmp[$i]['map_cat']);
+					}
+					if($tmp[$i]['section']==5){
+						$tmp[$i]['cat'] = '1';
+					}
 				}
 				$return_data = array_merge($return_data,$tmp);
 			}
 		}
-		
+		$list = array();
 		foreach($return_data as $v){
 			$k = array_search(array($v['section'],$v['id']),$order);
 			$list[$k]= $v; 
 		}
-		ksort($list);
+		if(count($list)>1){
+			ksort($list);
+		}
 		return array(
 			'page_size'	 => $rows,
 			'page_md5' => md5(json_encode($data)),
 			'page_now' => $page,
 			'data'	=> $list,
 		);
-	}
 	
+	}
 	
 }
