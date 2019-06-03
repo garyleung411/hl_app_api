@@ -442,7 +442,7 @@ class Instant extends CI_Model
 					INNER JOIN st_inews st ON st.rec_id = nm.rec_id
 					WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND nm.`status` =1 AND `publish_datetime` >= '$day' AND `publish_datetime` <= NOW() ORDER BY `publish_Datetime` DESC LIMIT $total");
 		
-				$list = array_merge($list,$res->result_array());
+				$list = array_merge($list,$results->result_array());
 			}
 			$total -= count($list);
 		}

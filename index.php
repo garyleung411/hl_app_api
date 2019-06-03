@@ -312,4 +312,14 @@ switch (ENVIRONMENT)
  *
  * And away we go...
  */
-require_once BASEPATH.'core/CodeIgniter.php';
+ 
+try{
+	require_once BASEPATH.'core/CodeIgniter.php';
+}
+catch(ArgumentCountError $t){
+	$output = json_encode(array(
+		'result' =>999,
+	),JSON_UNESCAPED_SLASHES);
+	header("Content-type:application/json");
+	echo $output;
+}
