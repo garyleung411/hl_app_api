@@ -39,7 +39,7 @@ class Life extends CI_Model
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
-			$img_id_list[] = $v['newsID'];
+			$img_id_list[] = $v['id'];
 			if($v['vdo']!=''&&$v['vdo']!=0){
 				$video_id_list[] = $v['vdo'];
 			}
@@ -64,10 +64,7 @@ class Life extends CI_Model
 		if(count($Imgs)==0&&count($data)>0){
 			$Imgs =array();
 			foreach ($data as $value) {
-				if(!isset($value['newsID'])){
-					$value['newsID'] = $this->Get_newsID_by_ID($value['id']);
-				}
-				$Imgs[] = $value['newsID'];
+				$Imgs[] = $value['id'];
 			}
 		}
 		
@@ -76,18 +73,15 @@ class Life extends CI_Model
 	    	$img = $this->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {
-					if(!isset($value['newsID'])){
-						$value['newsID'] = $this->Get_newsID_by_ID($value['id']);
-					}
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
-	    					if($value['newsID']==$v['newsID']){
+	    					if($value['id']==$v['id']){
 								//
 								if($is_list){
 									unset($v['caption']);
 								}
-	    						unset($v['newsID']);
+								unset($v['id']);
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
 	    					}
@@ -249,22 +243,22 @@ class Life extends CI_Model
 		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
 	}
 	
-	private function GetImg($newID){
+	private function GetImg($id){
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$imgs = array();
 		foreach($years as $year){
 			$this->db = $this->load->database('daily',TRUE);
-			$this->db->select('img.path,info.isCover,img.newsID,info.caption');
+			$this->db->select('img.path,info.isCover,hhn.hdID as id,info.caption');
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('hd_hl_news as hhn',"hhn.newsID = img.newsID AND hhn.year = '$year'", 'inner');
 			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.parentImgID', 'inner');
-			if(is_array($newID)&&count($newID)>0)
+			if(is_array($id)&&count($id)>0)
 			{
-				$this->db->where_in('img.newsID',$newID);
+				$this->db->where_in('hhn.hdID',$id);
 					
-			}else if($newID!=null&&$newID!='')
+			}else if($id!=null&&$id!='')
 			{
-				$this->db->where('img.newsID',$newID);
+				$this->db->where('hhn.hdID',$id);
 			}
 			$this->db->where('img.path NOT LIKE ','%.psd');
 			$this->db->where('img.class',14);
@@ -325,7 +319,7 @@ class Life extends CI_Model
     			'map_cat'=>$value['map_cat'],
 				'publish_datetime'=>date('Y-m-d',strtotime($value['publish_datetime'])),
     		);
-    		$imglist[] = $value['newsID'];
+    		$imglist[] = $value['id'];
     	}
     	if(count($return_data)==5){
     		unset($return_data[4]);
@@ -415,7 +409,7 @@ class Life extends CI_Model
         $video_id_list = array();
 		
         foreach ($data as $key => $value) {
-            $list_id[] = $value['newsID'];
+            $list_id[] = $value['id'];
             // unset($data[$key]['newsID']);
 			$data[$key]['publish_datetime'] = date('Y-m-d',strtotime($value['publish_datetime']));
 			$data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
