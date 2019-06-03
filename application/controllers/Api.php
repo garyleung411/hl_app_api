@@ -612,6 +612,7 @@ class Api extends DefaultApi{
 				foreach($data['list'] as $k =>$v){
 					$data['list'][$k]['section'] = "5"; 
 					$data['list'][$k]['cat'] = "1"; 
+					$data['list'][$k]['publish_datetime'] = date('Y-m-d', strtotime($data['list'][$k]['publish_datetime']));
 				}
 				$data['list'] = $this->list_cast($data['list']);
 				if(count($data['list'])>0){
@@ -858,12 +859,6 @@ class Api extends DefaultApi{
 
 	}
 	
-	public function show_error($error_code = 0){
-		$output = json_encode(array(
-				'result' =>$error_code,
-			),JSON_UNESCAPED_SLASHES);
-		$this->PushData($output);
-		exit;
-	}
+	
 	
 }
