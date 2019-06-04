@@ -82,8 +82,7 @@ class Search extends CI_Model
 			ksort($list);
 		}
 		return array(
-			'page_size'	 => $rows,
-			'page_md5' => md5(json_encode($data)),
+			'page_size'	 => count($list),//$rows,
 			'page_now' => $page,
 			'data'	=> $list,
 		);
