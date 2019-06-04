@@ -44,7 +44,7 @@ class Api extends DefaultApi{
 				"CatID" => ("4-".$cat->cat_id) ,
 				"CatName" => $cat->cat_cname,
 				"MappingCatID" => $cat->mapping_catid,
-				"icon" => '',
+				"icon" => 'http://hd.stheadline.com/images/life/icon_dining.png',
 			);
 			
 		}
