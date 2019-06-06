@@ -382,7 +382,7 @@ class Api extends DefaultApi{
 			
 			$path= $this->config->item('detail_path');
 			$path = str_replace('{section}',$section_name,$path);
-			$page = ((int)($id/1000)+1)*1000;
+			$page = ((int)((int)$id/1000)+1)*1000;
 			$path = str_replace('{page}',$page,$path);
 			$path = str_replace('{id}',$id,$path);
 			if(!($data=json_decode($this->Getfile($path),true))||isset($_GET['gen'])){
@@ -845,9 +845,10 @@ class Api extends DefaultApi{
 	public function ads($section,$cat=''){	
 		// echo MD5(MD5('123123'));
 		$ads = ($cat=='')?$section:$section.'-'.$cat;
-		
+		$pdate = getGetVal('pdate');
+		$pdate = isset($pdate)&&isset($_GET['editor'])?$pdate:date('Y-m-d');
 		$this->load->model('Ads');
-		$data = $this->Ads->GetAds($ads);
+		$data = $this->Ads->GetAds($ads, $pdate);
 		$ads = array();
 		if(count($data)>0){
 			$ads['data'] = $data;
@@ -856,7 +857,6 @@ class Api extends DefaultApi{
 			return;
 		}
 		$this->show_error();
-
 	}
 	
 	
