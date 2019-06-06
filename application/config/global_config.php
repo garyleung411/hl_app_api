@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('admin.stheadline.com');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
 }
