@@ -9,15 +9,15 @@ class Ads extends CI_Model  {
 	}
 	
 	//根据section cat获取广告
-	public function GetAds($section){
+	public function GetAds($section,$pdate){
 		$this->db->from('ads_publish_list as apl');
 		$this->db->join('hl_app_ads as ads','ads.id = apl.ads_id');
 
 
 		$this->db->where('apl.deleted',0);
 		$this->db->where('ads.status',1);
-		$this->db->where('apl.publish_datetime <=',date('Y-m-d'));
-		$this->db->where('apl.end_datetime >=',date('Y-m-d'));
+		$this->db->where('apl.publish_datetime <=', $pdate);
+		$this->db->where('apl.end_datetime >=', $pdate);
 		$this->db->where('apl.section_cat_name',$section);
 		$res = $this->db->get();
 		// var_dump($this->db->last_query());
