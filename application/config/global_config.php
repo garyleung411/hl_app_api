@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('admin.stheadline.com');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
 }
@@ -37,8 +37,8 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 	$config['solr'] = array(
-		"project"       => "HL",
-		"http_root"     => "192.168.148.105:8986/solr/",
+		"project"       => "appcollect",
+		"http_root"     => "192.168.149.106:8983/solr/",
 		"debug"         => false,
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
@@ -71,28 +71,28 @@ else{
 	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 	$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 	$config['solr'] = array(
-		"project"       => "HL",
-		"http_root"     => "192.168.148.116:8986/solr/",
+		"project"       => "appcollect",
+		"http_root"     => "192.168.149.106:8983/solr/",
 		"debug"         => false,
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
 	);
-	if(isset($_GET['real'])||true){
+	if(isset($_GET['real'])){ //false
 		//img_path
 		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 		$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 		$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
 		$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
-		$config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
+		// $config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
 		
 		//vdo
 		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
 		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
 		$config['solr'] = array(
-			"project"       => "HL",
-			"http_root"     => "192.168.148.105:8986/solr/",
+			"project"       => "appcollect",
+			"http_root"     => "192.168.149.106:8983/solr/",
 			"debug"         => false,
 			"is_cloud_mode" => true,
 			"min_score"     => 0.1,
@@ -105,6 +105,8 @@ else{
 
 
 $config['new_line'] = array('<br>', '<br />');
+
+
 
 $config['search_filter'] = array(
 	"~","`","!","@","#","$","%","^","&","*","(",")","-","_","=","+","[","]","{","}","\\","|",";",":","'",'"',",",".","?","/","<",">",
@@ -148,6 +150,9 @@ $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
 $config['columns_path'] = 'json/columns/list_{id}.json';
 
+//error_code
+require('error_code.php');
+$config['error_code'] = $error_code;
 
 //app_config
 $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
@@ -163,12 +168,12 @@ $app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
 $app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
 
 $app_config['api']['api_highlight'] = 		"highlight";
-$app_config['api']['api_detail'] =			"detail/[section]/[id]/[!cat]";
+$app_config['api']['api_detail'] =			"detail/[section]/[id]/";
 $app_config['api']['api_column_list'] =		"columns/[columnid]";
-$app_config['api']['api_list'] =			"list/[section]/[cat]/[!page]";//新闻列表
+$app_config['api']['api_list'] =			"list/[section]/[cat]/";//新闻列表
 $app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
 
-$app_config['api']['api_sp_search'] =		"sp_search/[section]/[id]";
+$app_config['api']['api_sp_search'] =		"sp_search/";
 $app_config['api']['api_search'] =			"search/[keyword]/[page]";
 $app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
 
@@ -178,11 +183,68 @@ $app_config['api']['api_special'] =			"special";
 
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-$app_config['api']['api_detail_ads'] = 		"ads/detail";
-$app_config['api']['api_columns_ads'] = 	"ads/columns";
 
 // foreach($app_config['api'] as $k=>$v){
 	// $app_config['api'][$k] = $v.'?real&gen';
 // }
+
+// $config['ads_cat_list_pos'] = array(
+	// "index" => '首頁',	
+	// "1-1" => '即時-港聞',	
+	// "1-2" => '即時-娛樂',	
+	// "1-3" => '即時-中國',	
+	// "1-4" => '即時-國際',	
+	// "1-5" => '即時-地產',	
+	// "1-6" => '即時-財經',	
+	// "1-7" => '即時-體育',	
+	// "2-1" => '日報-港聞',
+	// "2-2" => '日報-中國',
+	// "2-3" => '日報-國際',
+	// "2-4" => '日報-地產',
+	// "2-5" => '日報-財經',
+	// "2-6" => '日報-體育',
+	// "2-7" => '日報-副刊',
+	// "2-8" => '日報-娛樂',
+	// "2-9" => '日報-馬經',
+	// "4-1" => '生活-旅遊',
+	// "4-2" => '生活-飲食',
+	// "4-3" => '生活-影音',
+	// "4-4" => '生活-駕駛',
+	// "4-5" => '生活-時尚',
+	// "4-6" => '生活-健康',
+	// "3" => '影片',
+	// "5" => '專欄',
+	// "detail" => '文章內頁',		
+	// "columns" => '個入專欄列表',
+// );
+$config['ads_cat_list_pos'] = array(
+	"index" => array(2,4,5,10,13,16),	//首頁
+	"1-1" => array(2,4,5,10,13,16),	//即時-港聞
+	"1-2" => array(2,4,5,10,13,16),	//即時-娛樂
+	"1-3" => array(2,4,5,10,13,16),	//即時-中國
+	"1-4" => array(2,4,5,10,13,16),	//即時-國際
+	"1-5" => array(2,4,5,10,13,16),	//即時-地產
+	"1-6" => array(2,4,5,10,13,16),	//即時-財經
+	"1-7" => array(2,4,5,10,13,16),	//即時-體育
+	"2-1" => array(2,4,5,10,13,16),	//日報-港聞
+	"2-2" => array(2,4,5,10,13,16),	//日報-中國
+	"2-3" => array(2,4,5,10,13,16),	//日報-國際
+	"2-4" => array(2,4,5,10,13,16),	//日報-地產
+	"2-5" => array(2,4,5,10,13,16),	//日報-財經
+	"2-6" => array(2,4,5,10,13,16),	//日報-體育
+	"2-7" => array(2,4,5,10,13,16),	//日報-副刊
+	"2-8" => array(2,4,5,10,13,16),	//日報-娛樂
+	"2-9" => array(2,4,5,10,13,16),	//日報-馬經
+	"4-1" => array(2,4,5,10,13,16),	//生活-旅遊
+	"4-2" => array(2,4,5,10,13,16),	//生活-飲食
+	"4-3" => array(2,4,5,10,13,16),	//生活-影音
+	"4-4" => array(2,4,5,10,13,16),	//生活-駕駛
+	"4-5" => array(2,4,5,10,13,16),	//生活-時尚
+	"4-6" => array(2,4,5,10,13,16),	//生活-健康
+	"3" => array(2,4,5,10,13,16),	//影片
+	"5" => array(2,4,5,10,13,16),	//專欄
+	"detail" => array(1,2,3),	//文章內頁		
+	"columns" => array(3),	//個入專欄列表
+);
 
 $config['app_config'] = $app_config;

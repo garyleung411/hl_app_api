@@ -11,6 +11,46 @@
 		
 		
 		<script>
+		/*** app func use ***/
+		// function callAppFunc(str){
+			
+
+				// var functionArr = str.split("=");
+				// var valueStr = "";
+				// if(typeof functionArr[1] != 'undefined'){
+					// var valueArr = functionArr[1].split("@@");
+					// for(var k in valueArr){
+						// valueStr+="'"+valueArr[k]+"',";
+					// }
+					// if(valueStr != ""){
+						// valueStr = valueStr.substring(0, (valueStr.length-1));
+					// }
+				// }
+				
+				// if(typeof window.jsinterface != "undefined"){
+					// var checkfunc = eval("window.jsinterface."+functionArr[0]);
+					
+					// if(typeof checkfunc != "undefined"){
+						// eval("window.jsinterface."+functionArr[0]+"("+((valueStr!="")?valueStr:"")+");");
+					// }
+				// }
+				
+			
+			
+			
+			
+		// }
+		<?php 
+			preg_match("/Android|webOS/", $_SERVER['HTTP_USER_AGENT'], $matches);
+			$os = current($matches);
+			if($os=="Android"){
+		?>
+		function callAppFunc(photoJson, pos){
+			
+			var position = parseInt(pos);
+			window.jsinterface.callGallery(photoJson, position); 
+		}
+		<?php } ?>
 		$(document).ready(function(){
 			// $('.carousel').carousel({
 			  // // interval: 2000
@@ -21,6 +61,28 @@
 		   $("#carouselExampleIndicators").swipeleft(function() {
 				$(this).carousel('next');
 		   });
+		   // $(".fancybox").click(function(event){
+				// event.preventDefault();
+				// src = $(this).find('img').attr('src');
+				// var photoJson = [src];
+				// var appFuncStr = "showGallery="+encodeURIComponent(JSON.stringify(photoJson));
+
+				// callAppFunc(appFuncStr);
+			// });
+			 $(".fancybox").click(function(event){
+				event.preventDefault();
+				src = $(this).find('img').attr('src');
+				pos = $(this).find('img').attr('pos');
+				var photoJson = [];
+				$("img").each(function() {  
+				   imgsrc = this.src;
+				   photoJson.push(imgsrc);
+				}); 
+				//var appFuncStr = "showGallery="+encodeURIComponent(JSON.stringify(photoJson));
+
+				callAppFunc(photoJson, pos);
+			});
+		   
 		});
 		</script>
 		
@@ -29,15 +91,20 @@
 				width:100%;
 				height:auto;
 			}
+			#carouselExampleIndicators{
+				height:300px;
+			}
 			#carouselExampleIndicators img{ 
-				width: 100%; 
+				width: auto; 
+				height:100%;
 				margin: auto; 
 			}
+			
 		</style>
 		
 	</head>
 	<body style="">
-		<div id="container">
+		<div class="container">
 			<div class="layer_page">
 				<section>
 					<div id="detailVideo" class=""></div>
@@ -63,7 +130,9 @@
 							?>
 								
 								<div class="item <?= $k==0?'active':'' ?>">
-									<img class="d-block w-100" src="<?= $hl_app_img_url.$img['src'] ?>" alt="">
+									<a class="fancybox" rel="gallery" href="<?= $hl_app_img_url.$img['src'] ?>"  title="">
+										<img class="d-block w-100" src="<?= $hl_app_img_url.$img['src'] ?>" alt="" pos="<?= $k ?>">
+									</a>
 								</div>
 								
 							<?php

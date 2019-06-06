@@ -62,6 +62,10 @@ class Popnews extends CI_Model{
 				$this->db->where('catid',$cat);
 			}
 		}
+		$day_before = $this->config->item('day_before');
+		$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+		$this->db->where('publish_datetime >=',$day);
+		$this->db->where('publish_datetime <= NOW()');
 		$this->db->where('catid != ','');
 		$this->db->where('video_status','1');
 		$this->db->order_by('publish_datetime','desc');
@@ -92,8 +96,6 @@ class Popnews extends CI_Model{
 	}
 	
 	private function Get_video($id){
-		$day_before = $this->config->item('day_before');
-        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
     	$this->db = $this->load->database('popnews',TRUE);
 		
 		$this->db->select('id,video_path as vdo,catid as map_cat,length,thumb_294_path as imgs,publish_datetime,headline as title,');
@@ -103,7 +105,10 @@ class Popnews extends CI_Model{
 		}else{
 			$this->db->where('id',$id);
 		}
+		
 		$this->db->where('deleted',0);
+		$day_before = $this->config->item('day_before');
+        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 		$this->db->where('publish_datetime >= ',$day);
 		$this->db->where('deleted',0);
 		$res = $this->db->get();
@@ -114,13 +119,14 @@ class Popnews extends CI_Model{
     {
     	// var_dump($id);
     	$data = $this->Get_video($id);
+		// var_dump($data);
     	foreach ($data as $key => $value) {
     		$data[$key]['imgs'] = array(array(
     			'path'=> $value['imgs'],
     			'isCover'=> 1
     		));
-    		$data[$key]['map_cat'] = $value['cat'];
-    		unset($data[$key]['cat']);
+    		// $data[$key]['map_cat'] = $value['cat'];
+    		// unset($data[$key]['cat']);
     	}
     	
     	return $data;

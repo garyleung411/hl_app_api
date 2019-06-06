@@ -68,6 +68,17 @@ class DefaultApi extends CI_Controller {
 	}
 	
 	/**
+	*	設置header並輸出數據
+	*/
+	protected function show_error($error_code = 0){
+		$output = json_encode(array(
+				'result' =>$error_code,
+			),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
+		exit;
+	}
+	
+	/**
 	*	設置超時時間
 	*/
 	protected function SetExpired($time)
