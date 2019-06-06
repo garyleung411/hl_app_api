@@ -68,13 +68,3 @@
 		"result"	=>	$result,
 		"data"		=>	$data,
 	);
-?>
-
-   
-
-     
-
-     
-
-
-
