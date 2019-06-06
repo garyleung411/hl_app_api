@@ -150,6 +150,9 @@ $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
 $config['columns_path'] = 'json/columns/list_{id}.json';
 
+//error_code
+require('error_code.php');
+$config['error_code'] = $error_code;
 
 //app_config
 $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
