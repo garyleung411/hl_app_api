@@ -170,7 +170,9 @@ class Instant extends CI_Model
 								else{
 									$v['path'] = str_replace('.jpg', '_370.jpg', $v['path']);
 									$v['path'] = str_replace('.jpeg', '_370.jpeg', $v['path']);
+									
 								}
+								$v['path'] = str_replace('_content_370', '_370', $v['path']);
 							}
 							$data[$key]['imgs'][$k] = $v;
 						}
@@ -191,6 +193,7 @@ class Instant extends CI_Model
 							$v['path'] = str_replace('.jpg', '_600.jpg', $v['path']);
 							$v['path'] = str_replace('.jpeg', '_600.jpeg', $v['path']);
 						}
+						$v['path'] = str_replace('_content_600', '_600', $v['path']);
 						$img[$data['id']][$k]['path'] = $v['path'];
 					}
 				}
