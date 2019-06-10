@@ -611,6 +611,9 @@ class Api extends DefaultApi{
 				{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
 				}
+				if($k=="title"){
+					$tmp[$k] = str_ireplace("\n","",$tmp[$k]);
+				}
 			}
 			$return_data[] = $tmp;
 		}
@@ -648,6 +651,9 @@ class Api extends DefaultApi{
 			if($k=='vid'&&isset($data[$k])&&is_string($data[$k]))
 			{
 				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
+			}
+			if($k=="title"){
+				$tmp[$k] = str_ireplace("\n","",$tmp[$k]);
 			}
 		}
 		$return_data = $tmp;
