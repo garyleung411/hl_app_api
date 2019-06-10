@@ -238,7 +238,6 @@ $app_config['api']['api_special'] =			"special";
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
 
 //error_code
-require('error_code.php');
+require('hlapp/error_code.php');
 $app_config['error'] = $error_code;
-
 $config['app_config'] = $app_config;
