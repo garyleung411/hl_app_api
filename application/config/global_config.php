@@ -104,11 +104,7 @@ else{
 }
 
 //text releated
-
-
 $config['new_line'] = array('<br>', '<br />');
-
-
 
 $config['search_filter'] = array(
 	"~","`","!","@","#","$","%","^","&","*","(",")","-","_","=","+","[","]","{","}","\\","|",";",":","'",'"',",",".","?","/","<",">",
@@ -151,44 +147,6 @@ $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
 $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
 $config['columns_path'] = 'json/columns/list_{id}.json';
-
-//error_code
-require('error_code.php');
-$config['error_code'] = $error_code;
-
-//app_config
-$app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
-$app_config['img']['instant_img_url'] =		$config['instant_img_url'];
-$app_config['img']['popnews_img_url'] =		$config['popnews_img_url'];
-$app_config['img']['life_img_url'] =		$config['life_img_url'];
-$app_config['img']['column_img_url'] =		$config['column_img_url'];
-$app_config['img']['hl_app_img_url'] =		$config['hl_app_img_url'];
-
-
-$app_config['vdo']['popnews_vdo_url'] =		$config['popnews_vdo_url'];
-$app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
-$app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
-
-$app_config['api']['api_highlight'] = 		"highlight";
-$app_config['api']['api_detail'] =			"detail/[section]/[id]/";
-$app_config['api']['api_column_list'] =		"columns/[columnid]";
-$app_config['api']['api_list'] =			"list/[section]/[cat]/";//新闻列表
-$app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
-
-$app_config['api']['api_sp_search'] =		"sp_search/";
-$app_config['api']['api_search'] =			"search/[keyword]/[page]";
-$app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
-
-$app_config['api']['api_hit_list'] =		"hit_list/[section]";//十大熱門daily or instant only
-$app_config['api']['api_interest'] =		"interest";
-$app_config['api']['api_special'] =			"special";
-
-
-$app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-
-// foreach($app_config['api'] as $k=>$v){
-	// $app_config['api'][$k] = $v.'?real&gen';
-// }
 
 // $config['ads_cat_list_pos'] = array(
 	// "index" => '首頁',	
@@ -248,5 +206,39 @@ $config['ads_cat_list_pos'] = array(
 	"detail" => array(1,2,3),	//文章內頁		
 	"columns" => array(3),	//個入專欄列表
 );
+
+//app_config
+$app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
+$app_config['img']['instant_img_url'] =		$config['instant_img_url'];
+$app_config['img']['popnews_img_url'] =		$config['popnews_img_url'];
+$app_config['img']['life_img_url'] =		$config['life_img_url'];
+$app_config['img']['column_img_url'] =		$config['column_img_url'];
+$app_config['img']['hl_app_img_url'] =		$config['hl_app_img_url'];
+
+
+$app_config['vdo']['popnews_vdo_url'] =		$config['popnews_vdo_url'];
+$app_config['vdo']['life_vdo_url'] =		$config['life_vdo_url'];
+$app_config['vdo']['instant_vdo_url'] =		$config['instant_vdo_url'];
+
+$app_config['api']['api_highlight'] = 		"highlight";
+$app_config['api']['api_detail'] =			"detail/[section]/[id]/";
+$app_config['api']['api_column_list'] =		"columns/[columnid]";
+$app_config['api']['api_list'] =			"list/[section]/[cat]/";//新闻列表
+$app_config['api']['api_section_cat'] =		"section/";//栏目分类列表
+
+$app_config['api']['api_sp_search'] =		"sp_search/";
+$app_config['api']['api_search'] =			"search/[keyword]/[page]";
+$app_config['api']['api_hot_search'] =		"hot_search/";//熱門關鍵字
+
+$app_config['api']['api_hit_list'] =		"hit_list/[section]";//十大熱門daily or instant only
+$app_config['api']['api_interest'] =		"interest";
+$app_config['api']['api_special'] =			"special";
+
+
+$app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
+
+//error_code
+require('error_code.php');
+$app_config['error'] = $error_code;
 
 $config['app_config'] = $app_config;
