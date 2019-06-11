@@ -17,6 +17,8 @@ $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' .
  */
 if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){ 
 	define('ENV', 'PROD');
+	ini_set('display_errors', 'Off');
+	error_reporting(0);
 	$config['img_server_config'] = array(
 		"hostname"	=>	"192.168.148.50",
 		"username"	=>	"ftp_pop",
