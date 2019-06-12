@@ -81,28 +81,6 @@ else{
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
 	);
-	if(isset($_GET['real'])){ //false
-		//img_path
-		$config['daily_img_url'] = "http://static.stheadline.com/stheadline/";
-		$config['instant_img_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-		$config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
-		$config['life_img_url'] = "http://static.stheadline.com/stheadline/";
-		$config['column_img_url'] = "http://static.stheadline.com/stheadline/";
-		// $config['hl_app_img_url'] = "http://static.stheadline.com/stheadline/";
-		
-		//vdo
-		$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
-		$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
-		$config['instant_vdo_url'] = "http://static.stheadline.com/stheadline/inewsmedia/";
-		$config['solr'] = array(
-			"project"       => "appcollect",
-			"http_root"     => "192.168.149.106:8983/solr/",
-			"debug"         => false,
-			"is_cloud_mode" => true,
-			"min_score"     => 0.1,
-		);
-	}
-	
 }
 
 //text releated
