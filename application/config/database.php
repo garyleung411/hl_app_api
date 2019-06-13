@@ -77,8 +77,8 @@ if(ENV === 'PROD' ){
 		$db['hl_app'] = array(
 			'dsn'	=> '',
 			'hostname' => '192.168.149.158',
-			'username' => 'db_admin',
-			'password' => '68PkzcrXSJ',
+			'username' => 'hlapp_rw',
+			'password' => 'tw5y75ij',
 			'database' => 'hl_app',
 			'dbdriver' => 'mysqli',
 			'dbprefix' => '',
@@ -163,8 +163,8 @@ else {
 	$db['hl_app'] = array(
 		'dsn'	=> '',
 		'hostname' => '192.168.149.158',
-		'username' => 'db_admin',
-		'password' => '68PkzcrXSJ',
+		'username' => 'hlapp_rw',
+		'password' => 'tw5y75ij',
 		'database' => 'hl_app',
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
