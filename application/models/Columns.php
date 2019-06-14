@@ -490,12 +490,15 @@ class Columns extends CI_Model
     	// 11
     	$this->db = $this->load->database('daily',TRUE);
     	$year = date('Y');
+		$day_before = $this->config->item('day_before');
+        $day = date('Y-m-d',strtotime("today - $day_before days"));
     	$this->db->select("dhn.dailyID  as id,nm.title,nm.content,nm.publishDatetime as publish_datetime,nm.status,nm.keyword,nm.videoID,nm.newsID,dhe.columnistID");
     	$this->db->from('news_main_'.$year.' as nm');
     	$this->db->join('news_extra_base_'.$year.' as neb','neb.newsID = nm.newsID');
     	$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
     	$this->db->join('daily_hl_news as dhn','dhn.newsID = nm.newsID AND dhn.year = '.$year);
-
+		$this->db->where('nm.publishDatetime <= NOW()');
+		$this->db->where('nm.publishDatetime >=',$day);
     	$this->db->where('dhe.columnistID',$columnid);
     	$this->db->where('nm.status',1);
 		if($rand){
@@ -520,6 +523,8 @@ class Columns extends CI_Model
 	    	$this->db->join('daily_hl_news as dhn','dhn.newsID = nm.newsID AND dhn.year = '.$year);
 	    	$this->db->where('dhe.columnistID',$columnid);
 	    	$this->db->where('nm.status',1);
+			$this->db->where('nm.publishDatetime <= NOW()');
+			$this->db->where('nm.publishDatetime >=',$day);
 	    	if($rand){
     			$this->db->order_by(rand(0,1), 'RANDOM');
 	    	}
