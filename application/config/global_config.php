@@ -34,7 +34,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	
 	$config['life_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['column_img_url'] = "https://static.stheadline.com/stheadline/";
-	$config['hl_app_img_url'] = "https://static.stheadline.com/stheadline/";
+	$config['hl_app_img_url'] = "http://203.80.1.61/stheadline/";
 	
 	//vdo
 	$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
