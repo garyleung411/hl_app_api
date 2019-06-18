@@ -54,5 +54,5 @@
 	
 	$error_code = array(
 		"result"	=>	$result,
-		"data"		=>	$data,
+		// "data"		=>	$data,
 	);
