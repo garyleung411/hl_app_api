@@ -50,6 +50,19 @@
 			var position = parseInt(pos);
 			window.jsinterface.callGallery(photoJson, position); 
 		}
+		<?php }else{ ?>
+		function callAppFunc(photoJson, pos){
+						
+			// console.log(str);
+			str = {"img":[]};
+			$(photoJson).each(function(i,url) {  
+				str.img.push({"path":url});
+			});
+			str.pos = pos;
+			console.log(str);
+			window.webkit.messageHandlers.showImg.postMessage(str);
+			
+		}
 		<?php } ?>
 		$(document).ready(function(){
 			// $('.carousel').carousel({
