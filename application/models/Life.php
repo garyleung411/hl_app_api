@@ -246,8 +246,8 @@ class Life extends CI_Model
 	private function GetImg($id){
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$imgs = array();
-		foreach($years as $year){
-			$this->db = $this->load->database('daily',TRUE);
+		$this->db = $this->load->database('daily',TRUE);
+		foreach($years as $year){	
 			$this->db->select('img.path,info.isCover,hhn.hdID as id,info.caption');
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('hd_hl_news as hhn',"hhn.newsID = img.newsID AND hhn.year = '$year'", 'inner');
@@ -384,8 +384,8 @@ class Life extends CI_Model
 		
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$data = array();
+		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){
-			$this->db = $this->load->database('daily',TRUE);
 			$this->db->from('hd_hl_news as hhn');
 			$this->db->join('news_main_'.$year.' as nm','hhn.newsID = nm.newsID and hhn.year = '.$year, 'inner');
 			if(is_array($id)&&count($id)>0)
