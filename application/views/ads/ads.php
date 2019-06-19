@@ -54,7 +54,7 @@
 		function callAppFunc(photoJson, pos){
 						
 			// console.log(str);
-			str = {"img":[]};
+			str = {"img":[],"pos":pos+""};
 			$(photoJson).each(function(i,url) {  
 				str.img.push({"path":url});
 			});
