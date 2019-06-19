@@ -215,8 +215,8 @@ class Daily extends CI_Model
 	private function GetImg($id){
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$imgs = array();
+		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){
-			$this->db = $this->load->database('daily',TRUE);
 			$this->db->select('img.path,info.isCover,dhn.dailyID as id,info.caption');
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('daily_hl_news as dhn',"dhn.newsID = img.newsID AND dhn.year = '$year'", 'inner');
@@ -352,8 +352,8 @@ class Daily extends CI_Model
 		
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$data = array();
+		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){
-			$this->db = $this->load->database('daily',TRUE);
 			$this->db->from('daily_hl_news as dhn');
 			$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, 'inner');
 			if(is_array($id)&&count($id)>0)

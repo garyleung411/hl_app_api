@@ -27,9 +27,9 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$list = array();
+		$this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
-			if(count($list)<$total){
-				$this->db = $this->load->database('instant',TRUE);
+			if(count($list)<$total){	
 				$this->db->select('datetime, st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat');
 				$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' and `publish_datetime` <= NOW())  tmp");
 				$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
@@ -287,9 +287,10 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$list = array();
+		$this->db = $this->load->database('instant',TRUE);  
 		foreach($years as $year){
 			if(count($list)<$total){
-				$this->db = $this->load->database('instant',TRUE);  
+				
 				$this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,st.newstype as map_cat,keyword');
 				$this->db->from('st_inews_main_'.$year.' as main');
 				$this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
