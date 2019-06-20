@@ -169,7 +169,7 @@ class Columns extends CI_Model
 					$this->db->limit($PageSize);
 				}
 				$this->db->order_by('nw.displayOrder','asc');
-				// $this->db->order_by('nm.publishDatetime','desc');
+				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				return $res->result_array();
 
