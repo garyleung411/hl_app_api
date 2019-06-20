@@ -155,7 +155,9 @@ class Columns extends CI_Model
 				
 				$this->db->from('daily_hl_news as dhn');
 				$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
-
+				$this->db->join('news_extra_base_'.$year.' as neb','neb.newsID = nm.newsID','inner');
+				$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID','inner');
+				$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID','inner');
 				$this->db->where('dhn.newsCat',9);
 				
 				// $this->db->where('nm.createdBy !=',0);
@@ -166,7 +168,8 @@ class Columns extends CI_Model
 				if($PageSize != -1){
 					$this->db->limit($PageSize);
 				}
-				$this->db->order_by('nm.publishDatetime','desc');
+				$this->db->order_by('nw.displayOrder','asc');
+				// $this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				return $res->result_array();
 
