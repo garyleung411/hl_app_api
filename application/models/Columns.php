@@ -151,6 +151,7 @@ class Columns extends CI_Model
 			$date_second = date('Y-m-d', strtotime("-$day_before day"));
 			$year_second = date('Y',strtotime($date_second));
 			if($new){
+				$this->db->select('DISTINCT `dhe`.`columnistID`',false);
 				$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
 				
 				$this->db->from('daily_hl_news as dhn');
@@ -169,7 +170,6 @@ class Columns extends CI_Model
 					$this->db->limit($PageSize);
 				}
 				$this->db->order_by('nw.displayOrder','asc');
-				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
 				return $res->result_array();
 
