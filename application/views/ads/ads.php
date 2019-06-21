@@ -87,7 +87,7 @@
 				src = $(this).find('img').attr('src');
 				pos = $(this).find('img').attr('pos');
 				var photoJson = [];
-				$("img").each(function() {  
+				$("#carouselExampleIndicators img").each(function() {  
 				   imgsrc = this.src;
 				   photoJson.push(imgsrc);
 				}); 
