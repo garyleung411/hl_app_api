@@ -84,7 +84,7 @@ class Popnews extends CI_Model{
 				"title"					=> $data[0]['title'],
 				"map_cat"					=> $data[0]['map_cat'],
 				"publish_datetime"		=> $data[0]['publish_datetime'],
-				"vdo"					=> array('cover_path'=>$data[0]['imgs'],'headline'=>$data[0]['title'],'id'=>$data[0]['id'],'video_path'=>$data[0]['vdo'].'.mp4'),
+				"vid"					=> array('cover_path'=>$data[0]['imgs'],'headline'=>$data[0]['title'],'id'=>$data[0]['id'],'video_path'=>$data[0]['vdo'].'.mp4'),
 				"imgs"					=> array(array(
 											'path'=> $data[0]['imgs'],
 											'caption'	=>$data[0]['title'],
