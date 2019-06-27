@@ -112,6 +112,10 @@ $config['force_cache'] = -1;
 $config['list_time'] = 600;   
 $config['detail_time'] = 300;
 $config['interest_time'] = 300;
+//****TEST ONLY****//
+$config['list_time'] = 120;  
+$config['detail_time'] = 60;
+$config['interest_time'] = 60;
 
 //json cache path
 $config['detail_path']	= 'json/{section}/detail/{page}/{id}.json';
