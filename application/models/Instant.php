@@ -65,6 +65,8 @@ class Instant extends CI_Model
 				$res[0]['vid'] = "";
 			}
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
+            $this->Set_relevant_news($res[0],$id);
+			
             return $res[0];
            
         }
@@ -351,7 +353,7 @@ class Instant extends CI_Model
     }
 
     /**
-    *   获取相关新闻
+    *   related_news get by keyword
     */
     private function Set_related_news(&$data, $id, $keyword=''){
         // $this->load->model('Cat');
@@ -387,6 +389,55 @@ class Instant extends CI_Model
 
         $data['related_news'] = $return_data;
 
+    }
+	
+	/**
+    *   relevant_news get by news_main_id
+    */
+	private function Set_relevant_news(&$data, $id){
+		$this->db = $this->load->database('instant',TRUE);
+        $day_before = $this->config->item('day_before');
+        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+		$this->db->select("year");
+		$this->db->from("st_inews");
+		$this->db->where('rec_id',$id);
+		$res = $this->db->get();
+		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
+		$return_data = array();
+		if($year >= date('Y',strtotime($day))){
+			$res = $this->db->query("SELECT re.relevant_news_year, re.relevant_news_main_id
+			FROM `st_inews_main_$year` nm
+			INNER JOIN st_inews_relevant_$year re ON re.news_main_id = nm.news_main_id
+			WHERE nm.rec_id = $id AND re.deleted = 0");
+			$result = $res->result_array();
+			$news_year_list = array();
+			//id spilt by year
+			foreach($result as $n){
+				if(!array_key_exists($n['relevant_news_year'], $news_year_list)){
+					$news_year_list[$n['relevant_news_year']] = array();
+				}
+				$news_year_list[$n['relevant_news_year']][] = $n['relevant_news_main_id'];
+			}
+			
+			foreach(array_keys($news_year_list) as $y){
+				$id_list = $news_year_list[$y];
+				
+				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat');
+				$this->db->from("`st_inews_main_$y` nm");
+				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
+				$this->db->where_in('nm.news_main_id', $id_list);
+
+				
+				$res = $this->db->get();
+				$result = $res->result_array();
+				foreach($result as $n){
+					$return_data[] = $n;
+				}
+			}
+			
+		}
+        // var_dump($return_data);exit;
+		$data['relevant_news'] = $return_data;
     }
 
     /**

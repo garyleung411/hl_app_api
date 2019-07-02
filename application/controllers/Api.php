@@ -386,7 +386,14 @@ class Api extends DefaultApi{
 						}
 						$data["related_news"] = $this->list_cast($data["related_news"]);
 					}
-					
+					if(count($data["relevant_news"])>0){
+						foreach($data["relevant_news"] as $k => $v){
+							$v['section'] = $section;
+							$v['cat'] = $this->News_category_list->mapcat2cat($v['section'] ,$v['map_cat']);
+							$v = $this->detail_cast($v);
+							$data["relevant_news"][$k] = $v;	
+						}
+					}
 					
 					
 					$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
@@ -646,6 +653,7 @@ class Api extends DefaultApi{
 			"layout"				=> "1",
 			"keyword"				=> array(),
 			"related_news"			=> array(),
+			"relevant_news"			=> array(),
 			"topic"					=> array(),
 		);
 		
