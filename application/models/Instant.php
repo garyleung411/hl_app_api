@@ -405,6 +405,7 @@ class Instant extends CI_Model
 		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
 		$return_data = array();
 		if($year >= date('Y',strtotime($day))){
+			//Get all relevant_news_main_id 
 			$res = $this->db->query("SELECT re.relevant_news_year, re.relevant_news_main_id
 			FROM `st_inews_main_$year` nm
 			INNER JOIN st_inews_relevant_$year re ON re.news_main_id = nm.news_main_id
@@ -421,13 +422,10 @@ class Instant extends CI_Model
 			
 			foreach(array_keys($news_year_list) as $y){
 				$id_list = $news_year_list[$y];
-				
 				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat');
 				$this->db->from("`st_inews_main_$y` nm");
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
-
-				
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){

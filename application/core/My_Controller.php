@@ -73,7 +73,7 @@ class DefaultApi extends CI_Controller {
 	protected function show_error($error_code = 0){
 		$output = json_encode(array(
 				'result' =>0,
-				// 'error'=>$error_code,
+				'error_code'=>$error_code,
 			),JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 		exit;
