@@ -428,7 +428,7 @@ class Instant extends CI_Model
 				$this->db->from("`st_inews_main_$y` nm");
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
-				$this->db->where('`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW()');
+				$this->db->where("`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW()");
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){
