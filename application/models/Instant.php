@@ -420,12 +420,15 @@ class Instant extends CI_Model
 				$news_year_list[$n['relevant_news_year']][] = $n['relevant_news_main_id'];
 			}
 			
+			$day_before = $this->config->item('day_before');
+			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 			foreach(array_keys($news_year_list) as $y){
 				$id_list = $news_year_list[$y];
 				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat');
 				$this->db->from("`st_inews_main_$y` nm");
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
+				$this->db->where('`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW()');
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){
