@@ -370,7 +370,7 @@ class Api extends DefaultApi{
 						// $content[2] = strip_tags($content[2]);
 					}
 					$data['content'] = $content;
-					
+					$data['$share_link'] = $this->share_link($data);
 					$data = $this->detail_cast($data);
 					if(count($data["related_news"])>0){
 						foreach($data["related_news"] as $k => $v){
@@ -655,6 +655,7 @@ class Api extends DefaultApi{
 			"related_news"			=> array(),
 			"relevant_news"			=> array(),
 			"topic"					=> array(),
+			"share_link"			=> '',
 		);
 		
 		
@@ -800,6 +801,96 @@ class Api extends DefaultApi{
 			return;
 		}
 		$this->show_error(2);
+	}
+	
+	private function share_link($data){
+        //1=instant, 2=daily, 3=pop, 4=life, 5=columns
+        $shareLink = "";
+        $dailyPreLink   = "http://hd.stheadline.com/news/daily/";//http://hd.stheadline.com/news/daily/ls/764017/
+        $instantPreLink = "http://hd.stheadline.com/news/realtime/";//http://hd.stheadline.com/news/realtime/hk/1501462/
+        $lifePreLink    = "http://hd.stheadline.com/life/";
+        $entPreLink     = "http://hd.stheadline.com/life/ent/";//http://hd.stheadline.com/life/ent/realtime/1501459/
+        $popPreLink     = "http://pop.stheadline.com/content.php?";//http://pop.stheadline.com/content.php?vid=82849&cat=b
+        $preColumnsLink = "http://hd.stheadline.com/news/columns/";
+		/***即時***/
+        $InstantList = array(
+			"1"=>"hk",
+			"2"=>"ent",
+			"3"=>"chi",
+			"4"=>"wo",
+			"5"=>"pp",
+			"6"=>"fin",
+			"7"=>"spt",
+		);
+        /***即時***/
+
+        /***日報***/
+        $DailyList = array(
+			"1"=>"hk",
+			"2"=>"chi",
+			"3"=>"wo",
+			"4"=>"pp",
+			"5"=>"fin",
+			"6"=>"spt",
+			"7"=>"ls",
+			"8"=>"ent",
+			"9"=>"rac",
+		);
+        /***日報***/
+
+        /***日報副刊***/
+        $LiftList = array(
+			"1"=>"travel",
+			"2"=>"dining",
+			"3"=>"digital",
+			"4"=>"car",
+			"5"=>"fashion",
+			"6"=>"living",
+		);
+        /***日報副刊***/
+
+        /***POPNEWS***/
+        $PopList = array(
+			"1"=>"new",
+			"2"=>"a",
+			"3"=>"d",
+			"4"=>"f",
+			"5"=>"e",
+			"6"=>"b",
+			"7"=>"c",
+			"8"=>"m",
+			"9"=>"l",
+			"10"=>"s",
+        );
+		/***POPNEWS***/
+        switch(section){
+            case "1":
+                $data['id']  += 500000;
+                if($data['cat']==2){//ent special handle
+                    $shareLink = $entPreLink."realtime/".$data['id'];
+                }else{
+                    $shareLink = $instantPreLink.$InstantList[$data['cat']]."/".$data['id'];
+                }
+                break;
+            case "2":
+                if($data['cat']=="8"){//ent special handle
+                    $shareLink = $entPreLink."daily/".$data['id'];
+                }else{
+                    $shareLink = $dailyPreLink.$DailyList[$data['cat']]."/".$data['id'];
+                }
+                break;
+            case "3":
+                $shareLink = $popPreLink."vid=".$data['id']."&cat=".$PopList[$data['cat']];
+                break;
+            case "4":
+                $shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['id']."/";
+                break;
+            case "5":
+                $shareLink = $preColumnsLink.$data['writer']['columnistID']."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['id'];
+                break;
+        }
+        return $shareLink;
+
 	}
 	
 	public function show_404(){
