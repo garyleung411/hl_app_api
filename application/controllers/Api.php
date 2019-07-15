@@ -370,7 +370,7 @@ class Api extends DefaultApi{
 						// $content[2] = strip_tags($content[2]);
 					}
 					$data['content'] = $content;
-					$data['$share_link'] = $this->share_link($data);
+					$data['share_link'] = $this->share_link($data);
 					$data = $this->detail_cast($data);
 					if(count($data["related_news"])>0){
 						foreach($data["related_news"] as $k => $v){
@@ -863,7 +863,7 @@ class Api extends DefaultApi{
 			"10"=>"s",
         );
 		/***POPNEWS***/
-        switch(section){
+        switch($data['section']){
             case "1":
                 $data['id']  += 500000;
                 if($data['cat']==2){//ent special handle
