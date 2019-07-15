@@ -466,6 +466,9 @@ class Api extends DefaultApi{
 						if(isset($v["map_cat"])){
 							$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 						}
+						if($v["section"] == 3){
+							$v['share_link'] = $this->share_link($v);
+						}
 						$list[$k] = $v;
 					}
 					$list = $this->list_cast($list);
@@ -618,6 +621,7 @@ class Api extends DefaultApi{
 			"imgs"					=> array(),
 			"writer"				=> array('columnTitle'=>'','columnistID'=>'','trait'=>'','writer'=>''),
 			"layout"				=> "1",
+			"share_link"			=> '',
 		);
 		foreach($data as $i => $d){
 			$tmp = $list;
