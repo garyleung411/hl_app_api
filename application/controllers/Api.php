@@ -887,7 +887,7 @@ class Api extends DefaultApi{
                 $shareLink = $popPreLink."vid=".$data['id']."&cat=".$PopList[$data['cat']];
                 break;
             case "4":
-                $shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['id']."/";
+                $shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['newsID']."/";
                 break;
             case "5":
                 $shareLink = $preColumnsLink.$data['writer']['columnistID']."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['id'];
