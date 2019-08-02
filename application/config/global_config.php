@@ -183,10 +183,13 @@ $config['ads_cat_list_pos'] = array(
 	"4-6" => array(2,4,7,10,13,16),	//生活-健康
 	"3" => array(2,4,7,10,13,16),	//影片
 	"5" => array(2,4,7,10,13,16),	//專欄
-	"detail" => array(1,2,3),	//文章內頁		
 	"columns" => array(3),	//個入專欄列表
 );
-
+foreach($config['ads_cat_list_pos'] as $k => $v){
+	if(!in_array($k,array("columns", "3","index"))){
+		$config['ads_cat_list_pos']['detail-'.$k] = array(1,2,3);
+	}
+}
 //app_config
 $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
 $app_config['img']['instant_img_url'] =		$config['instant_img_url'];
