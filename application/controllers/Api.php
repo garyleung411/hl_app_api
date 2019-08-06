@@ -111,6 +111,7 @@ class Api extends DefaultApi{
 		$empty = false;
 		if(count($special)>0){
 			$special = $special[0];
+			$special['special_icon'] = $this->config->item('hl_app_img_url').$special['special_icon'];
 			if($is_return){
 				return $special;
 			}
