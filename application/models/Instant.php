@@ -66,6 +66,11 @@ class Instant extends CI_Model
 			}
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
             $this->Set_relevant_news($res[0],$id);
+			if(count($res[0]['relevant_news'])>0){
+				$res[0]['related_news'] = $res[0]['relevant_news'];
+				unset($res[0]['relevant_news']);
+			}
+			
 			
             return $res[0];
            
@@ -404,6 +409,7 @@ class Instant extends CI_Model
 		$res = $this->db->get();
 		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
 		$return_data = array();
+		$imglist = array();
 		if($year >= date('Y',strtotime($day))){
 			//Get all relevant_news_main_id 
 			$res = $this->db->query("SELECT re.relevant_news_year, re.relevant_news_main_id
@@ -432,11 +438,16 @@ class Instant extends CI_Model
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){
+					if(count($return_data)==10){
+						break;
+					}
 					$return_data[] = $n;
+					$imglist[] = $n['id'];
 				}
 			}
 			
 		}
+		$this->SetImg($return_data,$imglist);
         // var_dump($return_data);exit;
 		$data['relevant_news'] = $return_data;
     }
