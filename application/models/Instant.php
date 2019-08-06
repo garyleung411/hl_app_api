@@ -316,7 +316,10 @@ class Instant extends CI_Model
 					}
 					$this->db->group_end();
 				}
-
+				if($this->router->method=='list'){
+					
+					$this->db->order_by('passenge_type','desc');
+				}
 				$this->db->order_by('publish_Datetime','desc');
 				if($rand){
 					$this->db->order_by(rand(0,1), 'RANDOM');
