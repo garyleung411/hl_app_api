@@ -66,7 +66,11 @@ class Instant extends CI_Model
 			}
             $this->Set_related_news($res[0],$id,$res[0]['keyword']);
             $this->Set_relevant_news($res[0],$id);
-			
+			if(count($res[0]['relevant_news'])>0){
+				$res[0]['related_news'] = $res[0]['relevant_news'];
+				unset($res[0]['relevant_news']);
+			}
+			// var_dump($res[0]);
             return $res[0];
            
         }
@@ -384,9 +388,10 @@ class Instant extends CI_Model
         if(count($return_data)==5){
             unset($return_data[4]);
         }
+		// var_dump($return_data[0]);echo'<br>';
         $this->SetImg($return_data,$imglist);
-
-
+		// var_dump($return_data[0]);echo'<br>';
+		 
         $data['related_news'] = $return_data;
 
     }
@@ -404,6 +409,7 @@ class Instant extends CI_Model
 		$res = $this->db->get();
 		$year = count($res->result_array())>0?$res->result_array()[0]['year']:1;
 		$return_data = array();
+		$imglist = array();
 		if($year >= date('Y',strtotime($day))){
 			//Get all relevant_news_main_id 
 			$res = $this->db->query("SELECT re.relevant_news_year, re.relevant_news_main_id
@@ -424,7 +430,7 @@ class Instant extends CI_Model
 			$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 			foreach(array_keys($news_year_list) as $y){
 				$id_list = $news_year_list[$y];
-				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat');
+				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat, publish_datetime, datetime');
 				$this->db->from("`st_inews_main_$y` nm");
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
@@ -432,12 +438,18 @@ class Instant extends CI_Model
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){
+					if(count($return_data)==10){		
+						break;		
+					}
 					$return_data[] = $n;
+					$imglist[] = $n['id'];
 				}
 			}
 			
 		}
-        // var_dump($return_data);exit;
+		
+		// $this->SetImg($return_data,$imglist);
+        // var_dump($return_data[0]);exit;
 		$data['relevant_news'] = $return_data;
     }
 
