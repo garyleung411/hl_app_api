@@ -3,6 +3,10 @@
 *   即时新闻以及感兴趣
 *
 */
+defined('BASEPATH') OR exit('No direct script access allowed');
+function filterArray($value){
+	return ($value['isCover'] == 1);
+}
 class Instant extends CI_Model
 {
 	
@@ -130,9 +134,7 @@ class Instant extends CI_Model
             if(count($Imgs)>0){
                 $imglist = $this->GetImg($Imgs);
 				
-				function filterArray($value){
-					return ($value['isCover'] == 1);
-				}
+				
 				foreach ($data as $key => $value) {
                     if(isset($imglist[$value['id']])){
 						if(count($imglist[$value['id']]) >= 3){
@@ -448,7 +450,7 @@ class Instant extends CI_Model
 			
 		}
 		
-		// $this->SetImg($return_data,$imglist);
+		$this->SetImg($return_data,$imglist);
         // var_dump($return_data[0]);exit;
 		$data['relevant_news'] = $return_data;
     }
