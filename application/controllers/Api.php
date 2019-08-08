@@ -3,6 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends DefaultApi{
 	public $gen = false;
+	public $platform;
+	public $platform_type = array(
+		"android"=>"_android",
+		"ios"=>"_ios",
+	);
+	
+	
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
@@ -793,6 +800,13 @@ class Api extends DefaultApi{
 	
 	public function ads($section,$cat=''){	
 		// echo MD5(MD5('123123'));
+		
+		$this->platform = getGetVal('platform');
+		
+		if(empty($this->platform)||!in_array($this->platform,array_keys($this->platform_type))){
+			$this->show_error(3);
+		}
+		$this->platform = $this->platform_type[$this->platform];
 		$ads = ($cat=='')?$section:$section.'-'.$cat;
 		$pdate = getGetVal('pdate');
 		$pdate = !empty($pdate)&&isset($pdate)?$pdate:date('Y-m-d');

@@ -10,7 +10,7 @@ class Ads extends CI_Model  {
 	
 	//根据section cat获取广告
 	public function GetAds($section,$pdate){
-		$this->db->from('ads_publish_list as apl');
+		$this->db->from('ads_publish_list'.$this->platform.' as apl');
 		$this->db->join('hl_app_ads as ads','ads.id = apl.ads_id');
 
 
@@ -58,7 +58,7 @@ class Ads extends CI_Model  {
 	
 	public function select_ads($id){
 		$result = $this->db->query("SELECT `id`, `ads_code`, `title`, `content`, `ads_image`, `ads_type`, `landing_url`, `landing_type`, `detail_title`, `detail_content`, `publish_datetime`, `end_datetime`,  `status` 
-		FROM `hl_app_ads` haa WHERE id = $id LIMIT 1");
+		FROM `hl_app_ads".$this->platform."` haa WHERE id = $id LIMIT 1");
 		return $result->result_array();
 	}
 	
@@ -70,7 +70,7 @@ class Ads extends CI_Model  {
 		}
 		$where = "WHERE `ads_id` = $id";
 		$where .= " AND `status` = 1 ";
-		$result = $this->db->query("SELECT `id`, `ads_id`, `src`, `caption`, `pos` FROM `ads_img` $where ORDER BY pos ");
+		$result = $this->db->query("SELECT `id`, `ads_id`, `src`, `caption`, `pos` FROM `ads_img".$this->platform."` $where ORDER BY pos ");
 		return $result->result_array();
 	}
 	
