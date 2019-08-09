@@ -2,6 +2,11 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Ads_view extends DefaultApi{
+	public $platform;
+	public $platform_type = array(
+		"android"=>"_android",
+		"ios"=>"_ios",
+	);
 	
 	public function __construct (){
 		parent::__construct();
@@ -10,6 +15,12 @@ class Ads_view extends DefaultApi{
 	}
 	
 	public function ads($id){
+		$this->platform = getGetVal('platform');
+		
+		if(empty($this->platform)||!in_array($this->platform,array_keys($this->platform_type))){
+			$this->show_error(3);
+		}
+		$this->platform = $this->platform_type[$this->platform];
 		$this->load->model('Ads');
 		$ads = $this->Ads->select_ads($id);
 		if(count($ads)>0){

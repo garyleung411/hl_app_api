@@ -41,7 +41,7 @@ class Ads extends CI_Model  {
 			$return_data[] = array(
 				'id'			=>$value['id'],
 				'landing_type'	=>$value['landing_type'],
-				'landing_url'	=>($value['landing_type']==1)?$value['landing_url']:$this->config->item('base_url').'ads_view/'.$value['id'],
+				'landing_url'	=>($value['landing_type']==1)?$value['landing_url']:$this->config->item('base_url').'ads_view/'.$value['id']."?platform=".array_keys($this->platform_type,$this->platform)[0],
 				'title'			=>$value['title'],
 				'content'		=>$value['content'],
 				'cover'			=>$value['id'],
