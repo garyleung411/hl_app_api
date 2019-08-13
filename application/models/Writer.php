@@ -80,4 +80,19 @@
 			$res = $this->db->get();
 			return $res->result_array();
 		}
+		
+		public function GetLarge_Cover_by_ID($id)
+		{
+			
+			$this->db->select('largeCover');
+			$this->db->from('news_writer_list');
+			if(is_array($id)){
+				$this->db->where_in('columnistID',$id);
+			}else{
+				$this->db->where('columnistID',$id);
+			}
+			$this->db->where('status',1);
+			$res = $this->db->get();
+			return $res->result_array();
+		}
 	}

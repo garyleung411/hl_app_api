@@ -730,6 +730,13 @@ class Api extends DefaultApi{
 		$data2 = array();
 		foreach($data as $k => $v){
 			if(!count($v['imgs'])==0||$v['section']==5){
+				if($v['section']==5 && count($v['imgs'])==0){
+					$this->load->model('Writer');
+					$data[$k]['imgs'] = array('isCover'=>0);
+					
+					$data[$k]['imgs']['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID']);
+				}
+				
 				$data2[] = $data[$k];
 			}
 		}
