@@ -734,7 +734,7 @@ class Api extends DefaultApi{
 					$this->load->model('Writer');
 					$data[$k]['imgs'] = array('isCover'=>0);
 					
-					$data[$k]['imgs']['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID']);
+					$data[$k]['imgs']['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])['largeCover'];
 				}
 				
 				$data2[] = $data[$k];
