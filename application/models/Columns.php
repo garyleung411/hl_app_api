@@ -202,9 +202,7 @@ class Columns extends CI_Model
 						$this->db->order_by('nm.publishDatetime','desc');
 						$res = $this->db->get();
 						$data = $res->result_array();
-						// var_dump($this->db->last_query());
 						$return_data = array_merge($return_data,$data);
-						// var_dump($data);
 						$num = count($data);
 
 						if($num>=$PageSize)
@@ -219,7 +217,6 @@ class Columns extends CI_Model
 				else{
 
 					$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,dhn.newsCat');
-				
 					$this->db->from('daily_hl_news as dhn');
 					$this->db->join('news_main_'.$year.' as nm','dhn.newsID = nm.newsID and dhn.year = '.$year, ' inner');
 					$this->db->where('dhn.newsCat',9);
@@ -300,6 +297,7 @@ class Columns extends CI_Model
     		$data['writer'] = $Writer[$data['newsID']];
     	}
     }
+    
     /**
     *	获取作者列表
     */
@@ -408,7 +406,6 @@ class Columns extends CI_Model
 			$this->db->where('dhn.dailyID',(int)$id);
 		
 			$res = $this->db->get();
-			// var_dump($this->db->last_query());
 			return $res->result_array();
 		}
 		return array(); 
@@ -461,12 +458,16 @@ class Columns extends CI_Model
 			$this->SetVideo($data,$video_id_list);
 		}
 		$this->SetWriters($data);
-		
         return $data;
     }
 
-    public function column($WriterId,$page=11){
-		$rows = $this->config->item('total_columns_list_item');
+    public function column($WriterId,$first=false){
+    	if(!$first)
+    	{
+    		$rows = $this->config->item('total_columns_list_item');
+    	}else{
+			$rows = 1;
+		}
     	$this->load->model('Writer');
     	$data = $this->Writer->GetWriter_by_ID($WriterId);
     	if($data){//存在作者
@@ -475,7 +476,6 @@ class Columns extends CI_Model
     		if($list)
     		{
     			$imglist = array();
-				// var_dump($list);exit;
     			foreach ($list as $key => $value) {
     				$imglist[] = $value['id'];
     				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
@@ -483,13 +483,17 @@ class Columns extends CI_Model
 				
     			
     		}
-    		$this->SetImg($list,$imglist);
+    		if(count($list)>0){
+    			$this->SetImg($data,$list_id,true,1);
+    		}
 			$data[0]['list'] = $list;
 			return $data[0];
     	}
     	return false;
 
     }
+
+
 
     private function Get_News_By_column($columnid,$page=10,$rand=false){
     	// 11
@@ -515,7 +519,6 @@ class Columns extends CI_Model
 		
     	$this->db->limit($page);
     	$res = $this->db->get();
-		// var_dump($this->db->last_query());
     	$data = $res->result_array();
 		
     	if(count($data)<$page)
@@ -540,9 +543,31 @@ class Columns extends CI_Model
 	    	$res = $this->db->get();
 	    	$data = array_merge($data,$res->result_array());
     	}
+
     	return $data;
 
 
+    }
+    public function Get_frist_New($writer)
+    {
+    	$list = $this->Get_News_By_column($writer,1);
+		if($list)
+		{
+			$imglist = array();
+			foreach ($list as $key => $value) {
+				$imglist[] = $value['id'];
+				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
+			}
+			
+		}
+		if(count($list)>0){
+			$this->SetImg($list,$imglist);
+
+			return $list[0];
+		}else{
+
+			return array();
+		}
     }
 
 }

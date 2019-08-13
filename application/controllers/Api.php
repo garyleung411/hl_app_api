@@ -691,22 +691,37 @@ class Api extends DefaultApi{
 	}
 	
 	public function highlight()	{
+
+		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
 		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||$this->gen){
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
+			$posdata = $this->Highlight->Get_pos_highlight_list();
+			$return_data = array();
+			$num = count($data)+count($posdata);
+			for($i=0;$i<$num;$i++)
+			{
+				if(isset($posdata[$i+1]))
+				{
+					$return_data[] = $posdata[$i+1];
+				}else{
+					$return_data[] = array_shift($data);
+				}
+			}
+			// return;
 			$this->load->model('News_category_list');
-			foreach($data as $k=>$v){
+			foreach($return_data as $k=>$v){
 				if(isset($v['map_cat'])){
-					$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+					$return_data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 				}
 				if($v['section']==5){
-					$data[$k]['cat'] = '1';
+					$return_data[$k]['cat'] = '1';
 				}
 			}
 			
-			$data = $this->list_cast($data);
+			$data = $this->list_cast($return_data);
 			if(count($data)>0){
 				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
