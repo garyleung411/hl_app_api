@@ -732,9 +732,11 @@ class Api extends DefaultApi{
 			if(!count($v['imgs'])==0||$v['section']==5){
 				if($v['section']==5 && count($v['imgs'])==0){
 					$this->load->model('Writer');
-					$data[$k]['imgs'] = array('isCover'=>0);
+					$data[$k]['imgs'] = array(0=>array());
 					
-					$data[$k]['imgs']['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])[0]['largeCover'];
+					$data[$k]['imgs'][0]['isCover'] = 0;
+					$data[$k]['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])[0]['largeCover'];
+		
 				}
 				
 				$data2[] = $data[$k];
