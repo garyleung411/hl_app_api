@@ -729,7 +729,7 @@ class Api extends DefaultApi{
 		
 		$data2 = array();
 		foreach($data as $k => $v){
-			if(!count($v['imgs'])==0){
+			if(!count($v['imgs'])==0||$v['section']==5){
 				$data2[] = $data[$k];
 			}
 		}
