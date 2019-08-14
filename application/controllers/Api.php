@@ -639,8 +639,8 @@ class Api extends DefaultApi{
 				{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
 				}
-				if($k=="title"){
-					$tmp[$k] = str_ireplace($this->config->item('unicode_filter'),"",$tmp[$k]);
+				if($k=="content"){
+					$tmp[$k] =  preg_replace('/\s+/', '', $tmp[$k]);
 				}
 			}
 			$return_data[] = $tmp;
