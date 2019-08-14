@@ -640,6 +640,7 @@ class Api extends DefaultApi{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
 				}
 				if($k=="content"){
+					$tmp[$k] =  str_replace(json_decode('\u3000'), '', $tmp[$k]);
 					$tmp[$k] =  preg_replace('/\s+/', '', $tmp[$k]);
 				}
 			}
