@@ -639,9 +639,10 @@ class Api extends DefaultApi{
 				{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
 				}
-				// if($k=="title"){
-					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
-				// }
+				if($k=="title"){
+					$tmp[$k] = str_ireplace($this->config->item('unicode_filter'),"",$tmp[$k]);
+					$t
+				}
 			}
 			$return_data[] = $tmp;
 		}
