@@ -641,7 +641,6 @@ class Api extends DefaultApi{
 				}
 				if($k=="title"){
 					$tmp[$k] = str_ireplace($this->config->item('unicode_filter'),"",$tmp[$k]);
-					$t
 				}
 			}
 			$return_data[] = $tmp;
