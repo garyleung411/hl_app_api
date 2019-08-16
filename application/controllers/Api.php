@@ -684,9 +684,15 @@ class Api extends DefaultApi{
 			{
 				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
 			}
-			// if($k=="title"){
+			if($k=="imgs"){
+				foreach($tmp[$k] as $i => $img){
+					// $img['caption'] = str_replace(array("\n", "\r"),"",$img['caption']);
+					$img['caption'] = rtrim($img['caption']);
+					$tmp[$k][$i] = $img;
+					
+				}
 				// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
-			// }
+			}
 		}
 		$return_data = $tmp;
 		return $return_data;
