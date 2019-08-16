@@ -92,6 +92,9 @@ $config['search_filter'] = array(
 	"~","·","！","@","#","￥","%","……","&","*","（","）","——","-","+","=","【","】","{","}","、","|","；","：","‘","“","”","’","《","》","，","。","？","、",
 	"～","·","＠","＃","￥","％","……","＆","×","（","）","——","－","＋","＝","｛","｝","【","】","｜","＼","：","；","‘","“","”","《","》","，","、","　","＄","︿","＊","＿","＜","＞","／","［","］","‵","＂",'「','」'
 );
+$config['unicode_filter'] = array(
+	"\ufeff",
+);
 
 //select limit
 $config['day_before'] = 90;			//For date limit
@@ -223,7 +226,10 @@ $app_config['api']['api_special'] =			"special";
 
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-
+$app_config['android']['app-ver'] =			"1.0";
+$app_config['android']['force-update'] =	"1";	
+$app_config['ios']['app-ver'] =				"1.0";
+$app_config['ios']['force-update'] =		"1";	
 //error_code
 require('hlapp/error_code.php');
 $app_config['error'] = $error_code;

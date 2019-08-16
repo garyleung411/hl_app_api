@@ -21,7 +21,37 @@ class Highlight extends CI_Model  {
 
 		return $res->result_array();
 	}
+	public function Get_pos_highlight()
+	{
+		$this->db->from('hl_app_pos_highlight');
+		$this->db->where('status',1);
+		$this->db->order_by('pos','asc');
+		$res = $this->db->get();
 
+		return $res->result_array();
+
+	}
+	public function Get_pos_highlight_list(){
+
+		$list = $this->Get_pos_highlight();
+		$request_data = array();
+		$this->load->model('Section');
+		foreach ($list as $key => $value) {
+			$section_info = $this->Section->Get_Section($value['session_id']);
+			if($section_info)
+			{
+				$section_name = $section_info[0]->section_name;
+				$this->load->model($section_name);
+				$data = $this->$section_name->Get_frist_New($value['cat']);
+				if(count($data)>=1)
+				{
+					$data['section'] = $section_info[0]->section_id;
+					$request_data[$value['pos']] = $data;
+				}
+			}
+		}
+		return $request_data;
+	}
 	public function Get_highlight_list(){
 		$list = $this->Get_highlight();
 		$list_id = array();//根据session分类
@@ -62,7 +92,6 @@ class Highlight extends CI_Model  {
 		}
 
 		return $request_data;
-		
 	}
 
 

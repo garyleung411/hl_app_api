@@ -186,7 +186,6 @@ class Life extends CI_Model
 			$this->db->limit($PageSize);
 			$this->db->order_by('nm.publishDatetime','desc');
 			$res = $this->db->get();
-			
 			$data = $res->result_array();
 			if(count($data)<$PageSize)
 			{
@@ -214,7 +213,6 @@ class Life extends CI_Model
 				$this->db->limit($PageSize-count($data));
 				$this->db->order_by('nm.publishDatetime','desc');
 				$res = $this->db->get();
-				// var_dump(count($res->result_array()));
 				$data = array_merge($data,$res->result_array());
 			}
 			return $data;
@@ -294,10 +292,9 @@ class Life extends CI_Model
     */
 	private function Set_related_news(&$data, $id)
     {
-    	// $this->load->model('Cat');
-    	// var_dump($data);
+
     	$res = $this->Get_All_News_list(5, $data['map_cat'],0,true);
-    	// var_dump($res);
+
     	$imglist = array();
 		$video_id_list = array();
     	$return_data = array();
@@ -423,6 +420,40 @@ class Life extends CI_Model
 		}
 
         return $data;
+    }
+
+    public function Get_frist_New($cat)
+    {
+
+		$this->load->model('News_category_list');
+
+    	$map_cat = $this->News_category_list->cat2mapcat(4,$cat);
+		$map_cat = ($map_cat==-1)?0:$map_cat;
+
+    	$list = $this->Get_All_News_list(1,$map_cat,0);
+
+		$imglist = array();
+		$video_id_list = array();
+    	$return_data = array();
+		
+    	foreach ($list as $key => $value) {
+    		$return_data[] = array(
+    			'id'=>$value['id'],
+				'newsID'=>$value['newsID'],
+    			'title'=>$value['title'],
+    			
+    			'map_cat'=>$value['map_cat'],
+				'publish_datetime'=>date('Y-m-d',strtotime($value['publish_datetime'])),
+    		);
+    		$imglist[] = $value['id'];
+    	}
+
+    	if(count($return_data)>0){
+    		$this->SetImg($return_data,$imglist);
+			return $return_data[0];
+		}else{
+			return array();
+		}
     }
 
 }

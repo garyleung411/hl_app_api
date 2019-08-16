@@ -3,6 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends DefaultApi{
 	public $gen = false;
+	public $platform;
+	public $platform_type = array(
+		"android"=>"_android",
+		"ios"=>"_ios",
+	);
+	
+	
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
@@ -632,9 +639,11 @@ class Api extends DefaultApi{
 				{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
 				}
-				// if($k=="title"){
-					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
-				// }
+				if($k=="content"){
+					$tmp[$k] =  preg_replace('/^　　(.*)?/', '$1', $tmp[$k]);//\u3000
+					$tmp[$k] =  preg_replace('/^  (.*)?/', '$1', $tmp[$k]);//\u2003;
+					$tmp[$k] =  preg_replace('/^\s+(.*)?/', '$1', $tmp[$k]);
+				}
 			}
 			$return_data[] = $tmp;
 		}
@@ -675,31 +684,52 @@ class Api extends DefaultApi{
 			{
 				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
 			}
-			// if($k=="title"){
+			if($k=="imgs"){
+				foreach($tmp[$k] as $i => $img){
+					// $img['caption'] = str_replace(array("\n", "\r"),"",$img['caption']);
+					$img['caption'] = rtrim($img['caption']);
+					$tmp[$k][$i] = $img;
+					
+				}
 				// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
-			// }
+			}
 		}
 		$return_data = $tmp;
 		return $return_data;
 	}
 	
 	public function highlight()	{
+
+		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
 		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||$this->gen){
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
+			$posdata = $this->Highlight->Get_pos_highlight_list();
+			$return_data = array();
+			$num = count($data)+count($posdata);
+			for($i=0;$i<$num;$i++)
+			{
+				if(isset($posdata[$i+1]))
+				{
+					$return_data[] = $posdata[$i+1];
+				}else{
+					$return_data[] = array_shift($data);
+				}
+			}
+			// return;
 			$this->load->model('News_category_list');
-			foreach($data as $k=>$v){
+			foreach($return_data as $k=>$v){
 				if(isset($v['map_cat'])){
-					$data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+					$return_data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 				}
 				if($v['section']==5){
-					$data[$k]['cat'] = '1';
+					$return_data[$k]['cat'] = '1';
 				}
 			}
 			
-			$data = $this->list_cast($data);
+			$data = $this->list_cast($return_data);
 			if(count($data)>0){
 				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
@@ -707,7 +737,16 @@ class Api extends DefaultApi{
 		
 		$data2 = array();
 		foreach($data as $k => $v){
-			if(!count($v['imgs'])==0){
+			if(!count($v['imgs'])==0||$v['section']==5){
+				if($v['section']==5 && count($v['imgs'])==0){
+					$this->load->model('Writer');
+					$data[$k]['imgs'] = array(0=>array());
+					
+					$data[$k]['imgs'][0]['isCover'] = 0;
+					$data[$k]['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])[0]['largeCover'];
+		
+				}
+				
 				$data2[] = $data[$k];
 			}
 		}
@@ -793,6 +832,13 @@ class Api extends DefaultApi{
 	
 	public function ads($section,$cat=''){	
 		// echo MD5(MD5('123123'));
+		
+		$this->platform = getGetVal('platform');
+		
+		if(empty($this->platform)||!in_array($this->platform,array_keys($this->platform_type))){
+			$this->show_error(3);
+		}
+		$this->platform = $this->platform_type[$this->platform];
 		$ads = ($cat=='')?$section:$section.'-'.$cat;
 		$pdate = getGetVal('pdate');
 		$pdate = !empty($pdate)&&isset($pdate)?$pdate:date('Y-m-d');
