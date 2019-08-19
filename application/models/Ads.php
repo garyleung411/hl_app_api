@@ -11,7 +11,7 @@ class Ads extends CI_Model  {
 	//根据section cat获取广告
 	public function GetAds($section,$pdate){
 		$this->db->from('ads_publish_list'.$this->platform.' as apl');
-		$this->db->join('hl_app_ads as ads','ads.id = apl.ads_id');
+		$this->db->join('hl_app_ads'.$this->platform.'  as ads','ads.id = apl.ads_id');
 
 
 		$this->db->where('apl.deleted',0);
