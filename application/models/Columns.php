@@ -462,12 +462,9 @@ class Columns extends CI_Model
     }
 
     public function column($WriterId,$first=false){
-    	if(!$first)
-    	{
-    		$rows = $this->config->item('total_columns_list_item');
-    	}else{
-			$rows = 1;
-		}
+    	
+		$rows = $this->config->item('total_columns_list_item');
+    	
     	$this->load->model('Writer');
     	$data = $this->Writer->GetWriter_by_ID($WriterId);
     	if($data){//存在作者
