@@ -112,9 +112,13 @@
 				height:100%;
 				margin: auto; 
 			}
-			.content table{
+			#content table{
 				width:100%;
 			}
+			#content table a{
+				word-break: break-all;
+			}
+			
 		</style>
 		
 	</head>
