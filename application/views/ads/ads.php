@@ -112,7 +112,9 @@
 				height:100%;
 				margin: auto; 
 			}
-			
+			.content table{
+				width:100%;
+			}
 		</style>
 		
 	</head>
