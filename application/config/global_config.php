@@ -226,11 +226,19 @@ $app_config['api']['api_special'] =			"special";
 
 
 $app_config['api']['api_list_ads'] = 		"ads/[section]/[cat]";
-$app_config['android']['app_ver'] =			"1.0";
-$app_config['android']['force_update'] =	"1";	
-$app_config['ios']['app_ver'] =				"1.0";
-$app_config['ios']['force_update'] =		"1";	
+
 //error_code
 require('hlapp/error_code.php');
 $app_config['error'] = $error_code;
+//android app version
+require('hlapp/android.php');
+$app_config['android'] =			$android;
+//ios app version
+require('hlapp/ios.php');
+$app_config['ios'] =		$ios;	
 $config['app_config'] = $app_config;
+
+
+
+
+
