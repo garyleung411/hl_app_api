@@ -232,10 +232,10 @@ require('hlapp/error_code.php');
 $app_config['error'] = $error_code;
 //android app version
 require('hlapp/android.php');
-$app_config['android'] =			$android;
+$app_config['android'] = $android;
 //ios app version
 require('hlapp/ios.php');
-$app_config['ios'] =		$ios;	
+$app_config['ios'] = $ios;	
 $config['app_config'] = $app_config;
 
 
