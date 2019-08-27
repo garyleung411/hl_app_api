@@ -430,6 +430,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function list($section, $cat = -1, $page =1){
+		
 		$this->Expired = $this->config->item('list_time');
 		if($section == 5 && ($cat == 0 ||$cat == 4 ||$cat ==  417)){
 			$this->columns($cat);
