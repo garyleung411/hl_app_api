@@ -560,8 +560,8 @@ class Api extends DefaultApi{
 
 
 		if(!($data=json_decode($this->Getfile($path),true))||$this->gen){
-
-			$data = $this->Columns->column($columnid,11);
+			$rows = $this->config->item('total_columns_list_item');
+			$data = $this->Columns->column($columnid, $rows);
 			if($data){
 				foreach($data['list'] as $k =>$v){
 					$data['list'][$k]['section'] = "5"; 

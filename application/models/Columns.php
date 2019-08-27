@@ -461,10 +461,7 @@ class Columns extends CI_Model
         return $data;
     }
 
-    public function column($WriterId,$first=false){
-    	
-		$rows = $this->config->item('total_columns_list_item');
-    	
+    public function column($WriterId,$rows){
     	$this->load->model('Writer');
     	$data = $this->Writer->GetWriter_by_ID($WriterId);
     	if($data){//存在作者
@@ -547,20 +544,18 @@ class Columns extends CI_Model
     }
     public function Get_frist_New($writer)
     {
-    	$list = $this->Get_News_By_column($writer,1);
-		if($list)
-		{
-			$imglist = array();
-			foreach ($list as $key => $value) {
-				$imglist[] = $value['id'];
-				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
-			}
+    	$list = $this->column($writer,1);
+		if(!empty($list)){
+			$data = $list['list'];
+			$data[0]['writer'] = array(
+				"columnistID"	=>	$list['columnistID'],
+				"columnTitle"	=>	$list['columnTitle'],
+				"writer"		=>	$list['writer'],
+				"trait"			=>	$list['trait'],
+			);
+			$this->SetImg($data,array());
+			return $data[0];
 			
-		}
-		if(count($list)>0){
-			$this->SetImg($list,$imglist);
-
-			return $list[0];
 		}else{
 
 			return array();
