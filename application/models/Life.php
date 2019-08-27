@@ -90,6 +90,10 @@ class Life extends CI_Model
 							}
 	    				}
 	    			}
+					if($is_list&&count($data[$key]['imgs'])>2){
+						
+						$data[$key]['imgs'][0]['path'] = str_replace('_fb.', '_app.', $data[$key]['imgs'][0]['path']);
+					}
 					
 	    			if($is_list&&count($data[$key]['imgs'])==2){
 	    				$cover = true;
@@ -259,8 +263,9 @@ class Life extends CI_Model
 				$this->db->where('hhn.hdID',$id);
 			}
 			$this->db->where('img.path NOT LIKE ','%.psd');
-			$this->db->where('img.class',14);
+			$this->db->where('img.class',20);
 			$this->db->where('img.status',1);
+			$this->db->order_by('info.isCover', 'DESC');
 			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());
