@@ -474,11 +474,9 @@ class Columns extends CI_Model
     				$imglist[] = $value['id'];
     				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
     			}
-				
-    			
     		}
     		if(count($list)>0){
-    			$this->SetImg($data,$imglist,true,1);
+    			$this->SetImg($list,$imglist,true,1);
     		}
 			$data[0]['list'] = $list;
 			return $data[0];
@@ -542,7 +540,8 @@ class Columns extends CI_Model
 
 
     }
-    public function Get_frist_New($writer)
+   
+   public function Get_frist_New($writer)
     {
     	$list = $this->column($writer,1);
 		if(!empty($list)){
