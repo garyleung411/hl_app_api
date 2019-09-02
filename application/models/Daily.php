@@ -1,5 +1,5 @@
 <?php
-
+defined('BASEPATH') OR exit('No direct script access allowed');
 class Daily extends CI_Model
 {
 
@@ -64,11 +64,18 @@ class Daily extends CI_Model
 	    	$img = $this->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {
+					$class20 = false;
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
 	    					if($value['id']==$v['id']){
-								//
+								//sql: order by class desc
+								//第一圖係class20時，所有class14圖都不要
+								if($class20&&$v['class']==14){
+									unset($img[$k]);
+									continue;
+								}
+								$class20 = ($v['class']==20);
 								if($is_list){
 									unset($v['caption']);
 								}
@@ -221,7 +228,7 @@ class Daily extends CI_Model
 		$imgs = array();
 		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){
-			$this->db->select('img.path,info.isCover,dhn.dailyID as id,info.caption');
+			$this->db->select('img.path,info.isCover,dhn.dailyID as id,info.caption, img.class');
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('daily_hl_news as dhn',"dhn.newsID = img.newsID AND dhn.year = '$year'", 'inner');
 			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.parentImgID', 'inner');
@@ -234,8 +241,12 @@ class Daily extends CI_Model
 				$this->db->where('dhn.dailyID',$id);
 			}
 			$this->db->where('img.path NOT LIKE ','%.psd');
+			$this->db->group_start();
 			$this->db->where('img.class',20);
+			$this->db->or_where('img.class',14);
+			$this->db->group_end();
 			$this->db->where('img.status',1);
+			$this->db->order_by('img.class', 'DESC');
 			$this->db->order_by('info.isCover', 'DESC');
 			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
