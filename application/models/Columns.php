@@ -478,7 +478,7 @@ class Columns extends CI_Model
     			
     		}
     		if(count($list)>0){
-    			$this->SetImg($data,$list_id,true,1);
+    			$this->SetImg($data,$imglist,true,1);
     		}
 			$data[0]['list'] = $list;
 			return $data[0];
