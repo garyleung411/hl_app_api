@@ -237,6 +237,12 @@ class Api extends DefaultApi{
 							$value['cat'] = $this->News_category_list->mapcat2cat($s, $value['map_cat']);
 						}
 						if($value['section']==5){
+							if(count($value['imgs'])==0){
+								$this->load->model('Writer');
+								$value['imgs'] = array(0=>array());
+								$value['imgs'][0]['isCover'] = 0;
+								$value['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])[0]['largeCover'];
+							}
 							$value['cat'] = '1';
 						}
 						$data[$sort_list[intval($value['id'])]] =  $value;
