@@ -189,6 +189,7 @@ class Life extends CI_Model
 			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('hhn.status',1);
+			$this->db->where('nm.status',1);
 		
 			if($rand){
                 $this->db->order_by(rand(0,1), 'RANDOM');
@@ -217,6 +218,7 @@ class Life extends CI_Model
 				$this->db->where('nm.publishDatetime >=',$day);
 				$this->db->where('nm.publishDatetime <= NOW()');
 				$this->db->where('hhn.status',1);
+				$this->db->where('nm.status',1);
 				if($rand){
 	                $this->db->order_by(rand(0,1), 'RANDOM');
 	            }
@@ -248,6 +250,7 @@ class Life extends CI_Model
 		}
 			
 		$this->db->where('hhn.status',1);
+		$this->db->where('nm.status',1);
 			
 		$res = $this->db->get();
 		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
@@ -378,6 +381,7 @@ class Life extends CI_Model
 			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('hhn.status',1);
+			$this->db->where('nm.status',1);
 			$this->db->where('hhn.hdID',(int)$id);
 		
 			$res = $this->db->get();
@@ -412,6 +416,7 @@ class Life extends CI_Model
 			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('hhn.status',1);
+			$this->db->where('nm.status',1);
 			$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,hhn.newsCat as map_cat');
 			$res = $this->db->get();
 			$data = array_merge($data, $res->result_array());
