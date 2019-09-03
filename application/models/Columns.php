@@ -373,7 +373,6 @@ class Columns extends CI_Model
 
     public function GetDetail($id){
     	// $this->load->model('Section');
-    	$this->load->model('News');
 
 		$cat = array(9);
 		
