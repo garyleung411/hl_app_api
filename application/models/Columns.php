@@ -77,6 +77,7 @@ class Columns extends CI_Model
 									unset($v['caption']);
 								}
 	    						unset($v['id']);
+								unset($v['class']);
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
 	    					}
