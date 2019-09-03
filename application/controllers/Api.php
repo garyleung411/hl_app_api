@@ -241,7 +241,7 @@ class Api extends DefaultApi{
 								$this->load->model('Writer');
 								$value['imgs'] = array(0=>array());
 								$value['imgs'][0]['isCover'] = 0;
-								$value['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($v['writer']['columnistID'])[0]['largeCover'];
+								$value['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($value['writer']['columnistID'])[0]['largeCover'];
 							}
 							$value['cat'] = '1';
 						}
