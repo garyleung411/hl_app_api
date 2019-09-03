@@ -47,15 +47,16 @@ class Api extends DefaultApi{
 		);
 		$this->load->model('News_category_list');
 		$life_cat = $this->News_category_list->Get_Cat('4');
+		$icons = array(
+			"icon-life-travel.png",
+			"icon-life-dining.png",
+			"icon-life-digital.png",
+			"icon-life-car.png",
+			"icon-life-fashion.png",
+			"icon-life-living.png",
+		);
 		foreach($life_cat as $i => $cat){
-			$icons = array(
-				"icon-life-travel.png",
-				"icon-life-dining.png",
-				"icon-life-digital.png",
-				"icon-life-car.png",
-				"icon-life-fashion.png",
-				"icon-life-living.png",
-			);
+			
 			$other["CatList"][] = array(
 				"CatID" => ("4-".$cat->cat_id) ,
 				"CatName" => $cat->cat_cname,
@@ -430,6 +431,7 @@ class Api extends DefaultApi{
 	}
 	
 	public function list($section, $cat = -1, $page =1){
+		
 		$this->Expired = $this->config->item('list_time');
 		if($section == 5 && ($cat == 0 ||$cat == 4 ||$cat ==  417)){
 			$this->columns($cat);

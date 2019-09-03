@@ -186,8 +186,8 @@ else {
 		'hostname' => '192.168.148.103',
 		'username' => 'root',
 		'password' => 'jzwCvH7b2TWTsdxz',
-		// 'database' => 'content_store',//hl_content_store2
-		'database' => 'hl_content_store2',//hl_content_store2
+		'database' => 'content_store',//hl_content_store2
+		// 'database' => 'hl_content_store2',//hl_content_store2
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,

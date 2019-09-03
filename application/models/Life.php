@@ -73,15 +73,23 @@ class Life extends CI_Model
 	    	$img = $this->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {
+					$class20 = false;
 	    			$data[$key]['imgs'] = array();
 	    			if(count($img)>0){
 	    				foreach ($img as $k => $v) {
 	    					if($value['id']==$v['id']){
-								//
+								//sql: order by class desc
+								//第一圖係class20時，所有class14圖都不要
+								if($class20&&$v['class']==14){
+									unset($img[$k]);
+									continue;
+								}
+								$class20 = ($v['class']==20);
 								if($is_list){
 									unset($v['caption']);
 								}
 								unset($v['id']);
+								unset($v['class']);
 	    						$data[$key]['imgs'][] = $v;
 	    						unset($img[$k]);
 	    					}
@@ -90,6 +98,10 @@ class Life extends CI_Model
 							}
 	    				}
 	    			}
+					if($is_list&&count($data[$key]['imgs'])>2){
+						
+						$data[$key]['imgs'][0]['path'] = str_replace('_fb.', '_app.', $data[$key]['imgs'][0]['path']);
+					}
 					
 	    			if($is_list&&count($data[$key]['imgs'])==2){
 	    				$cover = true;
@@ -246,7 +258,7 @@ class Life extends CI_Model
 		$imgs = array();
 		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){	
-			$this->db->select('img.path,info.isCover,hhn.hdID as id,info.caption');
+			$this->db->select('img.path,info.isCover,hhn.hdID as id,info.caption, img.class');
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('hd_hl_news as hhn',"hhn.newsID = img.newsID AND hhn.year = '$year'", 'inner');
 			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.parentImgID', 'inner');
@@ -259,14 +271,16 @@ class Life extends CI_Model
 				$this->db->where('hhn.hdID',$id);
 			}
 			$this->db->where('img.path NOT LIKE ','%.psd');
-			$this->db->where('img.class',14);
+			$this->db->group_start();
+			$this->db->where('img.class',20);
+			$this->db->or_where('img.class',14);
+			$this->db->group_end();
 			$this->db->where('img.status',1);
+			$this->db->order_by('img.class', 'DESC');
+			$this->db->order_by('info.isCover', 'DESC');
 			$this->db->order_by('info.displayOrder', 'ASC');
 			$res = $this->db->get();
 			$imgs = array_merge($imgs, $res->result_array());
-			if(count($imgs)>0){
-				break;
-			}
 		}
 		return $imgs;
 	}
