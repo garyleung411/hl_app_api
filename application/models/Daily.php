@@ -312,7 +312,6 @@ class Daily extends CI_Model
     }
 
     public function GetDetail($id){
-    	$this->load->model('News');
 		$res = $this->Get_News($id);
 		if(count($res)>0){
 			$this->SetImg($res,array(),false);
