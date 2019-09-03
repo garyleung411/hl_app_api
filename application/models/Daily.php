@@ -182,6 +182,7 @@ class Daily extends CI_Model
 			}
 			
 			$this->db->where('dhn.status',1);
+			$this->db->where('nm.status',1);
 		
 			$this->db->where('publishDatetime >=',$maxdate );
 			if($rand){
@@ -219,6 +220,7 @@ class Daily extends CI_Model
 		}
 			
 		$this->db->where('dhn.status',1);
+		$this->db->where('nm.status',1);
 			
 		$res = $this->db->get();
 		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
@@ -349,6 +351,7 @@ class Daily extends CI_Model
 			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('dhn.status',1);
+			$this->db->where('nm.status',1);
 			$this->db->where('dhn.dailyID',(int)$id);
 		
 			$res = $this->db->get();
@@ -383,6 +386,7 @@ class Daily extends CI_Model
 			$this->db->where('nm.publishDatetime >=',$day);
 			$this->db->where('nm.publishDatetime <= NOW()');
 			$this->db->where('dhn.status',1);
+			$this->db->where('nm.status',1);
 			$this->db->select('dhn.dailyID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.videoID as vdo,dhn.newsCat as map_cat');
 			$res = $this->db->get();
 			$data = array_merge($data, $res->result_array());
