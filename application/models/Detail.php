@@ -159,7 +159,6 @@ class Detail extends CI_Model
     {
     	// var_dump($data);
     	if(count($Imgs)>0){
-	    	$this->load->model('Img');
 	    	$img = $this->Img->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {

@@ -69,7 +69,6 @@ class Life extends CI_Model
 		}
 		
     	if(count($Imgs)>0){
-	    	$this->load->model('Img');
 	    	$img = $this->GetImg($Imgs);
 	    	if(count($img)>0){
 	    		foreach ($data as $key => $value) {
