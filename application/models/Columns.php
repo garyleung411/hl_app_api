@@ -493,6 +493,7 @@ class Columns extends CI_Model
     		}
     		if(count($list)>0){
     			$this->SetImg($list,$imglist,true,1);
+    			$this->SetWriters($list);
     		}
 			$data[0]['list'] = $list;
 			return $data[0];
