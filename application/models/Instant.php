@@ -35,7 +35,9 @@ class Instant extends CI_Model
 		foreach($years as $year){
 			if(count($list)<$total){	
 				$this->db->select('datetime, st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat');
-				$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' and `publish_datetime` <= NOW())  tmp");
+				$this->db->from("(SELECT main.* FROM `st_inews_main_$year` main 
+									INNER JOIN `st_inews_feed_$year` nf ON main.news_main_id = nf.news_main_id
+									WHERE main.`status` =1 and main.`publish_datetime` >= '$day' and main.`publish_datetime` <= NOW() AND nf.noShowForHL = 0)  tmp");
 				$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
 				$this->db->order_by(rand(0,1), 'RANDOM');
 				$this->db->limit($total);
@@ -302,9 +304,12 @@ class Instant extends CI_Model
 				$this->db->select('datetime, main.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,st.newstype as map_cat,keyword');
 				$this->db->from('st_inews_main_'.$year.' as main');
 				$this->db->join('st_inews as st','main.rec_id = st.rec_id', 'inner');
+				$this->db->join('st_inews_feed_'.$year.' as nf','main.news_main_id = nf.news_main_id', 'inner');
+				
 				$this->db->where('main.status',1);
-				$this->db->where('publish_datetime >=',$day);
-				$this->db->where('`publish_datetime` <= NOW()');
+				$this->db->where('main.publish_datetime >=',$day);
+				$this->db->where('main.publish_datetime <= NOW()');
+				$this->db->where('nf.noShowForHL',0);
 				if($cat != -1)
 					$this->db->where('st.newstype',$cat);
 
@@ -352,7 +357,9 @@ class Instant extends CI_Model
 			$year = $res->result_array()[0]['year'];
 			
 			$this->db->select('datetime,tmp.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,keyword,newstype as map_cat');
-			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' AND `publish_datetime` <= NOW())  tmp");
+			$this->db->from("(SELECT main.* FROM `st_inews_main_$year` main 
+									INNER JOIN `st_inews_feed_$year` nf ON main.news_main_id = nf.news_main_id
+									WHERE main.`status` =1 and main.`publish_datetime` >= '$day' and main.`publish_datetime` <= NOW() AND nf.noShowForHL = 0)  tmp");
 			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
 			$this->db->where('tmp.rec_id',(int)$id);
 			$res = $this->db->get();
@@ -420,7 +427,8 @@ class Instant extends CI_Model
 			$res = $this->db->query("SELECT re.relevant_news_year, re.relevant_news_main_id
 			FROM `st_inews_main_$year` nm
 			INNER JOIN st_inews_relevant_$year re ON re.news_main_id = nm.news_main_id
-			WHERE nm.rec_id = $id AND re.deleted = 0");
+			INNER JOIN st_inews_feed_$year nf ON nf.news_main_id = nm.news_main_id
+			WHERE nm.rec_id = $id AND re.deleted = 0 AND nf.noShowForHL = 0");
 			$result = $res->result_array();
 			$news_year_list = array();
 			//id spilt by year
@@ -438,6 +446,7 @@ class Instant extends CI_Model
 				$this->db->select('nm.rec_id as id,headline as title,newstype as map_cat, publish_datetime, datetime');
 				$this->db->from("`st_inews_main_$y` nm");
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
+				$this->db->join("st_inews_feed_$y as nf",'nm.news_main_id = nf.news_main_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
 				$this->db->where("`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW()");
 				$res = $this->db->get();
@@ -470,7 +479,9 @@ class Instant extends CI_Model
         $this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
 			$this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,newstype as map_cat');
-			$this->db->from("(SELECT * FROM `st_inews_main_$year` WHERE `status` =1 and `publish_datetime` >= '$day' AND `publish_datetime` <= NOW())  tmp");
+			$this->db->from("(SELECT main.* FROM `st_inews_main_$year` main 
+									INNER JOIN `st_inews_feed_$year` nf ON main.news_main_id = nf.news_main_id
+									WHERE main.`status` =1 and main.`publish_datetime` >= '$day' and main.`publish_datetime` <= NOW() AND nf.noShowForHL = 0)  tmp");
 
 			$this->db->join('st_inews as st','tmp.rec_id = st.rec_id', 'inner');
 			
@@ -513,7 +524,8 @@ class Instant extends CI_Model
 				$results = $this->db->query("SELECT datetime, nm.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat  
 					FROM `st_inews_main_$year` nm
 					INNER JOIN st_inews st ON st.rec_id = nm.rec_id
-					WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND nm.`status` =1 AND `publish_datetime` >= '$day' AND `publish_datetime` <= NOW() ORDER BY `publish_Datetime` DESC LIMIT $total");
+					INNER JOIN st_inews_feed_$year nf ON nf.news_main_id = nm.news_main_id
+					WHERE (`keyword` LIKE '%;$keyword;%' OR `keyword` LIKE '$keyword;%' OR `keyword` LIKE '%;$keyword' OR `keyword` LIKE '$keyword') AND nm.`status` =1 AND `publish_datetime` >= '$day' AND `publish_datetime` <= NOW() AND nf.noShowForHL = 0 ORDER BY `publish_Datetime` DESC LIMIT $total");
 		
 				$list = array_merge($list,$results->result_array());
 			}
