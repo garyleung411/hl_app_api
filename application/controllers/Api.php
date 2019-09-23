@@ -952,6 +952,7 @@ class Api extends DefaultApi{
 
 	}
 	
+	//Trigger by incorrect route  
 	public function show_404(){
 		$this->show_error(404);
 	}

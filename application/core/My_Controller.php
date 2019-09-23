@@ -43,8 +43,11 @@ class DefaultApi extends CI_Controller {
 	/**
 	*	讀取文件內容
 	*/
-	protected function Getfile($filepath)
+	protected function Getfile($filepath,$force = false)
 	{
+		if($force){
+			return file_get_contents($filepath);
+		}
 		return (($this->Checkfile($filepath))?file_get_contents($filepath):false);
 	}
 	
