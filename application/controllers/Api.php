@@ -415,7 +415,7 @@ class Api extends DefaultApi{
 					
 				}
 				else{
-					$this->show_error(2);
+					$data=json_decode($this->Getfile($path, true),true);
 				}
 
 			}
@@ -424,7 +424,9 @@ class Api extends DefaultApi{
 			$this->show_error(3);
 		}
 		
-		
+		if(!$data){
+			$this->show_error(2);
+		}
 		
 		$output = json_encode(array(
 			'data'=>$data,
@@ -492,12 +494,15 @@ class Api extends DefaultApi{
 						$this->Savefile($path,json_encode($list,JSON_UNESCAPED_SLASHES));
 					}
 					else{
-						$this->show_error(2);
+						$list=json_decode($this->Getfile($path, true),true);
 					}
 				}
 				else{
-					$this->show_error(2);
+					$list=json_decode($this->Getfile($path, true),true);
 				}
+			}
+			if(!$list){
+				$this->show_error(2);
 			}
 			$output = json_encode(array(
 				'PageNums' =>$page,
@@ -580,9 +585,12 @@ class Api extends DefaultApi{
 				if(count($data['list'])>0){
 					$this->Savefile($path,json_encode($data, JSON_UNESCAPED_SLASHES));
 				}
+				else{
+					$data=json_decode($this->Getfile($path, true),true);
+				}
 			}
 			else{
-				$this->show_error(2);
+				$data=json_decode($this->Getfile($path, true),true);
 			}
 			// var_dump($data['list']);exit;
 		}
