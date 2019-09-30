@@ -405,9 +405,10 @@ class Api extends DefaultApi{
 						foreach($data["relevant_news"] as $k => $v){
 							$v['section'] = $section;
 							$v['cat'] = $this->News_category_list->mapcat2cat($v['section'] ,$v['map_cat']);
-							$v = $this->detail_cast($v);
+							// $v = $this->detail_cast($v);
 							$data["relevant_news"][$k] = $v;	
 						}
+						$data["relevant_news"] = $this->list_cast($data["relevant_news"]);
 					}
 					
 					
