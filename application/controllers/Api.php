@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Api extends DefaultApi{
-	public $gen = false;
+	
 	public $platform;
 	public $platform_type = array(
 		"android"=>"_android",
@@ -13,7 +13,6 @@ class Api extends DefaultApi{
 	public function __construct (){
 		parent::__construct();
 		$this->load->helper('url');
-		$this->gen = isset($_GET['gen']);
 		// $this->load->library('session');
 	}
 	
@@ -96,7 +95,7 @@ class Api extends DefaultApi{
 		 */
 		$this->Expired = $this->config->item('force_cache');
 		$data = array();
-		if(!($data=json_decode($this->Getfile($this->config->item('app_config_path')),true))||$this->gen){
+		if(!($data=json_decode($this->Getfile($this->config->item('app_config_path')),true))||$this->gen()){
 			$data = $this->config->item("app_config");
 			$this->Savefile($this->config->item('app_config_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
 		}
@@ -192,7 +191,7 @@ class Api extends DefaultApi{
 		$path = $this->config->item('hit_list_path');
 		$path = str_replace('{section}',$sname,$path);
 		
-		if(!($data=json_decode($this->Getfile($path),true))||$this->gen){
+		if(!($data=json_decode($this->Getfile($path),true))||$this->gen()){
 			$this->load->model('Section');
 			$this->load->model('News_category_list');
 			$tmp = json_decode(file_get_contents($file),true);
@@ -274,7 +273,7 @@ class Api extends DefaultApi{
 		$fileid = rand(0,9);
 		$outputpath = str_replace('{page}',$fileid,$path);
 		
-		if(!($list=json_decode($this->Getfile($outputpath),true))||$this->gen){
+		if(!($list=json_decode($this->Getfile($outputpath),true))||$this->gen()){
 			$this->load->model('Instant');
 			$data = $this->Instant->GetInterestList();
 			$file = array();
@@ -329,7 +328,7 @@ class Api extends DefaultApi{
 			$page = ((int)((int)$id/1000)+1)*1000;
 			$path = str_replace('{page}',$page,$path);
 			$path = str_replace('{id}',$id,$path);
-			if(!($data=json_decode($this->Getfile($path),true))||$this->gen){
+			if(!($data=json_decode($this->Getfile($path),true))||$this->gen()){
 				
 				$data = $this->$section_name->GetDetail($id);
 				
@@ -474,7 +473,7 @@ class Api extends DefaultApi{
 			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
 			$path = str_replace('{cat}',$cat,$path);
 			$path = str_replace('.json','_'.(int)$page.'.json',$path);
-			if(!($list=json_decode($this->Getfile($path)))||$this->gen){
+			if(!($list=json_decode($this->Getfile($path)))||$this->gen()){
 				$list = $this->$section_name->GetList($map_cat);
 				
 				if($list){
@@ -573,7 +572,7 @@ class Api extends DefaultApi{
 		$path = str_replace('{id}',(int)$columnid,$this->config->item('columns_path'));
 
 
-		if(!($data=json_decode($this->Getfile($path),true))||$this->gen){
+		if(!($data=json_decode($this->Getfile($path),true))||$this->gen()){
 			$rows = $this->config->item('total_columns_list_item');
 			$data = $this->Columns->column($columnid, $rows);
 			if($data){
@@ -607,7 +606,7 @@ class Api extends DefaultApi{
 
 		$this->Expired = $this->config->item('force_cache');
 
-		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||$this->gen){
+		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||$this->gen()){
 			$this->load->model('Section');
 			$data = $this->Section->Get_Section_list();
 			$section_list = json_encode(array(
@@ -719,7 +718,7 @@ class Api extends DefaultApi{
 
 		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
-		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||$this->gen){
+		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||$this->gen()){
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();

@@ -4,7 +4,6 @@ class DefaultApi extends CI_Controller {
 	
 	protected $Path = 'json/';//api總路徑
 	public $Expired = 600;//超時時間，默認十分鐘
-	
 	public function __construct()
 	{
 		parent::__construct();
@@ -89,6 +88,12 @@ class DefaultApi extends CI_Controller {
 	{
 		$this->Expired = $time;
 		return $this;
+	}
+	
+	protected function gen(){
+		
+		return isset($_GET['gen'])&&(in_array($_SERVER['REMOTE_ADDR'], $this->config->item('ALLOW_GEN_IP'))||strpos($_SERVER['REMOTE_ADDR'], '192.168')!==false);
+		
 	}
 	
 }
