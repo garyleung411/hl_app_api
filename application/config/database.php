@@ -93,11 +93,11 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => TRUE
+			'save_queries' => FALSE
 		);
 		$db['daily'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.31',
+			'hostname' => '192.168.1.25',
 			'username' => 'hlapp_ro',
 			'password' => 'BBhTbKtR2ykP',
 			'database' => 'content_store',
@@ -114,7 +114,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => TRUE
+			'save_queries' => FALSE
 		);
 		$db['instant'] = array(
 			'dsn'	=> '',
@@ -135,7 +135,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => TRUE
+			'save_queries' => FALSE
 		);
 		$db['popnews'] = array(
 			'dsn'	=> '',
@@ -156,7 +156,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => TRUE
+			'save_queries' => FALSE
 		);
 }
 else {
@@ -179,7 +179,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => TRUE
+		'save_queries' => FALSE
 	);
 	$db['daily'] = array(
 		'dsn'	=> '',
@@ -201,7 +201,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => TRUE
+		'save_queries' => FALSE
 	);
 	$db['instant'] = array(
 		'dsn'	=> '',
@@ -223,7 +223,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => TRUE
+		'save_queries' => FALSE
 	);
 	$db['popnews'] = array(
 		'dsn'	=> '',
@@ -244,7 +244,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => TRUE
+		'save_queries' => FALSE
 	);
 }
 
