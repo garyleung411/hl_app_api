@@ -2,13 +2,13 @@
 /**
 *   欄目{即時,日報,影片,生活,專欄}
 */
-class Section extends CI_Model
+class Section extends My_Model
 {
 	public $tablename = 'section_list';
-    function __construct()
+    public function __construct()
     {
-        parent::__construct();
-        $this->db = $this->load->database('hl_app',TRUE);
+        $this->mainDB = 'hl_app';
+		parent::__construct();
     }
 	/**
 	*	獲取相關欄目信息
