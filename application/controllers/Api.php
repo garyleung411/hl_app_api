@@ -21,8 +21,9 @@ class Api extends DefaultApi{
 		 *	Code for update app_config
 		 */
 		$this->Expired = $this->config->item('force_cache');
-		$data = array();
-		if(!($data=json_decode($this->Getfile($this->config->item('app_config_path')),true))||$this->gen()){
+		$path = $this->config->item('app_config_path');
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$data = $this->config->item("app_config");
 			$this->Savefile($this->config->item('app_config_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
 		}
@@ -117,8 +118,8 @@ class Api extends DefaultApi{
 		}
 		$path = $this->config->item('hit_list_path');
 		$path = str_replace('{section}',$sname,$path);
-		
-		if(!($data=json_decode($this->Getfile($path),true))||$this->gen()){
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Section');
 			$this->load->model('News_category_list');
 			$tmp = json_decode(file_get_contents($file),true);
@@ -178,11 +179,17 @@ class Api extends DefaultApi{
 			
 			if(count($data)>0){
 				$data = $this->list_cast($data);
-				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 			else{
-				$this->show_error(2);
+				$data = json_decode($this->getFile($path, true),true);
 			}
+			if(count($data)>0){
+				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
+			}
+			
+		}
+		if(!$data){
+			$this->show_error(2);
 		}
 		$output = array(
 			'result' => 1,
