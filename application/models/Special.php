@@ -1,10 +1,11 @@
 <?php
 
-class Special extends CI_Model
+class Special extends My_Model
 {
 
     public function __construct(){
-    	$this->db = $this->load->database('hl_app',TRUE);
+    	$this->mainDB = 'hl_app';
+		parent::__construct();
 	}
 
 	 public function get_special(){
