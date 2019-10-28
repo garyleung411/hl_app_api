@@ -93,7 +93,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => FALSE
+			'save_queries' => true
 		);
 		$db['daily'] = array(
 			'dsn'	=> '',
@@ -114,7 +114,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => FALSE
+			'save_queries' => true
 		);
 		$db['instant'] = array(
 			'dsn'	=> '',
@@ -135,7 +135,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => FALSE
+			'save_queries' => true
 		);
 		$db['popnews'] = array(
 			'dsn'	=> '',
@@ -156,7 +156,7 @@ if(ENV === 'PROD' ){
 			'compress' => FALSE,
 			'stricton' => FALSE,
 			'failover' => array(),
-			'save_queries' => FALSE
+			'save_queries' => true
 		);
 }
 else {
@@ -179,15 +179,15 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => FALSE
+		'save_queries' => true
 	);
 	$db['daily'] = array(
 		'dsn'	=> '',
 		'hostname' => '192.168.148.103',
 		'username' => 'root',
 		'password' => 'jzwCvH7b2TWTsdxz',
-		'database' => 'content_store',//hl_content_store2
-		// 'database' => 'hl_content_store2',//hl_content_store2
+		'database' => 'hl_content_store2',//hl_content_store2
+		// 'database' => 'content_store',//hl_content_store2
 		'dbdriver' => 'mysqli',
 		'dbprefix' => '',
 		'pconnect' => FALSE,
@@ -201,7 +201,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => FALSE
+		'save_queries' => true
 	);
 	$db['instant'] = array(
 		'dsn'	=> '',
@@ -223,7 +223,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => FALSE
+		'save_queries' => true
 	);
 	$db['popnews'] = array(
 		'dsn'	=> '',
@@ -244,7 +244,7 @@ else {
 		'compress' => FALSE,
 		'stricton' => FALSE,
 		'failover' => array(),
-		'save_queries' => FALSE
+		'save_queries' => true
 	);
 }
 

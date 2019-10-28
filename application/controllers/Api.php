@@ -183,9 +183,7 @@ class Api extends DefaultApi{
 			else{
 				$data = json_decode($this->getFile($path, true),true);
 			}
-			if(count($data)>0){
-				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
-			}
+			$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			
 		}
 		if(!$data){
@@ -255,7 +253,8 @@ class Api extends DefaultApi{
 		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Section');
-			if(count($this->Section->Get_Section($section))>1){
+			$res = $this->Section->Get_Section($section);
+			if(count($res )>0){
 				$section_name = $res[0]->section_name;
 				$this->load->model($section_name);
 				$data = $this->$section_name->GetDetail($id);
@@ -337,10 +336,9 @@ class Api extends DefaultApi{
 						$data["relevant_news"] = $this->list_cast($data["relevant_news"]);
 					}	
 				}
-				else{
-					$data=json_decode($this->Getfile($path, true),true);
+				if($data){
+					$this->saveFile($path,json_encode($data,ENT_QUOTES));
 				}
-				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 			else{
 				$this->show_error(3);
