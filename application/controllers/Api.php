@@ -16,79 +16,6 @@ class Api extends DefaultApi{
 		// $this->load->library('session');
 	}
 	
-	private function index_section(){
-		$other = array(
-			"SectionID" => "other",
-			"name" => "期它類別",
-			"SectionName" => "other",
-			"CatList"	=> array(),
-		);
-		
-		$other["CatList"] = array(
-			array(
-				"CatID" => "5-4",
-				"CatName" => "﻿金融High Tea",
-				"MappingCatID" => "1",
-				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405050334300476075.jpg",
-			),
-			array(
-				"CatID" => "5-417",
-				"CatName" => "﻿巴士的點評",
-				"MappingCatID" => "1",
-				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20150327042040701019288.jpg",
-			),
-			array(
-				"CatID" => "5-0",
-				"CatName" => "﻿Executive日記",
-				"MappingCatID" => "1",
-				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405045803512634278.jpg",
-			),
-		);
-		$this->load->model('News_category_list');
-		$life_cat = $this->News_category_list->Get_Cat('4');
-		$icons = array(
-			"icon-life-travel.png",
-			"icon-life-dining.png",
-			"icon-life-digital.png",
-			"icon-life-car.png",
-			"icon-life-fashion.png",
-			"icon-life-living.png",
-		);
-		foreach($life_cat as $i => $cat){
-			
-			$other["CatList"][] = array(
-				"CatID" => ("4-".$cat->cat_id) ,
-				"CatName" => $cat->cat_cname,
-				"MappingCatID" => $cat->mapping_catid,
-				"icon" => 'https://hlapp.stheadline.com/images/life/'.$icons[$i],
-			);
-			
-		}
-		
-		
-		$tmp = $this->topic(true);
-		$catlist = array();
-		if($tmp){
-			foreach($tmp as $v){
-				$cat = array(
-					"CatID" => $v['id'],
-					"CatName" => $v['title'],
-					"MappingCatID" => "",
-					"icon" => $this->config->item('hl_app_img_url').$v['icon'],
-				);
-				$catlist[] = $cat;
-			}
-		}
-		$topic = array(
-			"SectionID" => "topic",
-			"name" => "話題新聞",
-			"SectionName" => "topic",
-			"CatList"	=> $catlist,
-		);
-		return array($other, $topic);
-		
-	}
-	
 	public function app_config(){
 		/**
 		 *	Code for update app_config
@@ -588,33 +515,108 @@ class Api extends DefaultApi{
 
 	}
 	
+	
 	public function section(){
-
 		$this->Expired = $this->config->item('force_cache');
-
-		if(!($data=json_decode($this->Getfile($this->config->item('section_list_path')),true))||$this->gen()){
+		$path = $this->config->item('section_list_path');
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Section');
-			$data = $this->Section->Get_Section_list();
-			$section_list = json_encode(array(
-				'data'=>$data,
-				'result' => 1
-			),JSON_UNESCAPED_SLASHES);
-
-			$this->Savefile($this->config->item('section_list_path'),$section_list);
+			$data = $this->Section->Get_Section_list();		
+			if(count($data)>0){
+				$extra = $this->index_section();
+				foreach($extra as $v){
+					$data[] = $v;
+				}
+			}
+			else{
+				$data = json_decode($this->getFile($path, true),true);
+			}
+			if(count($data)>0){
+				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
+			}
 		}
-		else{
-			$data = $data['data'];
+		if(!$data){
+			$this->show_error(2);
 		}
-		$extra = $this->index_section();
-		foreach($extra as $v){
-			$data[] = $v;
-		}
-		
 		$section_list = json_encode(array(
 			'data'=>$data,
 			'result' => 1
 		),JSON_UNESCAPED_SLASHES);
 		$this->PushData($section_list);
+	}
+		
+	private function index_section(){
+		$other = array(
+			"SectionID" => "other",
+			"name" => "期它類別",
+			"SectionName" => "other",
+			"CatList"	=> array(),
+		);
+		
+		$other["CatList"] = array(
+			array(
+				"CatID" => "5-4",
+				"CatName" => "﻿金融High Tea",
+				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405050334300476075.jpg",
+			),
+			array(
+				"CatID" => "5-417",
+				"CatName" => "﻿巴士的點評",
+				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20150327042040701019288.jpg",
+			),
+			array(
+				"CatID" => "5-0",
+				"CatName" => "﻿Executive日記",
+				"MappingCatID" => "1",
+				"icon" => "http://static.stheadline.com/stheadline/columnist_res/columnist_65x65/20120405045803512634278.jpg",
+			),
+		);
+		$this->load->model('News_category_list');
+		$life_cat = $this->News_category_list->Get_Cat('4');
+		$icons = array(
+			"icon-life-travel.png",
+			"icon-life-dining.png",
+			"icon-life-digital.png",
+			"icon-life-car.png",
+			"icon-life-fashion.png",
+			"icon-life-living.png",
+		);
+		foreach($life_cat as $i => $cat){
+			
+			$other["CatList"][] = array(
+				"CatID" => ("4-".$cat->cat_id) ,
+				"CatName" => $cat->cat_cname,
+				"MappingCatID" => $cat->mapping_catid,
+				"icon" => 'https://hlapp.stheadline.com/images/life/'.$icons[$i],
+			);
+			
+		}
+		
+		
+		$tmp = $this->topic(true);
+		$catlist = array();
+		if($tmp){
+			foreach($tmp as $v){
+				$cat = array(
+					"CatID" => $v['id'],
+					"CatName" => $v['title'],
+					"MappingCatID" => "",
+					"icon" => $this->config->item('hl_app_img_url').$v['icon'],
+				);
+				$catlist[] = $cat;
+			}
+		}
+		$topic = array(
+			"SectionID" => "topic",
+			"name" => "話題新聞",
+			"SectionName" => "topic",
+			"CatList"	=> $catlist,
+		);
+		return array($other, $topic);
+		
 	}
 	
 	private function list_cast($data){
@@ -704,36 +706,42 @@ class Api extends DefaultApi{
 
 		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
-		$data = json_decode($this->Getfile($this->config->item('highlight_path'), $this->config->item('cache_only')),true);
+		$path = $this->config->item('highlight_path');
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
-			$posdata = $this->Highlight->Get_pos_highlight_list();
-			$return_data = array();
-			$num = count($data)+count($posdata);
-			for($i=0;$i<$num;$i++)
-			{
-				if(isset($posdata[$i+1]))
-				{
-					$return_data[] = $posdata[$i+1];
-				}else{
-					$return_data[] = array_shift($data);
-				}
-			}
-			// return;
-			$this->load->model('News_category_list');
-			foreach($return_data as $k=>$v){
-				if(isset($v['map_cat'])){
-					$return_data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
-				}
-				if($v['section']==5){
-					$return_data[$k]['cat'] = '1';
-				}
-			}
-			
-			$data = $this->list_cast($return_data);
 			if(count($data)>0){
-				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
+				$posdata = $this->Highlight->Get_pos_highlight_list();
+				$return_data = array();
+				$num = count($data)+count($posdata);
+				for($i=0;$i<$num;$i++)
+				{
+					if(isset($posdata[$i+1]))
+					{
+						$return_data[] = $posdata[$i+1];
+					}else{
+						$return_data[] = array_shift($data);
+					}
+				}
+				// return;
+				$this->load->model('News_category_list');
+				foreach($return_data as $k=>$v){
+					if(isset($v['map_cat'])){
+						$return_data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+					}
+					if($v['section']==5){
+						$return_data[$k]['cat'] = '1';
+					}
+				}
+				
+				$data = $this->list_cast($return_data);
+			}
+			else{
+				$data = json_decode($this->getFile($path, true),true);
+			}
+			if(count($data)>0){
+				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 		} 
 		if(!$data){
