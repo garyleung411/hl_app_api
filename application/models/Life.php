@@ -1,6 +1,6 @@
 <?php
 
-class Life extends CI_Model
+class Life extends My_Model
 {
 
 	public $Expired = 1;
@@ -8,7 +8,8 @@ class Life extends CI_Model
 
 	
     public function __construct(){
-		
+		$this->mainDB = 'daily';
+        parent::__construct();
     	$this->load->model('Section');
     }
    
@@ -160,7 +161,6 @@ class Life extends CI_Model
     }
 	
 	private function Get_newsID_by_ID($id){
-		$this->db = $this->load->database('daily',TRUE);
 		$this->db->from('hd_hl_news as hhn');
 		$this->db->where('hdID',$id);
 		$this->db->select('newsID');
@@ -169,8 +169,6 @@ class Life extends CI_Model
 	}
 	
 	private function Get_All_News_list($PageSize, $cat = -1,$Page=0,$rand=false){
-
-    	$this->db = $this->load->database('daily',TRUE);
 		if($cat){
 			$year = date('Y');
 			$this->db->from('hd_hl_news as hhn');
@@ -233,7 +231,6 @@ class Life extends CI_Model
     }
 	
 	private function Get_Max_Date($cat,$year){
-		$this->db = $this->load->database('daily',TRUE);
 		$this->db->select_max('nm.publishDatetime');
 			
 		$this->db->from('hd_hl_news as hhn');
@@ -258,7 +255,6 @@ class Life extends CI_Model
 	private function GetImg($id){
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$imgs = array();
-		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){	
 			$this->db->select('img.path,info.isCover,hhn.hdID as id,info.caption, img.class');
 			$this->db->from('news_img_output_'.$year.' as img');
@@ -288,18 +284,18 @@ class Life extends CI_Model
 	}
 	
 	private function GetNewsVideo($id){
-		$this->db = $this->load->database('popnews',TRUE);
-		$this->db->select('id,headline,video_path,cover_path');
+		$popdb = $this->load->database('popnews',TRUE);
+		$popdb->select('id,headline,video_path,cover_path');
 		
-		$this->db->from('video_news');
+		$popdb->from('video_news');
 		
 		if(is_array($id)&&count($id)>=1){
-            $this->db->where_in('id',$id);
+            $popdb->where_in('id',$id);
         }else{
-            $this->db->where('id',$id);
+            $popdb->where('id',$id);
         }
-		$this->db->where('deleted',0);
-		$res = $this->db->get();
+		$popdb->where('deleted',0);
+		$res = $popdb->get();
 		return $res->result_array();
 	}
 
@@ -363,7 +359,6 @@ class Life extends CI_Model
 	*	獲取文章
 	*/
     public function Get_News($id){
-    	$this->db = $this->load->database('daily',TRUE);
 		$this->db->select("year");
 		$this->db->from("hd_hl_news");
 		$this->db->where('hdID',$id);
@@ -397,7 +392,6 @@ class Life extends CI_Model
 		
 		$years = array(date('Y',strtotime('today')), date('Y',strtotime('today - 1 years ')));
 		$data = array();
-		$this->db = $this->load->database('daily',TRUE);
 		foreach($years as $year){
 			$this->db->from('hd_hl_news as hhn');
 			$this->db->join('news_main_'.$year.' as nm','hhn.newsID = nm.newsID and hhn.year = '.$year, 'inner');
