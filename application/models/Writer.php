@@ -2,27 +2,15 @@
 /**
 *	獲取發佈者
 */
-	class Writer extends CI_Model{
+defined('BASEPATH') OR exit('No direct script access allowed');
+	class Writer extends My_Model{
 		
 		public function __construct()
 		{
+			$this->mainDB = 'daily';
 			parent::__construct();
-			$this->db = $this->load->database('daily',TRUE);
-			
 		}
-		// public function GetWriter($creatId)
-		// {
-		// 	$this->db->select('columnistID,writer,trait');
-		// 	$this->db->from('news_writer_list');
-		// 	$this->db->where('status',1);
-  //           if(is_array($creatId)&&count($creatId)>1){
-  //               $this->db->where_in('columnistID',$creatId);
-  //           }else{
-  //               $this->db->where('columnistID',$creatId);
-  //           }
-		// 	$res = $this->db->get();
-		// 	return $res->result();
-		// }
+		
 		public function GetWriter($newsid,$year)
 		{
 			$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,neb.newsid');

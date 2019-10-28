@@ -1,11 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Ads extends CI_Model  {
+class Ads extends My_Model  {
 	
-
+	
 	public function __construct (){
+		$this->mainDB = 'hl_app';
 		parent::__construct();
-		$this->load->database('hl_app');
 	}
 	
 	//根据section cat获取广告
