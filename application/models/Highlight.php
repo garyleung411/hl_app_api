@@ -1,11 +1,11 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class Highlight extends CI_Model  {
+class Highlight extends My_Model  {
 	
 	
 	public function __construct (){
+		$this->mainDB = 'hl_app';
 		parent::__construct();
-		$this->load->database('hl_app');
 	}
 	
 	public function Get_highlight($section=null){
