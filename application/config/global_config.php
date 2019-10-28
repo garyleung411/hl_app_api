@@ -11,7 +11,8 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) ? 'https' : 'http';
 $config['base_suffix']    = '';
 $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
-
+#Read cache only, all DB connection aborted
+$config['cache_only'] = false;
 
 /*
  *	PROD config
@@ -136,35 +137,6 @@ $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
 $config['columns_path'] = 'json/columns/list_{id}.json';
 
-// $config['ads_cat_list_pos'] = array(
-	// "index" => '首頁',	
-	// "1-1" => '即時-港聞',	
-	// "1-2" => '即時-娛樂',	
-	// "1-3" => '即時-中國',	
-	// "1-4" => '即時-國際',	
-	// "1-5" => '即時-地產',	
-	// "1-6" => '即時-財經',	
-	// "1-7" => '即時-體育',	
-	// "2-1" => '日報-港聞',
-	// "2-2" => '日報-中國',
-	// "2-3" => '日報-國際',
-	// "2-4" => '日報-地產',
-	// "2-5" => '日報-財經',
-	// "2-6" => '日報-體育',
-	// "2-7" => '日報-副刊',
-	// "2-8" => '日報-娛樂',
-	// "2-9" => '日報-馬經',
-	// "4-1" => '生活-旅遊',
-	// "4-2" => '生活-飲食',
-	// "4-3" => '生活-影音',
-	// "4-4" => '生活-駕駛',
-	// "4-5" => '生活-時尚',
-	// "4-6" => '生活-健康',
-	// "3" => '影片',
-	// "5" => '專欄',
-	// "detail" => '文章內頁',		
-	// "columns" => '個入專欄列表',
-// );
 $config['ads_cat_list_pos'] = array(
 	"index" => array(2,4,7,10,13,16),	//首頁
 	"1-1" => array(2,4,7,10,13,16),	//即時-港聞

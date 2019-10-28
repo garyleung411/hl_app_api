@@ -7,7 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 function filterArray($value){
 	return ($value['isCover'] == 1);
 }
-class Instant extends CI_Model
+class Instant extends My_Model
 {
 	
     public $Expired = 1;
@@ -15,6 +15,7 @@ class Instant extends CI_Model
 
     public function __construct()
     {
+		$this->mainDB = 'instant';
         parent::__construct();
         $this->load->model('Section');
     }
@@ -31,7 +32,6 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$list = array();
-		$this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
 			if(count($list)<$total){	
 				$this->db->select('datetime, st.rec_id as id,content,keyword,newslayout as layout,news_main_id as newsID,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat');
@@ -97,7 +97,6 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$data = array();
-		$this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
 			$this->db->select('i.photo_content_for_headline as path,i.type,i.news_main_id,i.caption_content_for_headline as caption,m.rec_id,m.datetime');
 			$this->db->from('st_inews_img_'.$year.' as i');
@@ -247,18 +246,18 @@ class Instant extends CI_Model
     }
 	
 	private function GetNewsVideo($id){
-		$this->db = $this->load->database('popnews',TRUE);
-		$this->db->select('id,headline,video_path,cover_path');
+		$popdb = $this->load->database('popnews',TRUE);
+		$popdb->select('id,headline,video_path,cover_path');
 		
-		$this->db->from('video_news');
+		$popdb->from('video_news');
 		
 		if(is_array($id)&&count($id)>=1){
-            $this->db->where_in('id',$id);
+            $popdb->where_in('id',$id);
         }else{
-            $this->db->where('id',$id);
+            $popdb->where('id',$id);
         }
-		$this->db->where('deleted',0);
-		$res = $this->db->get();
+		$popdb->where('deleted',0);
+		$res = $popdb->get();
 		return $res->result_array();
 	}
 
@@ -297,7 +296,6 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$list = array();
-		$this->db = $this->load->database('instant',TRUE);  
 		foreach($years as $year){
 			if(count($list)<$total){
 				
@@ -344,7 +342,6 @@ class Instant extends CI_Model
     *   獲取文章
     */
     public function Get_News($id){
-        $this->db = $this->load->database('instant',TRUE);
         $day_before = $this->config->item('day_before');
         $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 		$this->db->select("year");
@@ -412,7 +409,6 @@ class Instant extends CI_Model
     *   relevant_news get by news_main_id
     */
 	private function Set_relevant_news(&$data, $id){
-		$this->db = $this->load->database('instant',TRUE);
         $day_before = $this->config->item('day_before');
         $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 		$this->db->select("year");
@@ -476,7 +472,6 @@ class Instant extends CI_Model
 		$day = date('Y-m-d',strtotime("today - $day_before days"));
 		$years = array(date('Y',strtotime("today")),date('Y',strtotime("today - 1 years ")));
 		$data = array();
-        $this->db = $this->load->database('instant',TRUE);
 		foreach($years as $year){
 			$this->db->select(' datetime,tmp.rec_id as id,content,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid,newstype as map_cat');
 			$this->db->from("(SELECT main.* FROM `st_inews_main_$year` main 
@@ -518,7 +513,6 @@ class Instant extends CI_Model
 			$years[] = date('Y',strtotime($day));
 		}
 		$list = array();
-		$this->db = $this->load->database('instant',TRUE);	
 		foreach($years as $year){
 			if(count($list)<$total){
 				$results = $this->db->query("SELECT datetime, nm.rec_id as id,content,content2,content3,newslayout as layout,headline as title,publish_datetime,video_path_1 as vdo, vid, newstype as map_cat  

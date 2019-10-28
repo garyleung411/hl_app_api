@@ -718,8 +718,8 @@ class Api extends DefaultApi{
 
 		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
-		if(!($data=json_decode($this->Getfile($this->config->item('highlight_path')),true))||$this->gen()){
-			
+		$data = json_decode($this->Getfile($this->config->item('highlight_path'), $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
 			$posdata = $this->Highlight->Get_pos_highlight_list();
@@ -750,7 +750,9 @@ class Api extends DefaultApi{
 				$this->Savefile($this->config->item('highlight_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 		} 
-		
+		if(!$data){
+			$this->show_error(2);
+		}
 		$data2 = array();
 		foreach($data as $k => $v){
 			if(!count($v['imgs'])==0||$v['section']==5){
