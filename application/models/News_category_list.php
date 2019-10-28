@@ -1,15 +1,14 @@
 <?php
 //欄目類別
 
-class News_category_list extends CI_Model
+class News_category_list extends My_Model
 {
 	public $tablename = 'section_category_list';
 	
-    function __construct()
-    {
-        parent::__construct();
-		$this->db = $this->load->database('hl_app',TRUE);
-    }
+    public function __construct (){
+		$this->mainDB = 'hl_app';
+		parent::__construct();
+	}
 	/**
 	*	獲取欄目下的類別
 	* 	Section 欄目id
