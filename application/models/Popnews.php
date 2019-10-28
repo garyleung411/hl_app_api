@@ -1,12 +1,14 @@
 <?php
 
-class Popnews extends CI_Model{
+class Popnews extends My_Model{
 
 	public $Expired = 1;
 	public $Page = 20;
 	
     public function __construct()
     {
+		$this->mainDB = 'popnews';
+		parent::__construct();
     	$this->load->model('Section');
     	// $this->DetailPath = $this->config->item('detail_path');
     }
@@ -51,7 +53,6 @@ class Popnews extends CI_Model{
 	
 	private function Get_video_list($cat,$PageSize=10,$Page=0,$count=FALSE){
 		
-    	$this->db = $this->load->database('popnews',TRUE);
 		
 		$this->db->select('id,video_path as vdo,catid as map_cat,length,cover_path as imgs,deleted,publish_datetime,headline as title');
 		$this->db->from('video_news');
@@ -97,7 +98,6 @@ class Popnews extends CI_Model{
 	}
 	
 	private function Get_video($id){
-    	$this->db = $this->load->database('popnews',TRUE);
 		
 		$this->db->select('id,video_path as vdo,catid as map_cat,length,cover_path as imgs,publish_datetime,headline as title,');
 		$this->db->from('video_news');
