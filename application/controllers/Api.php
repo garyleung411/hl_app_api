@@ -272,14 +272,14 @@ class Api extends DefaultApi{
 		$path = $this->config->item('interest_list_path');
 		$fileid = rand(0,9);
 		$outputpath = str_replace('{page}',$fileid,$path);
-		
-		if(!($list=json_decode($this->Getfile($outputpath),true))||$this->gen()){
+		$data = json_decode($this->getFile($outputpath, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Instant');
-			$data = $this->Instant->GetInterestList();
+			$interest = $this->Instant->GetInterestList();
 			$file = array();
 			$fileidlist = array();
 			$this->load->model('News_category_list');
-			foreach ($data as $key => $value) {
+			foreach ($interest as $key => $value) {
 				$value['section'] = "1";
 				$value['cat'] = $this->News_category_list->mapcat2cat("1",$value['map_cat']);
 				$file[(($key+1)%10)][] = $value;
@@ -287,15 +287,17 @@ class Api extends DefaultApi{
 			}
 			foreach ($file as $k => $v) {
 				$filepath = str_replace('{page}',$k,$path);
-				$data = $this->list_cast($file[$k]);
-				$this->Savefile($filepath, json_encode($data,JSON_UNESCAPED_SLASHES));
+				$interest = $this->list_cast($file[$k]);
+				if($interest){
+					$this->Savefile($filepath, json_encode($interest,JSON_UNESCAPED_SLASHES));
+				}
 				if(in_array($k,$fileidlist)&&$k==$fileid){
-					$list = $data;
+					$data = $interest;
 				}
 			}
-			if($list==false||$list==''){
-				$this->show_error(2);
-			}
+		}
+		if(!$data){
+			$this->show_error(2);
 		}
 		$output = json_encode(array(
 			'data'=>$list,
@@ -310,28 +312,19 @@ class Api extends DefaultApi{
 			$this->detail("1", $id);
 			return;
 		}
-		$this->load->model('Section');
-		$res = $this->Section->Get_Section($section);
+		$path= $this->config->item('detail_path');
+		$path = str_replace('{section}','s'.$section,$path);
+		$page = ((int)((int)$id/1000)+1)*1000;
+		$path = str_replace('{page}',$page,$path);
+		$path = str_replace('{id}',$id,$path);
 		
-		$error = false;
-		$error = count($res)<1;
-
-		if(!$error){
-
-			$section_name = $res[0]->section_name;
-			$this->load->model($section_name);
-			
-			
-			
-			$path= $this->config->item('detail_path');
-			$path = str_replace('{section}',$section_name,$path);
-			$page = ((int)((int)$id/1000)+1)*1000;
-			$path = str_replace('{page}',$page,$path);
-			$path = str_replace('{id}',$id,$path);
-			if(!($data=json_decode($this->Getfile($path),true))||$this->gen()){
-				
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
+			$this->load->model('Section');
+			if(count($this->Section->Get_Section($section))>1){
+				$section_name = $res[0]->section_name;
+				$this->load->model($section_name);
 				$data = $this->$section_name->GetDetail($id);
-				
 				if($data){
 					$data['section'] = $section;
 					if(isset($data['keyword'])&&$data['keyword']!=''){
@@ -408,22 +401,17 @@ class Api extends DefaultApi{
 							$data["relevant_news"][$k] = $v;	
 						}
 						$data["relevant_news"] = $this->list_cast($data["relevant_news"]);
-					}
-					
-					
-					$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
-					
+					}	
 				}
 				else{
 					$data=json_decode($this->Getfile($path, true),true);
 				}
-
+				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
+			}
+			else{
+				$this->show_error(3);
 			}
 		}
-		else{
-			$this->show_error(3);
-		}
-		
 		if(!$data){
 			$this->show_error(2);
 		}
@@ -456,28 +444,28 @@ class Api extends DefaultApi{
 			$this->topic_list($cat);
 			return;
 		}
-		$this->load->model('News_category_list');
-		$is_cat = $this->News_category_list->Check_Cat($section,$cat);
-		if($is_cat){
-			if($section == 5){
-				$map_cat = $cat;
-			}
-			else{
-				$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-				$map_cat = ($map_cat==-1)?0:$map_cat;
-			}
-			$this->load->model('Section');
-			$section_name = $this->Section->Get_Section($section)[0]->section_name;
-			$this->load->model($section_name);
-			$this->$section_name->page($page);
-			$path = str_replace('{section}',$section_name,$this->config->item('list_path'));
-			$path = str_replace('{cat}',$cat,$path);
-			$path = str_replace('.json','_'.(int)$page.'.json',$path);
-			if(!($list=json_decode($this->Getfile($path)))||$this->gen()){
-				$list = $this->$section_name->GetList($map_cat);
-				
-				if($list){
-					foreach($list as $k=>$v){
+		$path = str_replace('{section}','s'.$section,$this->config->item('list_path'));
+		$path = str_replace('{cat}',$cat,$path);
+		$path = str_replace('.json','_'.(int)$page.'.json',$path);
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
+			$this->load->model('News_category_list');
+			$is_cat = $this->News_category_list->Check_Cat($section,$cat);
+			if($is_cat){
+				if($section == 5){
+					$map_cat = $cat;
+				}
+				else{
+					$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
+					$map_cat = ($map_cat==-1)?0:$map_cat;
+				}
+				$this->load->model('Section');
+				$section_name = $this->Section->Get_Section($section)[0]->section_name;
+				$this->load->model($section_name);
+				$this->$section_name->page($page);
+				$data = $this->$section_name->GetList($map_cat);	
+				if($data){
+					foreach($data as $k=>$v){
 						// var_dump($section);exit;
 						$v["section"] = $section;
 						$v["cat"] = $cat;
@@ -487,32 +475,30 @@ class Api extends DefaultApi{
 						if($v["section"] == 3){
 							$v['share_link'] = $this->share_link($v);
 						}
-						$list[$k] = $v;
+						$data[$k] = $v;
 					}
-					$list = $this->list_cast($list);
-					if(count($list)>0){
-						$this->Savefile($path,json_encode($list,JSON_UNESCAPED_SLASHES));
-					}
-					else{
-						$list=json_decode($this->Getfile($path, true),true);
-					}
+					$data = $this->list_cast($data);
 				}
 				else{
-					$list=json_decode($this->Getfile($path, true),true);
+					$data=json_decode($this->Getfile($path, true),true);
 				}
+				if(count($data)>0){
+					$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
+				}
+				
 			}
-			if(!$list){
-				$this->show_error(2);
+			else{
+				$this->show_error(3);
 			}
-			$output = json_encode(array(
-				'PageNums' =>$page,
-				'data'=>$list,
-				'result' => 1
-			),JSON_UNESCAPED_SLASHES);
 		}
-		else{
-			$this->show_error(3);
+		if(!$data){
+			$this->show_error(2);
 		}
+		$output = json_encode(array(
+			'PageNums' =>$page,
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
 
 		$this->PushData($output);
 	}
