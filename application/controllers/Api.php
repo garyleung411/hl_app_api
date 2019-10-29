@@ -207,7 +207,7 @@ class Api extends DefaultApi{
 		$data = json_decode($this->getFile($outputpath, $this->config->item('cache_only')),true);
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Instant');
-			$interest = $this->Instant->GetInterestList();
+			$interest = $this->Instant->GetInterestList();	
 			$file = array();
 			$fileidlist = array();
 			$this->load->model('News_category_list');
@@ -232,7 +232,7 @@ class Api extends DefaultApi{
 			$this->show_error(2);
 		}
 		$output = json_encode(array(
-			'data'=>$list,
+			'data'=>$data,
 			'result' => 1
 		),JSON_UNESCAPED_SLASHES);		
 		$this->PushData($output);
