@@ -92,10 +92,13 @@ class Api extends DefaultApi{
 	}
 	
 	public function hot_search(){
-		
+
 		$json = json_decode( file_get_contents($this->config->item('hot_search_path')),true);
 		foreach($json as $k => $v){
 			$json[$k] = ncr2str($v);
+		}
+		if(!$json){
+			$json = array();
 		}
 		$output = array('data'=>$json);
 		$output['result'] = 1;

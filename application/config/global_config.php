@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159');
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
@@ -12,7 +12,7 @@ $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) 
 $config['base_suffix']    = '';
 $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
 #Read cache only, all DB connection aborted
-$config['cache_only'] = false;
+$config['cache_only'] = true;
 
 /*
  *	PROD config
@@ -44,7 +44,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['instant_vdo_url'] = "https://static.stheadline.com/stheadline/inewsmedia/";
 	$config['solr'] = array(
 		"project"       => "appcollect",
-		"http_root"     => "192.168.149.106:8983/solr/",
+		"http_root"     => "192.168.148.106:8983/solr/",
 		"debug"         => false,
 		"is_cloud_mode" => true,
 		"min_score"     => 0.1,
