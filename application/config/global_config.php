@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com');
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
@@ -12,7 +12,7 @@ $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) 
 $config['base_suffix']    = '';
 $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
 #Read cache only, all DB connection aborted
-$config['cache_only'] = true;
+$config['cache_only'] = false;
 
 /*
  *	PROD config
