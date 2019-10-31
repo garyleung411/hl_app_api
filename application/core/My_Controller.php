@@ -2,12 +2,12 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 class DefaultApi extends CI_Controller {
 	
-	protected $Path = './json/';//api總路徑
+	protected $Path = 'json/';//api總路徑
 	public $Expired = 600;//超時時間，默認十分鐘
-	
 	public function __construct()
 	{
 		parent::__construct();
+		$this->Path = $_SERVER['DOCUMENT_ROOT'].'/json/';
 		$this->Makedir($this->Path);
 	}
 	
@@ -18,7 +18,10 @@ class DefaultApi extends CI_Controller {
 	{
 		if(is_file($filepath))
 		{
-			$time = filectime($filepath);
+			if($this->Expired == -1){
+				return true;
+			}
+			$time = filemtime($filepath);
 			return ((time()-$time)<$this->Expired);
 		}
 		return false;
@@ -31,7 +34,7 @@ class DefaultApi extends CI_Controller {
 	{
 		if(!is_dir($Path))
 		{
-			return mkdir($Path,0775);
+			return mkdir($Path,0775,true);
 		}
 		return true;
 	}
@@ -39,8 +42,11 @@ class DefaultApi extends CI_Controller {
 	/**
 	*	讀取文件內容
 	*/
-	protected function Getfile($filepath)
+	protected function Getfile($filepath,$force = false)
 	{
+		if($force){
+			return file_get_contents($filepath);
+		}
 		return (($this->Checkfile($filepath))?file_get_contents($filepath):false);
 	}
 	
@@ -64,12 +70,30 @@ class DefaultApi extends CI_Controller {
 	}
 	
 	/**
+	*	設置header並輸出數據
+	*/
+	protected function show_error($error_code = 0){
+		$output = json_encode(array(
+				'result' =>0,
+				'error_code'=>$error_code,
+			),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
+		exit;
+	}
+	
+	/**
 	*	設置超時時間
 	*/
 	protected function SetExpired($time)
 	{
 		$this->Expired = $time;
 		return $this;
+	}
+	
+	protected function gen(){
+		
+		return isset($_GET['gen'])&&(in_array($_SERVER['REMOTE_ADDR'], $this->config->item('ALLOW_GEN_IP'))||strpos($_SERVER['REMOTE_ADDR'], '192.168')!==false);
+		
 	}
 	
 }
