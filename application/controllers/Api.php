@@ -816,9 +816,8 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function search($keyword,$page=1){
+	public function search($keyword,$page){
 		$this->load->model('search');
-		
 		$keyword = strip_tags(str_replace($this->config->item("search_filter"),"",urldecode($keyword)));
 		$data = null;
 		
