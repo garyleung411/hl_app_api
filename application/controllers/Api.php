@@ -531,13 +531,7 @@ class Api extends DefaultApi{
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Section');
 			$data = $this->Section->Get_Section_list();		
-			if(count($data)>0){
-				$extra = $this->index_section();
-				foreach($extra as $v){
-					$data[] = $v;
-				}
-			}
-			else{
+			if(count($data)<1){
 				$data = json_decode($this->getFile($path, true),true);
 			}
 			if(count($data)>0){
@@ -546,6 +540,10 @@ class Api extends DefaultApi{
 		}
 		if(!$data){
 			$this->show_error(2);
+		}
+		$extra = $this->index_section();
+		foreach($extra as $v){
+			$data[] = $v;
 		}
 		$section_list = json_encode(array(
 			'data'=>$data,
