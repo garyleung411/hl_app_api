@@ -724,16 +724,19 @@ class Api extends DefaultApi{
 				$posdata = $this->Highlight->Get_pos_highlight_list();
 				$return_data = array();
 				$num = count($data)+count($posdata);
-				for($i=0;$i<$num;$i++)
-				{
-					if(isset($posdata[$i+1]))
-					{
-						$return_data[] = $posdata[$i+1];
-					}else{
-						$return_data[] = array_shift($data);
+				
+				foreach($data as $k => $row){
+					if(isset($posdata[$k+1])){
+						$return_data[] = $posdata[$k+1];
+						unset($posdata[$k+1]);
+						
 					}
+					$return_data[] = $row;
 				}
-				// return;
+				
+				if(count($posdata)>0){
+					$return_data = array_merge($return_data,$posdata);
+				}
 				$this->load->model('News_category_list');
 				foreach($return_data as $k=>$v){
 					if(isset($v['map_cat'])){
