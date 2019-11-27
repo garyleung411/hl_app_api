@@ -444,7 +444,7 @@ class Instant extends My_Model
 				$this->db->join('st_inews as st','nm.rec_id = st.rec_id', 'inner');
 				$this->db->join("st_inews_feed_$y as nf",'nm.news_main_id = nf.news_main_id', 'inner');
 				$this->db->where_in('nm.news_main_id', $id_list);
-				$this->db->where("`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW()");
+				$this->db->where("`nm`.`status` =1 and `nm`.`publish_datetime` >= '$day' AND `nm`.`publish_datetime` <= NOW() AND nf.noShowForHL = 0");
 				$res = $this->db->get();
 				$result = $res->result_array();
 				foreach($result as $n){
