@@ -100,6 +100,14 @@
 		</script>
 		
 		<style>
+			img{
+				width: 100%;
+				max-width: 100%;
+			}
+			p{
+				max-width: 100%;
+				display: 
+			}
 			img.img-responsive{
 				width:100%;
 				height:auto;
@@ -114,6 +122,8 @@
 			}
 			#content table{
 				width:100%;
+				max-width:100% !important;
+
 			}
 			#content table a{
 				word-break: break-all;
