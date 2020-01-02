@@ -305,9 +305,9 @@ class Columns extends My_Model
     */
     private function SetWriter(&$data){
     	$this->load->model('Writer');
-    	$Writer = $this->Writer->GetWriter($data['newsID'],date('Y',strtotime($data['publish_datetime'])));
+    	$Writer = $this->Writer->GetWriter($data['id'],date('Y',strtotime($data['publish_datetime'])));
     	if(count($Writer)>0){
-    		$data['writer'] = $Writer[$data['newsID']];
+    		$data['writer'] = $Writer[$data['id']];
     	}
     }
     
@@ -319,7 +319,7 @@ class Columns extends My_Model
     	$newsID = array();
     	$date = array();
     	foreach ($data as $key => $value) {
-    		$newsID[] = $value['newsID'];
+    		$newsID[] = $value['id'];
     		$year = date('Y',strtotime($value['publish_datetime']));
     		if(!in_array($year,$date))
     		{
@@ -327,11 +327,10 @@ class Columns extends My_Model
     		}
     	}
     	$Writer = $this->Writer->GetWriter($newsID,$date);
-
     	foreach ($data as $k => $v) {
-    		if(isset($Writer[$v['newsID']]))
+    		if(isset($Writer[$v['id']]))
     		{
-    			$data[$k]['writer'] =  $Writer[$v['newsID']];
+    			$data[$k]['writer'] =  $Writer[$v['id']];
     		}else{
     			unset($data[$k]);
     		}
@@ -487,9 +486,13 @@ class Columns extends My_Model
     				$list[$key]['content'] =  mb_substr(strip_tags($value['content']),0,50,'utf-8');
     			}
     		}
+			
     		if(count($list)>0){
     			$this->SetImg($list,$imglist,true,1);
-    			$this->SetWriters($list);
+    			
+				// foreach($list as $k => $n){
+					$this->SetWriters($list);
+				// }
     		}
 			$data[0]['list'] = $list;
 			return $data[0];

@@ -10,46 +10,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			parent::__construct();
 		}
 		
-		public function GetWriter($newsid,$year)
+		public function GetWriter($id,$year)
 		{
 			$data = array();
 			if(is_array($year))
 			{
 				foreach ($year as $value) {
 					# code..}
-					$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,neb.newsid');
+					$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,dhn.dailyID as id');
 					$this->db->from('news_extra_base_'.$value.' as neb');
 					$this->db->join('daily_hl_extra_'.$value.' as dhe','neb.extraID = dhe.extraID');
 					$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID');
-					if(is_array($newsid)){
-						$this->db->where_in('neb.newsID',$newsid);
+					$this->db->join('daily_hl_news as dhn','dhn.newsID = neb.newsID AND dhn.year = '.$value, 'inner');
+					if(is_array($id)){
+						$this->db->where_in('dhn.dailyID',$id);
 					}else{
-						$this->db->where('neb.newsID',$newsid);
+						$this->db->where('dhn.dailyID',$id);
 					}
 
 					$res = $this->db->get();
 					foreach ($res->result_array() as $v){
-						$newsid = $v['newsid'];
-						unset($v['newsid']);
-						$data[$newsid] = $v;
+						$i = $v['id'];
+						unset($v['id']);
+						$data[$i] = $v;
 					}
 				}
 			}else{
-				$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,neb.newsid');
+				$this->db->select('nw.columnistID,nw.columnTitle,nw.writer,nw.trait,dhn.dailyID as id');
 				$this->db->from('news_extra_base_'.$year.' as neb');
 				$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
 				$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID');
-				if(is_array($newsid)){
-					$this->db->where_in('neb.newsID',$newsid);
+				$this->db->join('daily_hl_news as dhn','dhn.newsID = neb.newsID AND dhn.year = '.$value, 'inner');
+				if(is_array($id)){
+					$this->db->where_in('dhn.dailyID',$id);
 				}else{
-					$this->db->where('neb.newsID',$newsid);
+					$this->db->where('dhn.dailyID',$id);
 				}
 
 				$res = $this->db->get();
 				foreach ($res->result_array() as $v){
-					$newsid = $v['newsid'];
-					unset($v['newsid']);
-					$data[$newsid] = $v;
+					$i = $v['id'];
+					unset($v['id']);
+					$data[$i] = $v;
 				}
 			}
 			return $data;
