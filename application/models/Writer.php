@@ -40,7 +40,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				$this->db->from('news_extra_base_'.$year.' as neb');
 				$this->db->join('daily_hl_extra_'.$year.' as dhe','neb.extraID = dhe.extraID');
 				$this->db->join('news_writer_list as nw','dhe.columnistID = nw.columnistID');
-				$this->db->join('daily_hl_news as dhn','dhn.newsID = neb.newsID AND dhn.year = '.$value, 'inner');
+				$this->db->join('daily_hl_news as dhn','dhn.newsID = neb.newsID AND dhn.year = '.$year, 'inner');
 				if(is_array($id)){
 					$this->db->where_in('dhn.dailyID',$id);
 				}else{
