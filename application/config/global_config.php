@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159');
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
@@ -31,12 +31,21 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	//img_path
 	$config['daily_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['instant_img_url'] = "https://static.stheadline.com/stheadline/inewsmedia/";
-	// $config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 	$config['popnews_img_url'] = "https://static.stheadline.com/stheadline/pop/";
-	
 	$config['life_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['column_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['hl_app_img_url'] = "https://static.stheadline.com/stheadline/";
+	
+	$config['imgwd_prefix'] = "http://192.168.148.170/f/10000r10000/0x0/100/hd/";
+	$config['imgwd_md5'] = '10000r100000x0100hd{src}';
+	$config['imgwd_src'] = array(
+		 '1'=>'stheadline/inewsmedia/',
+		 '2'=>'stheadline/',
+		 '3'=>'stheadline/pop/',
+		 '4'=>'stheadline/',
+		 '5'=>'stheadline/',
+	);
+	
 	
 	//vdo
 	$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";

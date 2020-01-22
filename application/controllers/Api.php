@@ -657,6 +657,18 @@ class Api extends DefaultApi{
 					$tmp[$k] =  preg_replace('/^  (.*)?/', '$1', $tmp[$k]);//\u2003;
 					$tmp[$k] =  preg_replace('/^\s+(.*)?/', '$1', $tmp[$k]);
 				}
+				if($k=="imgs"){
+					foreach($tmp[$k] as $i => $img){
+						// var_dump( config_item('imgwd_src')[$d["section"]].$img['path'] );exit;
+						$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+						$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+						$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+						$tmp[$k][$i] = $img;
+						
+					}
+					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
+				}
+				
 			}
 			$return_data[] = $tmp;
 		}
@@ -701,6 +713,11 @@ class Api extends DefaultApi{
 				foreach($tmp[$k] as $i => $img){
 					// $img['caption'] = str_replace(array("\n", "\r"),"",$img['caption']);
 					$img['caption'] = rtrim($img['caption']);
+					
+					$config['imgwd_prefix'] = "http://192.168.148.170/f/10000r10000/0x0/100/hd/";
+					$tmp_path = $config['imgwd_src'][$data["section"]].$img['path'];
+					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+					$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
 					$tmp[$k][$i] = $img;
 					
 				}
