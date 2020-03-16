@@ -666,12 +666,18 @@ class Api extends DefaultApi{
 				}
 				if($k=="imgs"){
 					foreach($tmp[$k] as $i => $img){
-						$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
-						$tmp_path = str_replace('//','/',$tmp_path);
-						$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
-						$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
-						$tmp[$k][$i] = $img;
-						
+						if($d["section"]==3){
+							$img['path'] = config_item('popnews_img_url').$img['path'];
+							
+							$tmp[$k][$i] = $img;
+						}
+						else{
+							$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+							$tmp_path = str_replace('//','/',$tmp_path);
+							$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+							$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+							$tmp[$k][$i] = $img;
+						}
 					}
 					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
 				}

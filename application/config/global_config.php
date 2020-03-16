@@ -80,8 +80,18 @@ else{
 	$config['popnews_img_url'] = "http://192.168.149.49/stheadline/pop/";
 	$config['life_img_url'] = "http://192.168.148.107/stheadline/";
 	$config['column_img_url'] = "http://192.168.148.107/stheadline/";
-	
 	$config['hl_app_img_url'] = "http://192.168.149.49/stheadline/";
+	
+	$config['imgwd_para'] = "10000p10000/0x0/100/hd/";
+	$config['imgwd_md5'] = str_ireplace('/','',$config['imgwd_para']).'{src}';
+	$config['imgwd_src'] = array(
+		 '1'=>'stheadline/inewsmedia/',
+		 '2'=>'stheadline/',
+		 '3'=>'stheadline/pop/',
+		 '4'=>'stheadline/',
+		 '5'=>'stheadline/',
+	);
+	$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
 	
 	//vdo
 	$config['popnews_vdo_url'] = "http://dev.vod6.stheadline.com/";
@@ -188,6 +198,13 @@ foreach($config['ads_cat_list_pos'] as $k => $v){
 // $app_config['img']['life_img_url'] =		$config['life_img_url'];
 // $app_config['img']['column_img_url'] =		$config['column_img_url'];
 // $app_config['img']['hl_app_img_url'] =		$config['hl_app_img_url'];
+
+$app_config['img']['imgwd_para'] = $config['imgwd_para'];
+$app_config['img']['imgwd_prefix'] = $config['imgwd_prefix'];
+
+
+
+
 
 $app_config['img']['daily_img_url'] = 		'';
 $app_config['img']['instant_img_url'] =		'';
