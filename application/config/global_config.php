@@ -31,9 +31,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	//img_path
 	$config['daily_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['instant_img_url'] = "https://static.stheadline.com/stheadline/inewsmedia/";
-	// $config['popnews_img_url'] = "http://res001.stheadline.com/vNews/";
 	$config['popnews_img_url'] = "https://static.stheadline.com/stheadline/pop/";
-	
 	$config['life_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['column_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['hl_app_img_url'] = "https://static.stheadline.com/stheadline/";
