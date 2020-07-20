@@ -648,6 +648,13 @@ class Api extends DefaultApi{
 			$tmp = $list;
 			foreach($tmp as $k => $v){
 				$tmp[$k] = isset($d[$k])?$d[$k]:$v;
+				if($k=='writer'&&isset($d[$k])&&is_string($d[$k]['trait'])){
+					$tmp_path = config_item('imgwd_src')[$d["section"]].$tmp[$k]['trait'];
+					$tmp_path = str_replace('//','/',$tmp_path);
+					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+					$tmp[$k]['trait'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+					
+				}
 				if($k=='vdo'&&isset($d[$k])&&is_string($d[$k]))
 				{
 					$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$d[$k]);
@@ -657,6 +664,24 @@ class Api extends DefaultApi{
 					$tmp[$k] =  preg_replace('/^  (.*)?/', '$1', $tmp[$k]);//\u2003;
 					$tmp[$k] =  preg_replace('/^\s+(.*)?/', '$1', $tmp[$k]);
 				}
+				if($k=="imgs"){
+					foreach($tmp[$k] as $i => $img){
+						if($d["section"]==3){
+							$img['path'] = config_item('popnews_img_url').$img['path'];
+							
+							$tmp[$k][$i] = $img;
+						}
+						else{
+							$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+							$tmp_path = str_replace('//','/',$tmp_path);
+							$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+							$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+							$tmp[$k][$i] = $img;
+						}
+					}
+					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
+				}
+				
 			}
 			$return_data[] = $tmp;
 		}
@@ -689,6 +714,12 @@ class Api extends DefaultApi{
 		$tmp = $detail;
 		foreach($tmp as $k => $v){
 			$tmp[$k] = isset($data[$k])?$data[$k]:$v;
+			if($k=='writer'&&isset($data[$k])&&is_string($data[$k]['trait'])){
+				$tmp_path = config_item('imgwd_src')[$data["section"]].$tmp[$k]['trait'];
+				$tmp_path = str_replace('//','/',$tmp_path);
+				$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+				$tmp[$k]['trait'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+			}
 			if($k=='vdo'&&isset($data[$k])&&is_string($data[$k]))
 			{
 				$tmp[$k] =  array('cover_path'=>'','headline'=>'','id'=>'','video_path'=>$data[$k]);
@@ -701,6 +732,10 @@ class Api extends DefaultApi{
 				foreach($tmp[$k] as $i => $img){
 					// $img['caption'] = str_replace(array("\n", "\r"),"",$img['caption']);
 					$img['caption'] = rtrim($img['caption']);
+					$tmp_path = config_item('imgwd_src')[$data["section"]].$img['path'];
+					$tmp_path = str_replace('//','/',$tmp_path);
+					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+					$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
 					$tmp[$k][$i] = $img;
 					
 				}
@@ -774,6 +809,7 @@ class Api extends DefaultApi{
 				$data2[] = $data[$k];
 			}
 		}
+		$data2 = $this->list_cast($data2);
 		if(count($data2)<1){
 			$this->show_error(2);	
 		}
