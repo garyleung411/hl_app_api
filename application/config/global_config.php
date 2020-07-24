@@ -120,6 +120,8 @@ $config['unicode_filter'] = array(
 	"\ufeff",
 );
 
+$config['headlife_cat'] = array(57,58,60,61,63,65,67,68);
+
 //select limit
 $config['day_before'] = 90;			//For date limit
 $config['column_day_before'] = 30;	//For date limit
