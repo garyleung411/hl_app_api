@@ -165,6 +165,7 @@ class Daily extends My_Model
 		
 		if($cat){
 			$this->$current_cat = $cat;
+			
 			if(!$maxdate = $this->Get_Max_Date($cat,$year))
 			{
 				$maxdate  = $this->Get_Max_Date($cat,($year-1));
@@ -213,6 +214,7 @@ class Daily extends My_Model
 				$this->db->order_by('nm.publishDatetime','desc');
 				$this->db->order_by("$tempID",'asc');
 				$res = $this->db->get();
+				//echo $this->db->last_query();exit;
 				return $res->result_array();
 			}else{
 				return $this->db->count_all_results();
@@ -222,23 +224,28 @@ class Daily extends My_Model
 	
 	private function Get_Max_Date($cat,$year){
 		$this->db->select_max('nm.publishDatetime');
-			
-		$this->db->from('daily_hl_news as dhn');
+		if($cat == '7'){
+			$this->db->from('hd_hl_news as dhn');
+		}else{
+			$this->db->from('daily_hl_news as dhn');
+		}
 		$this->db->join("news_main_$year as nm",'dhn.newsID = nm.newsID and dhn.year = '.$year, 'inner');
 			
-		if(is_array($cat)&&count($cat)>0)
-		{
-			$this->db->where_in('dhn.newsCat',$cat);
-			
-		}else if($cat!=null&&$cat!='')
-		{
-			$this->db->where('dhn.newsCat',$cat);
-		}
-			
+		if($cat != '7'){	
+			if(is_array($cat)&&count($cat)>0)
+			{
+				$this->db->where_in('dhn.newsCat',$cat);
+				
+			}else if($cat!=null&&$cat!='')
+			{
+				$this->db->where('dhn.newsCat',$cat);
+			}
+		}	
 		$this->db->where('dhn.status',1);
 		$this->db->where('nm.status',1);
 			
 		$res = $this->db->get();
+		//echo $this->db->last_query();exit;
 		return ($res->result_array()[0]['publishDatetime'])?date('Y-m-d',strtotime($res->result_array()[0]['publishDatetime'])):false;
 	}
 	
