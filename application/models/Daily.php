@@ -162,7 +162,13 @@ class Daily extends My_Model
 	private function Get_All_News_list($PageSize, $cat = -1,$Page=0,$count=false,$rand=false){
 		$maxdate = null;
 		$year = date('Y', strtotime('today'));
+		$today = date("Y-m-d h:i:s");
 		
+		//date_default_timezone_set('GMT');//set timezone		
+		$start = $today;//set an date and time to work with
+
+		
+		$nowtime = date('Y-m-d H:i',strtotime('+12 hour',strtotime($start)));//display the converted time
 		if($cat){
 			$this->$current_cat = $cat;
 			
@@ -170,6 +176,11 @@ class Daily extends My_Model
 			{
 				$maxdate  = $this->Get_Max_Date($cat,($year-1));
 			}
+			
+			if(strtotime($maxdate) > strtotime('today')){
+				$maxdate = date("Y-m-d");
+			}
+			
 			$year = date('Y',strtotime($maxdate));
 			$tempID = "dhn.dailyID";
 
@@ -203,7 +214,8 @@ class Daily extends My_Model
 			$this->db->where('dhn.status',1);
 			$this->db->where('nm.status',1);
 		
-			$this->db->where('publishDatetime >=',$maxdate );
+			$this->db->where('publishDatetime >=',$maxdate." 00:00:00" );
+			$this->db->where('publishDatetime <=',$nowtime );
 			if($rand){
                 $this->db->order_by(rand(0,1), 'RANDOM');
             }
