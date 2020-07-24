@@ -40,7 +40,22 @@ class Api extends DefaultApi{
 		),JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 	}
-	
+	/*
+	public function hotmob_adcode(){
+		$this->Expired = $this->config->item('force_cache');
+		$path = $this->config->item('hotmob_adcode_path');
+		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
+			$data = $this->config->item("hotmob_adcode");
+			$this->Savefile($this->config->item('hotmob_adcode_path'),json_encode($data,JSON_UNESCAPED_SLASHES));
+		}
+		$output = json_encode(array(
+			'data'=>$data,
+			'result' => 1
+		),JSON_UNESCAPED_SLASHES);
+		$this->PushData($output);
+	}
+	*/
 	public function special($is_return = false){
 		$this->load->model('Special');
 		$special = $this->Special->get_special();
@@ -109,6 +124,7 @@ class Api extends DefaultApi{
 	
 	public function hit_list($section){
 		$this->Expired = $this->config->item('list_time');
+		
 		if($section == 1){
 			$file = $this->config->item('instant_top_list_path');
 			$sname = 'instant';
@@ -120,18 +136,23 @@ class Api extends DefaultApi{
 		else{
 			$this->show_error(3);
 		}
+		
 		$path = $this->config->item('hit_list_path');
 		$path = str_replace('{section}',$sname,$path);
 		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
+			
 			$this->load->model('Section');
 			$this->load->model('News_category_list');
 			$tmp = json_decode(file_get_contents($file),true);
+			//var_dump($tmp);exit;
 			foreach($tmp as $name => $list){
+				
 				if($name != 'day'){
 					continue;
 				}
-			
+				
 				$list_id = array();
 				$sort_list = array();
 				foreach($list as $k=>$v){
@@ -158,9 +179,14 @@ class Api extends DefaultApi{
 				$sections = array_keys($list_id);
 				$data =array();
 				foreach($sections as $s ){
+					
 					$SectionName = $this->Section->Get_Section($s)[0]->section_name;
+					if($SectionName == 'daily'){
 					$this->load->model($SectionName);
 					$list = $this->$SectionName->Get_News_list_by_ID($list_id[$s]);
+					
+						
+					
 					foreach($list as $key=> $value ){
 						$value['section'] = $s.'';
 						if(isset($value['map_cat'])){
@@ -178,7 +204,9 @@ class Api extends DefaultApi{
 						}
 						$data[$sort_list[intval($value['id'])]] =  $value;
 					}
+					}
 				}
+				
 			}
 			
 			if(count($data)>0){
@@ -190,6 +218,7 @@ class Api extends DefaultApi{
 			$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			
 		}
+		
 		if(!$data){
 			$this->show_error(2);
 		}
@@ -197,6 +226,7 @@ class Api extends DefaultApi{
 			'result' => 1,
 			'data'	=> $data,
 		);
+
 		$output = json_encode($output,JSON_UNESCAPED_SLASHES);
 		$this->PushData($output);
 			
@@ -242,7 +272,7 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
-	public function detail($section, $id){
+	public function detail($section, $cat, $id){
 		$this->Expired = $this->config->item('detail_time');
 		if($section == "topic"){
 			$this->detail("1", $id);
@@ -261,7 +291,8 @@ class Api extends DefaultApi{
 			if(count($res )>0){
 				$section_name = $res[0]->section_name;
 				$this->load->model($section_name);
-				$data = $this->$section_name->GetDetail($id);
+				$data = $this->$section_name->GetDetail($id, $cat);
+				//var_dump($data);exit;
 				if($data){
 					$data['section'] = $section;
 					if(isset($data['keyword'])&&$data['keyword']!=''){
@@ -402,11 +433,19 @@ class Api extends DefaultApi{
 				$data = $this->$section_name->GetList($map_cat);	
 				if($data){
 					foreach($data as $k=>$v){
-						// var_dump($section);exit;
+						 
 						$v["section"] = $section;
 						$v["cat"] = $cat;
+						
 						if(isset($v["map_cat"])){
-							$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+							//var_dump($v["map_cat"]);exit;
+							$headlife_cat = $this->config->item('headlife_cat');
+							if(in_array($v['map_cat'], $headlife_cat)){
+								$v["cat"] = '7';
+							}else{
+								$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+							}
+							
 						}
 						if($v["section"] == 3){
 							$v['share_link'] = $this->share_link($v);
@@ -523,7 +562,6 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 
 	}
-	
 	
 	public function section(){
 		$this->Expired = $this->config->item('force_cache');

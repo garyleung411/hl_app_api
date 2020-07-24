@@ -50,6 +50,8 @@ class News_category_list extends My_Model
 		$this->db->where('cat_id',$CatID);
         
         $res = $this->db->get();
+		
+		//var_dump($this->db->last_query());exit;
         return $res->result_array()[0]['mapping_catid'];
     }
 	
@@ -62,6 +64,7 @@ class News_category_list extends My_Model
 		$this->db->where('mapping_catid',$mapcat);
         
         $res = $this->db->get();
+		//var_dump($this->db->last_query());exit;
         return $res->result_array()[0]['cat_id'];
     }
 }
