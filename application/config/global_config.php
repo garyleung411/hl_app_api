@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.148.159');
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
@@ -46,7 +46,8 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 		 '4'=>'stheadline/',
 		 '5'=>'stheadline/',
 	);
-	$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
+	//$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
+	$config['imgwd_prefix'] = "https://image.stheadline.com/f/".$config['imgwd_para'];
 	
 	
 	//vdo
