@@ -238,6 +238,7 @@ class Instant extends My_Model
 		else if(!$video){
 	    	$videos = $this->GetNewsVideo($data['vid']);
 		    if(count($videos)>0){
+				$videos[0]['cover_path'] = config_item('popnews_img_url').$videos[0]['cover_path'];
 		    	$videos[0]['video_path'] = $videos[0]['video_path'].'.mp4';
 		    	$data['vid'] = $videos[0];
 		    }
