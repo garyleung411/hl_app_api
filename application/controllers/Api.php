@@ -433,15 +433,27 @@ class Api extends DefaultApi{
 				$data = $this->$section_name->GetList($map_cat);	
 				if($data){
 					foreach($data as $k=>$v){
-						 
-						$v["section"] = $section;
+						if($section == 2 && $cat == 7){
+							$v["section"] = '4';
+						}else{
+							$v["section"] = $section;
+						}
 						$v["cat"] = $cat;
 						
 						if(isset($v["map_cat"])){
-							//var_dump($v["map_cat"]);exit;
+							
 							$headlife_cat = $this->config->item('headlife_cat');
+							
 							if(in_array($v['map_cat'], $headlife_cat)){
-								$v["cat"] = '7';
+								if($section == 2){
+									//$v["cat"] = '7';
+									$cat_key = array_search ($v['map_cat'], $headlife_cat);
+									$v["cat"] = $cat_key+1;
+								}else{
+									$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
+								}
+								
+								
 							}else{
 								$v["cat"] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 							}
@@ -666,7 +678,7 @@ class Api extends DefaultApi{
 		
 	}
 	
-	private function list_cast($data){
+	private function list_cast($data, $cast2 = false){
 		$return_data = array();
 		$list = array(
 			"id"					=> "",
@@ -686,7 +698,7 @@ class Api extends DefaultApi{
 			$tmp = $list;
 			foreach($tmp as $k => $v){
 				$tmp[$k] = isset($d[$k])?$d[$k]:$v;
-				if($k=='writer'&&isset($d[$k])&&is_string($d[$k]['trait'])){
+				if(!$cast2&&$k=='writer'&&isset($d[$k])&&is_string($d[$k]['trait'])){
 					$tmp_path = config_item('imgwd_src')[$d["section"]].$tmp[$k]['trait'];
 					$tmp_path = str_replace('//','/',$tmp_path);
 					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
@@ -706,15 +718,17 @@ class Api extends DefaultApi{
 					foreach($tmp[$k] as $i => $img){
 						if($d["section"]==3){
 							$img['path'] = config_item('popnews_img_url').$img['path'];
-							
 							$tmp[$k][$i] = $img;
 						}
 						else{
-							$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
-							$tmp_path = str_replace('//','/',$tmp_path);
-							$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
-							$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
-							$tmp[$k][$i] = $img;
+							
+							if(!$cast2 || ($cast2 && $d["section"] == 5)){
+								$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+								$tmp_path = str_replace('//','/',$tmp_path);
+								$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
+								$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+								$tmp[$k][$i] = $img;
+							}
 						}
 					}
 					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
@@ -815,7 +829,7 @@ class Api extends DefaultApi{
 					if(isset($v['map_cat'])){
 						$return_data[$k]['cat'] = $this->News_category_list->mapcat2cat($v['section'],$v['map_cat']);
 					}
-					if($v['section']==5){
+					if($v['section']==5){!
 						$return_data[$k]['cat'] = '1';
 					}
 				}
@@ -847,7 +861,7 @@ class Api extends DefaultApi{
 				$data2[] = $data[$k];
 			}
 		}
-		$data2 = $this->list_cast($data2);
+		$data2 = $this->list_cast($data2, true);
 		if(count($data2)<1){
 			$this->show_error(2);	
 		}
@@ -987,6 +1001,7 @@ class Api extends DefaultApi{
         /***日報***/
 
         /***日報副刊***/
+		/*
         $LiftList = array(
 			"1"=>"travel",
 			"2"=>"dining",
@@ -994,6 +1009,17 @@ class Api extends DefaultApi{
 			"4"=>"car",
 			"5"=>"fashion",
 			"6"=>"living",
+		);
+		*/
+		$LiftList = array(
+			"1"=>"health",
+			"2"=>"hotpicks",
+			"3"=>"happylife",
+			"4"=>"motor-gadget",
+			"5"=>"travel-play",
+			"6"=>"food",
+			"7"=>"style",
+			"8"=>"horo"
 		);
         /***日報副刊***/
 
@@ -1031,7 +1057,15 @@ class Api extends DefaultApi{
                 $shareLink = $popPreLink."vid=".$data['id']."&cat=".$PopList[$data['cat']];
                 break;
             case "4":
-                $shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['newsID']."/";
+				$headlife_cat = $this->News_category_list->Get_Cat(4);
+				$headlife_cat_sectionCat = $headlife_cat[$data['cat']-1];
+				$headlife_catname = $headlife_cat_sectionCat->cat_cname;
+				$headlife_catname = str_replace("&", "-", $headlife_catname);
+				$headlife_catname = strtolower($headlife_catname);		
+                //$shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['newsID']."/";
+                //$shareLink = $lifePreLink.$LiftList[$data['cat']]."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['newsID']."/生活消費";
+                $shareLink = $lifePreLink.$headlife_catname."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['newsID']."/生活消費";
+				//echo $shareLink;exit;
                 break;
             case "5":
                 $shareLink = $preColumnsLink.$data['writer']['columnistID']."/".date('Ymd',strtotime($data['publish_datetime']))."/".$data['id'];
