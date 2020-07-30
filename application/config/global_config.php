@@ -46,7 +46,8 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 		 '4'=>'stheadline/',
 		 '5'=>'stheadline/',
 	);
-	$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
+	//$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
+	$config['imgwd_prefix'] = "https://image.stheadline.com/f/".$config['imgwd_para'];
 	
 	
 	//vdo
@@ -119,6 +120,8 @@ $config['unicode_filter'] = array(
 	"\ufeff",
 );
 
+$config['headlife_cat'] = array(57,58,60,61,63,65,67,68);
+
 //select limit
 $config['day_before'] = 90;			//For date limit
 $config['column_day_before'] = 30;	//For date limit
@@ -150,6 +153,7 @@ $config['hit_list_path'] = 'json/{section}_hit_list.json';
 $config['app_config_path'] = 'json/app_config.json';
 $config['hot_search_path'] = 'json/hotSearch.json';
 $config['section_list_path'] = 'json/section_list.json';
+$config['hotmob_adcode_path'] = 'json/hotmob_adcode.json';
 
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
@@ -191,6 +195,87 @@ foreach($config['ads_cat_list_pos'] as $k => $v){
 		$config['ads_cat_list_pos']['detail-'.$k] = array(1,2,3);
 	}
 }
+
+$config['hotmob_adcode'] = array(
+	
+	"instantlist" => array(
+		"highlight" => "headline_android_banner_realtime_main",
+		"1" => "headline_android_banner_realtime_list_local",
+		"2" => "headline_android_banner_realtime_list_entertainment",
+		"3" => "headline_android_banner_realtime_list_china",
+		"4" => "headline_android_banner_realtime_list_international",
+		"5" => "headline_android_banner_realtime_list_realestate",
+		"6" => "headline_android_banner_realtime_list_finance",
+		"7" => "headline_android_banner_realtime_list_sport",
+		"topic" => "headline_android_banner_realtime_list_feature",
+		
+	),
+	"instantdetail" => array(
+		"1" => "headline_android_banner_realtime_local",
+		"2" => "headline_android_banner_realtime_entertainment",
+		"3" => "headline_android_banner_realtime_china",
+		"4" => "headline_android_banner_realtime_international",
+		"5" => "headline_android_banner_realtime_realestate",
+		"6" => "headline_android_banner_realtime_finance",
+		"7" => "headline_android_banner_realtime_sport",					
+	),
+
+
+	"dailylist" => array(
+		"1" => "headline_android_banner_daily_list_local",
+		"2" => "headline_android_banner_daily_list_china",
+		"3" => "headline_android_banner_daily_list_international",
+		"4" => "headline_android_banner_daily_list_realestate",
+		"5" => "headline_android_banner_daily_list_finance",
+		"6" => "headline_android_banner_daily_list_sport",
+		"7" => "headline_android_banner_daily_list_leisure",
+		"8" => "headline_android_banner_daily_list_entertainment",
+		"9" => "headline_android_banner_daily_list_racing",
+	),
+	"dailydetail" => array(
+		"1" => "headline_android_banner_daily_local",
+		"2" => "headline_android_banner_daily_china",
+		"3" => "headline_android_banner_daily_international",
+		"4" => "headline_android_banner_daily_realestate",
+		"5" => "headline_android_banner_daily_finance",
+		"6" => "headline_android_banner_daily_sport",
+		"7" => "headline_android_banner_daily_leisure",
+		"8" => "headline_android_banner_daily_entertainment",
+		"9" => "headline_android_banner_daily_racing"					
+	),			
+
+	"headlifelist" => array(
+		"1" => "headline_android_banner_lifestyle_list_1",
+		"2" => "headline_android_banner_lifestyle_list_2",
+		"3" => "headline_android_banner_lifestyle_list_3",
+		"4" => "headline_android_banner_lifestyle_list_4",
+		"5" => "headline_android_banner_lifestyle_list_5",
+		"6" => "headline_android_banner_lifestyle_list_6",
+		"7" => "headline_android_banner_lifestyle_list_7",
+		"8" => "headline_android_banner_lifestyle_list_8",
+	),
+	"headlifedetail" => array(
+		"1" => "headline_android_banner_lifestyle_1",
+		"2" => "headline_android_banner_lifestyle_2",
+		"3" => "headline_android_banner_lifestyle_3",
+		"4" => "headline_android_banner_lifestyle_4",
+		"5" => "headline_android_banner_lifestyle_5",
+		"6" => "headline_android_banner_lifestyle_6",
+		"7" => "headline_android_banner_lifestyle_7",
+		"8" => "headline_android_banner_lifestyle_8",				
+	),
+		
+			
+	"columns" => array(
+					"list" => "headline_android_banner_column_list",
+					"other" => "headline_android_banner_column_other",
+					"author" => "headline_android_banner_column_list_author",
+					"1" => "headline_android_banner_daily_column",
+					"2" => "headline_android_banner_daily_column",
+				),	
+		
+	"popnews" => array("headline_android_banner_popnews")
+);
 //app_config
 // $app_config['img']['daily_img_url'] = 		$config['daily_img_url'];
 // $app_config['img']['instant_img_url'] =		$config['instant_img_url'];

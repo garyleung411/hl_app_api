@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = 'Api/show_404';
 $route['translate_uri_dashes'] = FALSE;
-$route['(highlight|topic_list|topic|special|hit_list|hot_search|detail|columns|list|section|sp_search|search|interest|ads|ads_section|app_config)(/(.*)){0,1}'] = 'Api/$1$2';
+$route['(highlight|topic_list|topic|special|hit_list|hot_search|detail|columns|list|section|sp_search|search|interest|ads|ads_section|app_config|hotmob_adcode)(/(.*)){0,1}'] = 'Api/$1$2';
 $route['(ads_view)(/(.*)){0,1}'] = 'Ads_view/ads$2';
 
 
