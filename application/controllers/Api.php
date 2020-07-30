@@ -637,11 +637,13 @@ class Api extends DefaultApi{
 		$life_cat = $this->News_category_list->Get_Cat('4');
 		$icons = array(
 			"icon-life-travel.png",
-			"icon-life-dining.png",
-			"icon-life-digital.png",
-			"icon-life-car.png",
-			"icon-life-fashion.png",
-			"icon-life-living.png",
+			"icon-life-food.png",
+			"icon-life-motor-gadget.png",
+			"icon-life-health.png",
+			"icon-life-horo.png",
+			"icon-life-hotpicks.png",
+			"icon-life-style.png",
+			"icon-life-happy-life.png",
 		);
 		foreach($life_cat as $i => $cat){
 			
