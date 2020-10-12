@@ -54,7 +54,7 @@ class Popnews extends My_Model{
 	private function Get_video_list($cat,$PageSize=10,$Page=0,$count=FALSE){
 		
 		
-		$this->db->select('id,video_path as vdo,catid as map_cat,length,cover_path as imgs,deleted,publish_datetime,headline as title');
+		$this->db->select('id,headline as title,video_path as vdo,catid as map_cat,length,cover_path as imgs,deleted,publish_datetime,headline as title');
 		$this->db->from('video_news');
 		if($cat!=-1){
 			if(is_array($cat)){
@@ -134,4 +134,44 @@ class Popnews extends My_Model{
     	return $data;
     }
 	
+	 public function Get_frist_New($cat)
+    {
+		
+
+		$this->load->model('News_category_list');
+
+    	$map_cat = $this->News_category_list->cat2mapcat(3,$cat);
+		$map_cat = ($map_cat==-1)?0:$map_cat;
+		
+    	//$list = $this->Get_All_News_list(1,$map_cat,0);
+    	$list = $this->Get_video_list($map_cat);
+		
+		$imglist = array();
+		$video_id_list = array();
+    	$return_data = array();
+		
+    	foreach ($list as $key => $value) {
+    		$return_data[] = array(
+    			'id'=>$value['id'],
+				'newsID'=>'',
+    			'title'=>$value['title'],
+				'vdo'=>array(
+							'cover_path'=>'','headline'=>'','id'=>'','video_path'=>$value['vdo'].".mp4"
+						),
+    			'imgs'=>array(
+							'0' => array('path'=>$value['imgs'],'isCover'=>1)
+						),
+    			'map_cat'=>$value['map_cat'],
+				'publish_datetime'=>date('Y-m-d',strtotime($value['publish_datetime'])),
+    		);
+    		$imglist[] = $value['id'];
+    	}
+		//return $list;exit;
+    	if(count($return_data)>0){
+    		//$this->SetImg($return_data,$imglist);
+			return $return_data[0];
+		}else{
+			return array();
+		}
+    }
 }

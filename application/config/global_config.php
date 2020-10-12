@@ -3,7 +3,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
+
 $config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.148.159');
+
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159','192.168.148.159');
+
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
@@ -38,7 +42,9 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	
 	
 	$config['imgwd_para'] = "10000p10000/0x0/100/hd/";
+	$config['imgwd_para_nowm'] = "10000p10000/0x0/100/none/";
 	$config['imgwd_md5'] = str_ireplace('/','',$config['imgwd_para']).'{src}';
+	$config['imgwd_md5_nowm'] = str_ireplace('/','',$config['imgwd_para_nowm']).'{src}';
 	$config['imgwd_src'] = array(
 		 '1'=>'stheadline/inewsmedia/',
 		 '2'=>'stheadline/',
@@ -48,6 +54,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	);
 	//$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
 	$config['imgwd_prefix'] = "https://image.stheadline.com/f/".$config['imgwd_para'];
+	$config['imgwd_prefix_nowm'] = "https://image.stheadline.com/f/".$config['imgwd_para_nowm'];
 	
 	
 	//vdo
