@@ -122,6 +122,7 @@ class Api extends DefaultApi{
 		$this->PushData($output);
 	}
 	
+	
 	public function hit_list($section){
 		$this->Expired = $this->config->item('list_time');
 		
@@ -181,30 +182,33 @@ class Api extends DefaultApi{
 				foreach($sections as $s ){
 					
 					$SectionName = $this->Section->Get_Section($s)[0]->section_name;
-					if($SectionName == 'daily'){
-					$this->load->model($SectionName);
-					$list = $this->$SectionName->Get_News_list_by_ID($list_id[$s]);
-					
+					//echo $SectionName;
+					//echo "<br>";
+					//if($SectionName == 'daily'){
 						
-					
-					foreach($list as $key=> $value ){
-						$value['section'] = $s.'';
-						if(isset($value['map_cat'])){
+						$this->load->model($SectionName);
+						$list = $this->$SectionName->Get_News_list_by_ID($list_id[$s]);
+						
 							
-							$value['cat'] = $this->News_category_list->mapcat2cat($s, $value['map_cat']);
-						}
-						if($value['section']==5){
-							if(count($value['imgs'])==0){
-								$this->load->model('Writer');
-								$value['imgs'] = array(0=>array());
-								$value['imgs'][0]['isCover'] = 0;
-								$value['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($value['writer']['columnistID'])[0]['largeCover'];
+						
+						foreach($list as $key=> $value ){
+							$value['section'] = $s.'';
+							if(isset($value['map_cat'])){
+								
+								$value['cat'] = $this->News_category_list->mapcat2cat($s, $value['map_cat']);
 							}
-							$value['cat'] = '1';
+							if($value['section']==5){
+								if(count($value['imgs'])==0){
+									$this->load->model('Writer');
+									$value['imgs'] = array(0=>array());
+									$value['imgs'][0]['isCover'] = 0;
+									$value['imgs'][0]['path'] = $this->Writer->GetLarge_Cover_by_ID($value['writer']['columnistID'])[0]['largeCover'];
+								}
+								$value['cat'] = '1';
+							}
+							$data[$sort_list[intval($value['id'])]] =  $value;
 						}
-						$data[$sort_list[intval($value['id'])]] =  $value;
-					}
-					}
+					//}
 				}
 				
 			}
@@ -703,8 +707,8 @@ class Api extends DefaultApi{
 				if(!$cast2&&$k=='writer'&&isset($d[$k])&&is_string($d[$k]['trait'])){
 					$tmp_path = config_item('imgwd_src')[$d["section"]].$tmp[$k]['trait'];
 					$tmp_path = str_replace('//','/',$tmp_path);
-					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
-					$tmp[$k]['trait'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5_nowm'));
+					$tmp[$k]['trait'] = config_item('imgwd_prefix_nowm').md5($md5).'/'.$tmp_path;
 					
 				}
 				if($k=='vdo'&&isset($d[$k])&&is_string($d[$k]))
@@ -718,19 +722,39 @@ class Api extends DefaultApi{
 				}
 				if($k=="imgs"){
 					foreach($tmp[$k] as $i => $img){
-						if($d["section"]==3){
+						if($d["section"]==3 && !$cast2){
+							//$img['path'] = config_item('popnews_img_url').$img['path'];
 							$img['path'] = config_item('popnews_img_url').$img['path'];
 							$tmp[$k][$i] = $img;
-						}
-						else{
-							
+						}else{
+							if($cast2 && $d["section"] == 5){
+								if (strpos($img['path'], 'http') !== false) {
+									
+								}else{
+									$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+									$tmp_path = str_replace('//','/',$tmp_path);
+									$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5_nowm'));
+									$img['path'] = config_item('imgwd_prefix_nowm').md5($md5).'/'.$tmp_path;
+									$tmp[$k][$i] = $img;
+								}
+							}else if(!$cast2){
+								$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
+								$tmp_path = str_replace('//','/',$tmp_path);
+								$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5_nowm'));
+								$img['path'] = config_item('imgwd_prefix_nowm').md5($md5).'/'.$tmp_path;
+								$tmp[$k][$i] = $img;
+							}
+							/*
 							if(!$cast2 || ($cast2 && $d["section"] == 5)){
+								
 								$tmp_path = config_item('imgwd_src')[$d["section"]].$img['path'];
 								$tmp_path = str_replace('//','/',$tmp_path);
 								$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
 								$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
 								$tmp[$k][$i] = $img;
+								
 							}
+							*/
 						}
 					}
 					// $tmp[$k] = str_ireplace("\n","",$tmp[$k]);
@@ -739,6 +763,7 @@ class Api extends DefaultApi{
 			}
 			$return_data[] = $tmp;
 		}
+		
 		return $return_data;
 	}
 	
@@ -788,8 +813,8 @@ class Api extends DefaultApi{
 					$img['caption'] = rtrim($img['caption']);
 					$tmp_path = config_item('imgwd_src')[$data["section"]].$img['path'];
 					$tmp_path = str_replace('//','/',$tmp_path);
-					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5'));
-					$img['path'] = config_item('imgwd_prefix').md5($md5).'/'.$tmp_path;
+					$md5 = str_replace('{src}',$tmp_path,config_item('imgwd_md5_nowm'));
+					$img['path'] = config_item('imgwd_prefix_nowm').md5($md5).'/'.$tmp_path;
 					$tmp[$k][$i] = $img;
 					
 				}
@@ -801,19 +826,22 @@ class Api extends DefaultApi{
 	}
 	
 	public function highlight()	{
-
+		
 		//需要获取固定位higlight
 		$this->Expired = $this->config->item('list_time');
 		$path = $this->config->item('highlight_path');
 		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
+			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
 			if(count($data)>0){
+				
 				$posdata = $this->Highlight->Get_pos_highlight_list();
+				
 				$return_data = array();
 				$num = count($data)+count($posdata);
-				
+				/*//old function
 				foreach($data as $k => $row){
 					if(isset($posdata[$k+1])){
 						$return_data[] = $posdata[$k+1];
@@ -826,6 +854,33 @@ class Api extends DefaultApi{
 				if(count($posdata)>0){
 					$return_data = array_merge($return_data,$posdata);
 				}
+				*///old function
+				$maxNum = 50;
+				$temp_data = array();
+				for($i=0; $i<$maxNum; $i++){
+					if(isset($posdata[$i+1])){
+						$temp_data[$i] = $posdata[$i+1];
+					}
+				}
+				
+				$temp_cnt = 0;
+				for($s=0; $s<$maxNum; $s++){
+					if(!isset($temp_data[$s])){	
+						if($temp_cnt > count($data)){
+							break;
+						}		
+						if(!empty( $data[$temp_cnt])){
+							$temp_data[$s] = $data[$temp_cnt];
+							$temp_cnt++;
+						}
+					}
+				}
+				if(count($posdata)>0){
+					$return_data = $temp_data;
+				}
+				
+				ksort($return_data);
+				
 				$this->load->model('News_category_list');
 				foreach($return_data as $k=>$v){
 					if(isset($v['map_cat'])){
@@ -845,12 +900,15 @@ class Api extends DefaultApi{
 				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 		} 
+		
 		if(!$data){
 			$this->show_error(2);
 		}
 		$data2 = array();
 		foreach($data as $k => $v){
 			if(!count($v['imgs'])==0||$v['section']==5){
+				//echo $k;
+				//echo "<br>";
 				if($v['section']==5 && count($v['imgs'])==0){
 					$this->load->model('Writer');
 					$data[$k]['imgs'] = array(0=>array());
