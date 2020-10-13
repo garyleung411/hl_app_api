@@ -48,10 +48,7 @@ class Highlight extends My_Model  {
 				$this->load->model($section_name);
 				
 				$data = $this->$section_name->Get_frist_New($value['cat']);
-				if($value['session_id'] == '3'){
-					//var_dump($data);
-					//exit;
-				}
+				
 				if(count($data)>=1)
 				{
 					$data['section'] = $section_info[0]->section_id;
