@@ -428,13 +428,19 @@ class Api extends DefaultApi{
 				}
 				else{
 					$map_cat = $this->News_category_list->cat2mapcat($section,$cat);
-					$map_cat = ($map_cat==-1)?0:$map_cat;
+					if($section==3 && $cat==2){//specail handle for popnews keywords cat
+						$map_cat = -1;
+					}else{
+						$map_cat = ($map_cat==-1)?0:$map_cat;
+					}
 				}
+				
 				$this->load->model('Section');
 				$section_name = $this->Section->Get_Section($section)[0]->section_name;
 				$this->load->model($section_name);
 				$this->$section_name->page($page);
 				$data = $this->$section_name->GetList($map_cat);	
+				
 				if($data){
 					foreach($data as $k=>$v){
 						if($section == 2 && $cat == 7){

@@ -34,9 +34,8 @@ class Popnews extends My_Model{
 				$CatID[]=$value->mapping_catid;
 			}
 		}
-
+		
     	$data = $this->Get_video_list($CatID,$rows,$page);
-
     	
     	foreach ($data as $key => $value) {
     		$data[$key]['imgs'] = array(array(
@@ -62,6 +61,8 @@ class Popnews extends My_Model{
 			}else{
 				$this->db->where('catid',$cat);
 			}
+		}else{
+			$this->db->like('keywords','名人時事導航');
 		}
 		$day_before = $this->config->item('day_before');
 		$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
