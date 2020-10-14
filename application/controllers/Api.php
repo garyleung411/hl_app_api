@@ -837,16 +837,19 @@ class Api extends DefaultApi{
 		$this->Expired = $this->config->item('list_time');
 		$path = $this->config->item('highlight_path');
 		$data = json_decode($this->getFile($path, $this->config->item('cache_only')),true);
+		
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			
 			$this->load->model('Highlight');
 			$data = $this->Highlight->Get_highlight_list();
+			
 			if(count($data)>0){
 				
 				$posdata = $this->Highlight->Get_pos_highlight_list();
 				
 				$return_data = array();
 				$num = count($data)+count($posdata);
+				
 				/*//old function
 				foreach($data as $k => $row){
 					if(isset($posdata[$k+1])){
@@ -881,7 +884,8 @@ class Api extends DefaultApi{
 						}
 					}
 				}
-				if(count($posdata)>0){
+				
+				if(count($posdata)>0 || count($data)>0){
 					$return_data = $temp_data;
 				}
 				
@@ -906,6 +910,7 @@ class Api extends DefaultApi{
 				$this->Savefile($path,json_encode($data,JSON_UNESCAPED_SLASHES));
 			}
 		} 
+		
 		
 		if(!$data){
 			$this->show_error(2);
