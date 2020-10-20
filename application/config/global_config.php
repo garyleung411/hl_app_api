@@ -303,7 +303,8 @@ $app_config['img']['instant_img_url'] =		'';
 $app_config['img']['popnews_img_url'] =		'';
 $app_config['img']['life_img_url'] =		'';
 $app_config['img']['column_img_url'] =		'';
-$app_config['img']['hl_app_img_url'] =		'';
+//$app_config['img']['hl_app_img_url'] =		'';
+$app_config['img']['hl_app_img_url'] =		$config['hl_app_img_url'];
 
 
 $app_config['vdo']['popnews_vdo_url'] =		$config['popnews_vdo_url'];
