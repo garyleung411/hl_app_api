@@ -49,8 +49,8 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 		 '5'=>'stheadline/',
 	);
 	//$config['imgwd_prefix'] = "http://192.168.148.170/f/".$config['imgwd_para'];
-	$config['imgwd_prefix'] = "https://image.stheadline.com/f/".$config['imgwd_para'];
-	$config['imgwd_prefix_nowm'] = "https://image.stheadline.com/f/".$config['imgwd_para_nowm'];
+	$config['imgwd_prefix'] = "https://image2.stheadline.com/f/".$config['imgwd_para'];
+	$config['imgwd_prefix_nowm'] = "https://image2.stheadline.com/f/".$config['imgwd_para_nowm'];
 	
 	
 	//vdo
