@@ -37,6 +37,7 @@ class Life extends My_Model
 		}
 
 		$list = $this->Get_All_News_list($rows, $cat, $Page);
+		
 		$img_id_list = array();
 		$video_id_list = array();
 		foreach($list as $k => $v){
@@ -193,8 +194,11 @@ class Life extends My_Model
             }
 			
 			$this->db->select('hhn.hdID as id, nm.title,nm.newsID as newsID,nm.content,nm.publishDatetime as publish_datetime,nm.keyword,nm.videoID as vdo,hhn.newsCat as map_cat,newsLayout as layout');
+			$ignoreIds = ['124','84','85','87','464','467'];
+			$this->db->where_not_in('hhn.newsSubCat', $ignoreIds);
 			$this->db->limit($PageSize);
 			$this->db->order_by('nm.publishDatetime','desc');
+			$this->db->order_by('hhn.hdID','desc');
 			$res = $this->db->get();
 			$data = $res->result_array();
 			if(count($data)<$PageSize)
@@ -210,6 +214,7 @@ class Life extends My_Model
 				{
 					$this->db->where('hhn.newsCat',$cat);
 				}
+				
 				$day_before = $this->config->item('day_before');
 				$day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
 				$this->db->where('nm.publishDatetime >=',$day);
@@ -260,6 +265,7 @@ class Life extends My_Model
 			$this->db->from('news_img_output_'.$year.' as img');
 			$this->db->join('hd_hl_news as hhn',"hhn.newsID = img.newsID AND hhn.year = '$year'", 'inner');
 			$this->db->join('news_img_info_'.$year.' as info','info.imgID = img.parentImgID', 'inner');
+			//$this->db->join('news_img_src_'.$year.' as src','src.imgID = img.parentImgID AND src.status = 1', 'inner');
 			if(is_array($id)&&count($id)>0)
 			{
 				$this->db->where_in('hhn.hdID',$id);
@@ -270,8 +276,9 @@ class Life extends My_Model
 			}
 			$this->db->where('img.path NOT LIKE ','%.psd');
 			$this->db->group_start();
-			$this->db->where('img.class',20);
-			$this->db->or_where('img.class',14);
+			//$this->db->where('img.class',20);
+			$this->db->where('img.class',14);
+			//$this->db->or_where('img.class',14);
 			$this->db->group_end();
 			$this->db->where('img.status',1);
 			$this->db->order_by('img.class', 'DESC');
@@ -415,7 +422,7 @@ class Life extends My_Model
 		}
         $list_id = array();
         $video_id_list = array();
-		
+		//return $this->db->last_query();exit;
         foreach ($data as $key => $value) {
             $list_id[] = $value['id'];
             // unset($data[$key]['newsID']);

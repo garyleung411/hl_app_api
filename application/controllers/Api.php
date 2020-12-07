@@ -134,6 +134,10 @@ class Api extends DefaultApi{
 			$file = $this->config->item('daily_top_list_path');
 			$sname = 'daily';
 		}
+		else if($section == 4){
+			$file = $this->config->item('life_top_list_path');
+			$sname = 'life';
+		}
 		else{
 			$this->show_error(3);
 		}
@@ -157,6 +161,7 @@ class Api extends DefaultApi{
 				$list_id = array();
 				$sort_list = array();
 				foreach($list as $k=>$v){
+					//var_dump($v);exit;
 					//top 10 only
 					$is_column = $v['catID']==9 && $section == 2;
 					if(count($sort_list)==10){
@@ -171,24 +176,27 @@ class Api extends DefaultApi{
 							$list_id["5"][] = $v['newsId'];
 						}
 						else{
+						
 							$list_id[$section][] = $v['newsId'];
 						}
 					}
 					$sort_list[$v['newsId']] = count($sort_list);
 				}
-				
+				//var_dump($list_id);exit;
 				$sections = array_keys($list_id);
 				$data =array();
+				
 				foreach($sections as $s ){
 					
 					$SectionName = $this->Section->Get_Section($s)[0]->section_name;
+					
 					//echo $SectionName;
 					//echo "<br>";
 					//if($SectionName == 'daily'){
 						
 						$this->load->model($SectionName);
 						$list = $this->$SectionName->Get_News_list_by_ID($list_id[$s]);
-						
+						//var_dump($list);exit;
 							
 						
 						foreach($list as $key=> $value ){
@@ -245,7 +253,7 @@ class Api extends DefaultApi{
 		$data = json_decode($this->getFile($outputpath, $this->config->item('cache_only')),true);
 		if(!$this->config->item('cache_only') && (!$data || $this->gen()) ){
 			$this->load->model('Instant');
-			$interest = $this->Instant->GetInterestList();	
+			$interest = $this->Instant->GetInterestList();
 			$file = array();
 			$fileidlist = array();
 			$this->load->model('News_category_list');
