@@ -127,6 +127,7 @@ $config['headlife_cat'] = array(57,58,60,61,63,65,67,68);
 
 //select limit
 $config['day_before'] = 90;			//For date limit
+$config['day_before_7'] = 7;			//For date limit
 $config['column_day_before'] = 30;	//For date limit
 
 //number_of_topic
@@ -161,6 +162,7 @@ $config['hotmob_adcode_path'] = 'json/hotmob_adcode.json';
 
 $config['daily_top_list_path'] = 'json/daily-newest-top-list.json';
 $config['instant_top_list_path'] = 'json/instant-newest-top-list.json';
+$config['life_top_list_path'] = 'json/lifeHitlist.json';
 $config['interest_list_path'] = 'json/interest/list_{page}.json';
 $config['highlight_path'] = 'json/highlight.json';
 $config['columns_path'] = 'json/columns/list_{id}.json';

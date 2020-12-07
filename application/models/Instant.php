@@ -22,8 +22,8 @@ class Instant extends My_Model
 
     public function GetInterestList(){
 		$total = 100;
-        $day_before = $this->config->item('day_before');
-        $day = date('Y-m-d',strtotime("today - $day_before days"));//90天前的日期
+        $day_before = $this->config->item('7_day_before');
+        $day = date('Y-m-d',strtotime("today - 7 days"));//7天前的日期
         $years = array(
 			date('Y',strtotime("today")),//今年
 		);
