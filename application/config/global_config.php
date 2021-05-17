@@ -3,13 +3,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /*************************                       all page config                             *************************/ 
 
-$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.149.159','192.168.148.159');
+$config['PRODUCTION_HOST'] = array('hlapp.stheadline.com','192.168.148.159');//192.168.149.159
 $config['ALLOW_GEN_IP'] = array('210.3.98.54','203.80.0.5');
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
 }
 $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) ? 'https' : 'http';
-$config['base_suffix']    = '';
+$config['base_suffix']    = 'hlapp/';
 $config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
 #Read cache only, all DB connection aborted
 $config['cache_only'] = false;
@@ -35,6 +35,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['life_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['column_img_url'] = "https://static.stheadline.com/stheadline/";
 	$config['hl_app_img_url'] = "https://static.stheadline.com/stheadline/";
+	//$config['hl_app_img_url'] = "http://192.168.149.49/stheadline/";
 	
 	
 	$config['imgwd_para'] = "10000p10000/0x0/100/hd/";
