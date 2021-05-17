@@ -74,6 +74,7 @@ $active_group = '';
 $query_builder = TRUE;
 
 if(ENV === 'PROD' ){
+		
 		$db['hl_app'] = array(
 			'dsn'	=> '',
 			'hostname' => '192.168.148.158',

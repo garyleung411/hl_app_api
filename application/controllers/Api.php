@@ -287,7 +287,7 @@ class Api extends DefaultApi{
 	public function detail($section, $cat, $id){
 		$this->Expired = $this->config->item('detail_time');
 		if($section == "topic"){
-			$this->detail("1", $id);
+			$this->detail("1", $cat, $id);
 			return;
 		}
 		$path= $this->config->item('detail_path');
