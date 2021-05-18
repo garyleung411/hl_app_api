@@ -43,6 +43,7 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	$config['imgwd_md5'] = str_ireplace('/','',$config['imgwd_para']).'{src}';
 	$config['imgwd_md5_nowm'] = str_ireplace('/','',$config['imgwd_para_nowm']).'{src}';
 	$config['imgwd_src'] = array(
+		 'topic'=>'stheadline/inewsmedia/',
 		 '1'=>'stheadline/inewsmedia/',
 		 '2'=>'stheadline/',
 		 '3'=>'stheadline/pop/',
