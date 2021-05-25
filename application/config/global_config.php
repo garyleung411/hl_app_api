@@ -9,15 +9,17 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
   $_SERVER['HTTPS'] = 'on';
 }
 $config['PROTOCOL'] = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ) ? 'https' : 'http';
-$config['base_suffix']    = 'hlapp/';
-$config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
+
 #Read cache only, all DB connection aborted
 $config['cache_only'] = false;
 
 /*
  *	PROD config
  */
-if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){ 
+if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
+	$config['base_suffix']    = '';
+	$config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
+	
 	define('ENV', 'PROD');
 	ini_set('display_errors', 'Off');
 	error_reporting(0);
@@ -72,6 +74,9 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
  *	DEV config
  */
 else{
+	$config['base_suffix']    = 'hlapp/';
+	$config['base_url']    = $config['PROTOCOL'] . '://'.$_SERVER['HTTP_HOST'].'/' . $config['base_suffix'];
+	
 	define('ENV', 'DEV');	
 	$config['img_server_config'] = array(
 		"hostname"	=>	"192.168.149.50",
