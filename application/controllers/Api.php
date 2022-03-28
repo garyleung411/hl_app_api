@@ -357,6 +357,9 @@ class Api extends DefaultApi{
 						// $content[2] = strip_tags($content[2]);
 					}
 					$data['content'] = $content;
+					if($data['layout'] == '9'){
+						$data['layout'] = 1;
+					}
 					$data['share_link'] = $this->share_link($data);
 					$data = $this->detail_cast($data);
 					if(count($data["related_news"])>0){

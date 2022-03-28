@@ -58,9 +58,9 @@ if(in_array($_SERVER['SERVER_NAME'], $config['PRODUCTION_HOST']) ){
 	
 	
 	//vdo
-	$config['popnews_vdo_url'] = "http://vod6.hkheadline.com/";
-	$config['life_vdo_url'] = "http://vod6.hkheadline.com/";
-	$config['instant_vdo_url'] = "https://static.stheadline.com/stheadline/inewsmedia/";
+	$config['popnews_vdo_url'] = "";//http://vod6.hkheadline.com/
+	$config['life_vdo_url'] = "";
+	$config['instant_vdo_url'] = "";//https://static.stheadline.com/stheadline/inewsmedia/
 	$config['solr'] = array(
 		"project"       => "appcollect",
 		"http_root"     => "192.168.148.106:8983/solr/",

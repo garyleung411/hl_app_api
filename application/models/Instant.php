@@ -63,7 +63,7 @@ class Instant extends My_Model
         if(count($res)>0){ 
             $this->SetImg($res[0],array(),false);
             if($res[0]['vdo']){
-                $res[0]['vdo'] = substr($res[0]['vdo'], 2, 8).'/'.$res[0]['vdo'];
+                //$res[0]['vdo'] = substr($res[0]['vdo'], 2, 8).'/'.$res[0]['vdo'];
             }
 			if($res[0]['vid']!=''&&$res[0]['vid']>0){
 				$this->SetVideo($res[0]);
@@ -273,7 +273,7 @@ class Instant extends My_Model
         
         foreach($list as $k => $v){
             if($v['vdo']){
-                $v['vdo'] = substr($v['vdo'], 2, 8).'/'.$v['vdo'];
+                //$v['vdo'] = substr($v['vdo'], 2, 8).'/'.$v['vdo'];
             }
             $img_id_list[] = $v['id'];
             $v['content'] = mb_substr(strip_tags($v['content']),0,50,'utf-8');
@@ -494,7 +494,7 @@ class Instant extends My_Model
 		   $data[$key]['content'] = mb_substr(strip_tags($value['content']),0,50,'utf-8');
             if($value['vdo']!=''){
                 // var_dump($value['vdo']);
-                $data[$key]['vdo'] = substr($value['vdo'], 2, 8).'/'.$value['vdo'];
+                //$data[$key]['vdo'] = substr($value['vdo'], 2, 8).'/'.$value['vdo'];
             }
         }
 		

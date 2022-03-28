@@ -98,7 +98,7 @@ if(ENV === 'PROD' ){
 		);
 		$db['daily'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.25',
+			'hostname' => '192.168.1.31',
 			'username' => 'hlapp_ro',
 			'password' => 'BBhTbKtR2ykP',
 			'database' => 'content_store',
@@ -119,9 +119,12 @@ if(ENV === 'PROD' ){
 		);
 		$db['instant'] = array(
 			'dsn'	=> '',
-			'hostname' => '192.168.1.33',
-			'username' => 'hlapp_ro',
-			'password' => 'BBhTbKtR2ykP',
+			// 'hostname' => '192.168.1.33',
+			// 'username' => 'hlapp_ro',
+			// 'password' => 'BBhTbKtR2ykP',
+			'hostname' => 'pc-3nscj5lvmj1clh95i.rwlb.rds.aliyuncs.com',
+			'username' => 'dbuser_rw',
+			'password' => 'sthl@1105',
 			'database' => 'st_breaking',
 			'dbdriver' => 'mysqli',
 			'dbprefix' => '',
